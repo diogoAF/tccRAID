@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 
 @SuppressWarnings("serial")
@@ -111,12 +112,6 @@ public class Directory extends DirectoryNode {
 		} catch (ClassNotFoundException | IOException e) {
 			return null;
 		}
-	}
-	
-	public Path getPath() {
-		Path path = null;
-		
-		return path;
 	}
 	
 	public void printDir(String sep) {

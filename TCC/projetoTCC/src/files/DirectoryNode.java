@@ -1,6 +1,8 @@
 package files;
 
 import java.io.Serializable;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 
 @SuppressWarnings("serial")
@@ -26,7 +28,7 @@ public class DirectoryNode  implements Serializable {
 		
 		return path;
 	}
-	
+
 	public boolean isLoked() {
 		return metadata.isLocked();
 	}

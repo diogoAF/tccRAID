@@ -10,6 +10,7 @@ public class ServerConsole {
             System.exit(-1);
     	}
     	ServerData d = new ServerData(Integer.parseInt(args[0]));
+    	ServerConsole sc = new ServerConsole();
     	
     	try {
         	byte[] resp;
@@ -22,5 +23,10 @@ public class ServerConsole {
 			e.printStackTrace();
             System.exit(-1);
 		}
+    	sc.metodo();
+	}
+	
+	private void metodo() {
+		
 	}
 }

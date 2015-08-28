@@ -4,6 +4,7 @@ import java.io.Console;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 import result.Result;
@@ -61,7 +62,15 @@ public class ClientConsole {
 		    System.out.println(Option.EXIT+": Terminar");
 		    
 		    System.out.print(">");
-			int option = sc.nextInt();
+		    
+			int option;
+			try {
+				option = sc.nextInt();
+			} catch (InputMismatchException e) {
+				sc.nextLine();
+				option = -1;
+			}
+			
 			switch(option) {
 			case(Option.OPENDIR):
 				openDir(con);
