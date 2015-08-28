@@ -1,0 +1,7 @@
+\beamer@sectionintoc {1}{Introdu\IeC {\c c}\IeC {\~a}o}{3}{0}{1}
+\beamer@sectionintoc {2}{Diretriz da pesquisa}{4}{0}{2}
+\beamer@sectionintoc {3}{Fundamenta\IeC {\c c}\IeC {\~a}o te\IeC {\'o}rica}{6}{0}{3}
+\beamer@sectionintoc {4}{Sistema proposto}{15}{0}{4}
+\beamer@sectionintoc {5}{Bibliografia}{17}{0}{5}
+\beamer@endinputifotherversion {3.36pt}
+\select@language {american}

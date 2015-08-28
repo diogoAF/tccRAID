@@ -1,0 +1,25 @@
+\select@language {brazil}
+\select@language {american}
+\select@language {brazil}
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {2.1}{\ignorespaces \IeC {\'A}rvore de diret\IeC {\'o}rios}}{13}{figure.2.1}
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {3.1}{\ignorespaces Vis\IeC {\~a}o geral da Computa\IeC {\c c}\IeC {\~a}o na Nuvem}}{15}{figure.3.1}
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {4.1}{\ignorespaces A modularidade do BFT-SMaRt. Adaptado de Alchieri~\cite {bessani3}}}{19}{figure.4.1}
+\contentsline {figure}{\numberline {4.2}{\ignorespaces Processamento de mensagens arquitetadas entre replicas do BFT-SMaRt. Adaptado de Alchieri~\cite {bessani3} }}{22}{figure.4.2}
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {5.1}{\ignorespaces Diagrama do RAID 0. Retirado da Wikipedia~\citep {wikiRAIDlevels}.}}{27}{figure.5.1}
+\contentsline {figure}{\numberline {5.2}{\ignorespaces Diagrama do RAID 1. Retirado da Wikipedia~\citep {wikiRAIDlevels}.}}{28}{figure.5.2}
+\contentsline {figure}{\numberline {5.3}{\ignorespaces Diagrama do RAID 2. Retirado da Wikipedia~\citep {wikiRAIDlevels}.}}{28}{figure.5.3}
+\contentsline {figure}{\numberline {5.4}{\ignorespaces Diagrama do RAID 3. Retirado da Wikipedia~\citep {wikiRAIDlevels}.}}{29}{figure.5.4}
+\contentsline {figure}{\numberline {5.5}{\ignorespaces Diagrama do RAID 4. Retirado da Wikipedia~\citep {wikiRAIDlevels}.}}{30}{figure.5.5}
+\contentsline {figure}{\numberline {5.6}{\ignorespaces Diagrama do RAID 5. Retirado da Wikipedia~\citep {wikiRAIDlevels}.}}{31}{figure.5.6}
+\contentsline {figure}{\numberline {5.7}{\ignorespaces Diagrama do RAID 6. Retirado da Wikipedia~\citep {wikiRAIDlevels}.}}{32}{figure.5.7}
+\contentsline {figure}{\numberline {5.8}{\ignorespaces Diagrama do RAID 50. Retirado da Wikipedia~\citep {wikiRAIDlevels}.}}{32}{figure.5.8}
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {6.1}{\ignorespaces Vis\IeC {\~a}o geral do sistema}}{35}{figure.6.1}
+\contentsline {figure}{\numberline {6.2}{\ignorespaces \textit {Name node} e \textit {data node}}}{36}{figure.6.2}
+\contentsline {figure}{\numberline {6.3}{\ignorespaces Gera\IeC {\c c}\IeC {\~a}o de paridade}}{37}{figure.6.3}
+\contentsline {figure}{\numberline {6.4}{\ignorespaces Recuperando um arquivo de uma falha}}{38}{figure.6.4}

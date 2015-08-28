@@ -1,0 +1,23 @@
+This is pdfTeX, Version 3.14159265-2.6-1.40.15 (MiKTeX 2.9 64-bit) (preloaded format=pdftex 2015.4.2)  6 JUL 2015 02:17
+entering extended mode
+**C:/Users/Diogo/Documents/UnB/TCC/Monografia/trunk/monografia/bibliografia.bib
+
+(C:/Users/Diogo/Documents/UnB/TCC/Monografia/trunk/monografia/bibliografia.bib
+! Missing $ inserted.
+<inserted text> 
+                $
+<to be read again> 
+                   _
+l.1 .@book{tanenbaum07_
+                       2,
+? 
+! Emergency stop.
+<inserted text> 
+                $
+<to be read again> 
+                   _
+l.1 .@book{tanenbaum07_
+                       2,
+End of file on the terminal!
+
+!  ==> Fatal error occurred, no output PDF file produced!

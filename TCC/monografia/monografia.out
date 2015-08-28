@@ -1,0 +1,46 @@
+\BOOKMARK [0][-]{dedication.0}{Dedicat\363ria}{}% 1
+\BOOKMARK [0][-]{acknowledgements.0}{Agradecimentos}{}% 2
+\BOOKMARK [0][-]{resumo.0}{Resumo}{}% 3
+\BOOKMARK [0][-]{abstract.0}{Abstract}{}% 4
+\BOOKMARK [0][-]{chapter.1}{Introdu\347\343o}{}% 5
+\BOOKMARK [1][-]{section.1.1}{Contextualiza\347\343o}{chapter.1}% 6
+\BOOKMARK [1][-]{section.1.2}{Objetivo}{chapter.1}% 7
+\BOOKMARK [1][-]{section.1.3}{Organiza\347\343o de cap\355tulos}{chapter.1}% 8
+\BOOKMARK [0][-]{chapter.2}{Sistema de arquivos distribu\355do}{}% 9
+\BOOKMARK [1][-]{section.2.1}{Sistema distribu\355do}{chapter.2}% 10
+\BOOKMARK [1][-]{section.2.2}{Sistema de arquivos distribu\355do}{chapter.2}% 11
+\BOOKMARK [2][-]{subsection.2.2.1}{Transpar\352ncia}{section.2.2}% 12
+\BOOKMARK [2][-]{subsection.2.2.2}{Caracter\355sticas}{section.2.2}% 13
+\BOOKMARK [2][-]{subsection.2.2.3}{Nomes e localiza\347\343o}{section.2.2}% 14
+\BOOKMARK [2][-]{subsection.2.2.4}{Servi\347o de Nomes}{section.2.2}% 15
+\BOOKMARK [0][-]{chapter.3}{Computa\347\343o na Nuvem}{}% 16
+\BOOKMARK [1][-]{section.3.1}{Conceitos}{chapter.3}% 17
+\BOOKMARK [1][-]{section.3.2}{As necessidades da Computa\347\343o nas Nuvens}{chapter.3}% 18
+\BOOKMARK [0][-]{chapter.4}{BFT-SMaRt}{}% 19
+\BOOKMARK [1][-]{section.4.1}{Conceitos}{chapter.4}% 20
+\BOOKMARK [1][-]{section.4.2}{Princ\355pios do Design}{chapter.4}% 21
+\BOOKMARK [2][-]{subsection.4.2.1}{Modelo Harmonioso de Falhas}{section.4.2}% 22
+\BOOKMARK [2][-]{subsection.4.2.2}{Simplicidade}{section.4.2}% 23
+\BOOKMARK [2][-]{subsection.4.2.3}{Modularidade}{section.4.2}% 24
+\BOOKMARK [2][-]{subsection.4.2.4}{Interface de Programa\347\343o de Aplica\347\343o Simples e Extens\355vel}{section.4.2}% 25
+\BOOKMARK [2][-]{subsection.4.2.5}{Consci\352ncia de ambiente Multi-Core}{section.4.2}% 26
+\BOOKMARK [2][-]{subsection.4.2.6}{Modelo do Sistema}{section.4.2}% 27
+\BOOKMARK [1][-]{section.4.3}{Protocolos Centrais}{chapter.4}% 28
+\BOOKMARK [2][-]{subsection.4.3.1}{Total Order Multicast}{section.4.3}% 29
+\BOOKMARK [2][-]{subsection.4.3.2}{Transfer\352ncia de Estado}{section.4.3}% 30
+\BOOKMARK [1][-]{section.4.4}{Reconfigura\347\343o}{chapter.4}% 31
+\BOOKMARK [1][-]{section.4.5}{Implementa\347\343o}{chapter.4}% 32
+\BOOKMARK [1][-]{section.4.6}{Configura\347\365es Alternativas}{chapter.4}% 33
+\BOOKMARK [2][-]{subsection.4.6.1}{Crash Fault Tolerance}{section.4.6}% 34
+\BOOKMARK [2][-]{subsection.4.6.2}{Falhas Bizantinas Maliciosas}{section.4.6}% 35
+\BOOKMARK [0][-]{chapter.5}{RAID}{}% 36
+\BOOKMARK [1][-]{section.5.1}{Conceitos}{chapter.5}% 37
+\BOOKMARK [0][-]{chapter.6}{Desenvolvimento}{}% 38
+\BOOKMARK [1][-]{section.6.1}{Metadados}{chapter.6}% 39
+\BOOKMARK [1][-]{section.6.2}{Arquitetura do sistema}{chapter.6}% 40
+\BOOKMARK [2][-]{subsection.6.2.1}{Servidor}{section.6.2}% 41
+\BOOKMARK [2][-]{subsection.6.2.2}{Cliente}{section.6.2}% 42
+\BOOKMARK [1][-]{section.6.3}{Opera\347\365es}{chapter.6}% 43
+\BOOKMARK [2][-]{subsection.6.3.1}{Cliente-Servidor}{section.6.3}% 44
+\BOOKMARK [2][-]{subsection.6.3.2}{Servidor-Servidor}{section.6.3}% 45
+\BOOKMARK [0][-]{section*.55}{Refer\352ncias}{}% 46

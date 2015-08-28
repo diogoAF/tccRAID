@@ -1,0 +1,17 @@
+This is pdfTeX, Version 3.14159265-2.6-1.40.15 (MiKTeX 2.9 64-bit) (preloaded format=pdftex 2015.4.2)  2 APR 2015 21:40
+entering extended mode
+**"C:/Users/Diogo/Documents/UnB/Trabalho de Graduação 1/monografiaCIC/monogra
+fia/unb-cic.cls"
+
+("C:/Users/Diogo/Documents/UnB/Trabalho de Graduação 1/monografiaCIC/monograf
+ia/unb-cic.cls"
+! Undefined control sequence.
+l.355 \NeedsTeXFormat
+                     {LaTeX2e}[1994/12/01]
+? 
+! Emergency stop.
+l.355 \NeedsTeXFormat
+                     {LaTeX2e}[1994/12/01]
+End of file on the terminal!
+
+!  ==> Fatal error occurred, no output PDF file produced!

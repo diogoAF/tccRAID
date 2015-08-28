@@ -1,0 +1,27 @@
+
+\section{Objetivo}
+
+O nosso objeivo neste artigo é a construção de um sistema de arquivos distribuído baseado na computação em nuvem que possui menor \textit{overhead} de espaço, comparado a 200\% de método de replicação, sem degradar muito o performance e a confiabilidade na armazenamento de dados. \\
+
+Para isso, nós observamos em técnica de redundância usado na tecnologia RAID, onde tem possibilidade de diminuir o espaço ocupado pela parte redundante com atribuição de paridade nos arquivos, ao invés de simples replicação. Dessa forma, é possível de reduzir o \textit{overhead} de espaço até 50\%, quando for gerada uma paridade para cada duas partes de arquivo original, ou até menos, dependendo da configuração utilizada para calcular as paridades.
+Além de otimização de uso de espaço para armazenamento, também é esperado a melhoria na distribuição de caga entre os servidores. Como os arquivos estão fragmentados em blocos e espalhados em todos os servidores, a probabilidade de ocorrer a concentração de acesso em um servidor tende a ser reduzida.
+Também notamos no fato de que a tecnologia RAID foi inicialmente desenvolvido para aumentar a taxa de transferência da unidade de armazenamento, mantendo a mesma velocidade de leitura/estrita. Isso foi realizado com leitura/escrita simultânea em vários discos rígidos, aumentando o tamanho total de dados transferidos por vez numa operação de entrada/saída. Esta ideia também foi incorporado no nosso sistema, uma vez que no sistema distribuído é requisito básico o uso de vários servidores para trabalhar em conjunto.\\
+
+Para gerenciar o armazenamento de forma eficientemente, todos os arquivos são divididos em duas partes, o metadado, as informações sobre arquivo, e o conteúdo, o dado em si do arquivo. 
+Assim, no conjunto de servidor vai ter dois tipos diferentes de nós, alguns que armazena os metadados dos arquivos e outros que armazena o conteúdo dos arquivos.
+A confiabilidade do conteúdo do arquivo é assegurado com conceito de RAID, e da mesma forma os metadados serão protegidos através de BFT-SMaRt, uma biblioteca JAVA que fornece a tolerância a falha, realizada com uso de método de replicação do serviço.\\
+
+%Assim, a nossa abordagem está focalizado em construção de uma forma eficiente para armazenar os arquivos com segurança no sistema de arquivos distribuído.
+
+Também será feito a comparação de desempenho entre os dois sistemas, um que usa método de replicação e outro que usa método de RAID.
+Comparando os dois métodos de redundância, será possível a visualização das vantagens e desvantagens que existem entre eles.
+
+
+
+
+
+
+
+
+
+
