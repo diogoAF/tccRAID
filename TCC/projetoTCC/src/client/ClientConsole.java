@@ -1,20 +1,21 @@
 package client;
 
+import files.Metadata;
 import java.io.Console;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
+import java.net.Socket;
 import java.nio.file.Paths;
 import java.util.InputMismatchException;
 import java.util.Scanner;
-
 import result.Result;
-import files.Metadata;
 
 
 public class ClientConsole {
 	ClientDFS c;
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
     	if(args.length < 1) {
             System.out.println("Use: java ClientConsole <processId>");
             System.exit(-1);
@@ -35,7 +36,7 @@ public class ClientConsole {
 		this.c = c;
 	}
 	
-	private void run() {
+	private void run() throws IOException {
 		Scanner sc   = new Scanner(System.in);
         boolean exit = false;
         Console con  = System.console();
@@ -57,6 +58,7 @@ public class ClientConsole {
 		    System.out.println(Option.DELETEDIR +": Deletar diretorio");
 		    System.out.println(Option.RENAMEDIR +": Renomear diretorio");
 		    System.out.println(Option.CLOSEDIR  +": Fechar diretorio");
+                    System.out.println(Option.CREATE  +": Enviar arquivo");
 		    
 		    System.out.println();
 		    System.out.println(Option.EXIT+": Terminar");
@@ -90,6 +92,10 @@ public class ClientConsole {
 
 			case(Option.CLOSEDIR):
 				closeDir();
+				break;
+                            
+                        case(Option.CREATE):
+				createFile(con);
 				break;
 			
 			case(Option.EXIT):
@@ -288,4 +294,42 @@ public class ClientConsole {
             System.exit(-1);
 	    }
 	}
+
+    private void createFile(Console con) throws IOException {
+        String hostName = "127.0.0.1";
+        int portNumber = 4400;
+        System.out.println();
+        System.out.println("Enviar arquivo");
+        //String   filePath  = con.readLine("Path do arquivo:\n>");
+        Socket clientSocket = new Socket(hostName, portNumber);
+        System.out.println("O cliente se conectou ao servidor!");
+     
+        Scanner scanner = new Scanner(System.in);
+        PrintStream outStream = new PrintStream(clientSocket.getOutputStream());
+
+        while (scanner.hasNextLine()) {
+          outStream.println(scanner.nextLine());
+        }
+        
+        outStream.close();
+        scanner.close();
+        clientSocket.close();
+		
+                /*
+		if(filePath.isEmpty())
+			return;
+			
+		try {
+			int result = c.openFile(filePath);
+			
+			if(result == Result.SUCCESS)
+				System.out.println("Abrindo diretorio");
+			else
+				reportError(result);
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+                        */
+    }
 }

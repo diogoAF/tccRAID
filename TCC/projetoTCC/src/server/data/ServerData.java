@@ -9,6 +9,7 @@ import bftsmart.tom.ServiceProxy;
 
 public class ServerData {
     private ServiceProxy proxy;
+    
 
     public ServerData(int id) {
         proxy = new ServiceProxy(id);
