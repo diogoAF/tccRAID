@@ -1,12 +1,14 @@
 package client;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.Socket;
 import java.util.Scanner;
+import server.data.ServerConsole;
 
 
 public class ClientTestSocket {
@@ -16,28 +18,36 @@ public class ClientTestSocket {
             String filePath; 
             int portNumber = 4400;
             File newFile;
-            BufferedReader reader = null;
             
             Scanner scanner = new Scanner(System.in);
             System.out.println();
             
             Socket clientSocket = new Socket(hostName, portNumber);
-            System.out.println("O cliente se conectou ao servidor!");
+            System.out.println("O cliente se conectou ao servidor na porta " + clientSocket.getLocalPort());
             
             System.out.println("Informe o path do arquivo.");
             System.out.print(">");
             filePath  = scanner.nextLine();
             newFile = new File(filePath);
-            reader = new BufferedReader(new FileReader(newFile));
-            PrintStream outStream = new PrintStream(clientSocket.getOutputStream());
+            
 
-            outStream.println(filePath);
-            while (reader.ready()) {
-              outStream.println(reader.readLine());
+            byte [] fileContent = new byte[ServerConsole.BUFFER_SIZE];
+            InputStream fileInputStream = new FileInputStream(newFile);
+            OutputStream out = clientSocket.getOutputStream();
+            
+            //out.write(newFile.getName().getBytes(), 0, newFile.getName().getBytes().length);
+            
+            Integer bytesRead;            
+            while ((bytesRead = fileInputStream.read(fileContent)) > 0){
+                out.write(fileContent, 0, bytesRead);
             }
-
-            outStream.close();
+            
+            System.out.println("Arquivo enviado com sucesso!");
+            
+            out.close();
             scanner.close();
             clientSocket.close();
+            fileInputStream.close();
+            
     }
 }

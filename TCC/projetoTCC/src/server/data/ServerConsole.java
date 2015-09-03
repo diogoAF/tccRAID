@@ -1,24 +1,22 @@
 package server.data;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
 public class ServerConsole {
+    public static final int BUFFER_SIZE = 16*1024;
     
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, Exception {
         int portNumber;
         
     	if(args.length < 1) {
@@ -31,48 +29,111 @@ public class ServerConsole {
         //Decide a porta do Servidor
         portNumber = 4400 + Integer.parseInt(args[0]);
         
-        serverConsole.initServerSocket(portNumber);
-    	
+        serverConsole.start(portNumber);
 
     }
     
-    private void initServerSocket(int portNumber) throws IOException{
-        Path filePath;
-        String fileName;
+    private void start(int portNumber) throws IOException, Exception{        
+        Scanner sc   = new Scanner(System.in);
+        do{
+            try { 
+                ServerSocket serverSocket = new ServerSocket(portNumber);
+                System.out.println("Aguardando cliente...");
+                Socket clientSocket = serverSocket.accept();
+                System.out.println("Cliente conectado do IP "+clientSocket.getInetAddress().
+                        getHostAddress()); // imprime o ip do cliente
+                
+                saveFile(clientSocket);
+                
+            } catch (IOException ex) { Logger.getLogger(ServerConsole.class.getName()).log(Level.SEVERE, null, ex); }
         
-    	try { 
-            ServerSocket serverSocket = new ServerSocket(portNumber);
-            System.out.println("Aguardando cliente...");
-            Socket clientSocket = serverSocket.accept();
-            System.out.println("Cliente conectado do IP "+clientSocket.getInetAddress().
-                    getHostAddress()); // imprime o ip do cliente
-            /*PrintWriter out =
-                new PrintWriter(clientSocket.getOutputStream(), true);*/
-            
-            Scanner scanner = new Scanner(clientSocket.getInputStream());
+        }while(!sc.nextLine().equalsIgnoreCase("exit"));
+    }
 
-            fileName = scanner.nextLine() + "saida.txt";
-            filePath = Paths.get(fileName);
-            BufferedWriter writer = Files.newBufferedWriter(filePath, StandardOpenOption.CREATE);
+    private void saveFile(Socket clientSocket) throws Exception {        
+        InputStream in = null;
+        OutputStream out = null;
+        Scanner fileName = null;
+
+        try {
+            //fileName = new Scanner(clientSocket.getInputStream());
+            in = clientSocket.getInputStream();
+        } catch (IOException ex) {
+            System.out.println("Não conseguiu coletar o socket input stream. ");
+        }
+
+        try {
+            //out = new FileOutputStream("C:\\Users\\Diogo\\Documents\\UnB\\TCC\\tccRAID\\TCC\\projetoTCC\\testeSaida.txt");
+            System.out.println("Nome do arquivo: " + in.toString());
+            out = new FileOutputStream("testeSaida.txt");
+        } catch (FileNotFoundException ex) {
+            System.out.println("Arquivo não encontrado. ");
+        }
+
+        byte[] bytes = new byte[BUFFER_SIZE];
+
+        int count;
+        while ((count = in.read(bytes)) > 0) {
+            out.write(bytes, 0, count);
+        }
+
+        out.close();
+        in.close();
+        clientSocket.close();
+        
+        /*
+        ObjectOutputStream oos = new ObjectOutputStream(clientSocket.getOutputStream());
+        ObjectInputStream ois = new ObjectInputStream(clientSocket.getInputStream());
+        FileOutputStream fileOutputStream = null;
+        byte [] buffer = new byte[BUFFER_SIZE];
+        
+        //Lê o nome do arquivo
+        Object object = ois.readObject();
+        
+        if(object instanceof String){
+            //fileOutputStream = new FileOutputStream(object.toString());
+            System.out.println("Nome do arquivo recebido: " + object.toString());
+            String fileName = "C:\\Users\\Diogo\\Documents\\UnB\\TCC\\tccRAID\\TCC\\projetoTCC\\testeSaida.txt";
+            FileOutputStream out = new FileOutputStream(fileName);
+        } else {
+            throwException("Não foi informado o nome do arquivo.");
+        }
+        
+        //Percorre todo o arquivo
+        Integer bytesRead = 0;
+        
+        do{
+            object = ois.readObject();
             
-            while (scanner.hasNextLine()) {
-              //System.out.println(scanner.nextLine());
-              writer.write(scanner.nextLine());
+            if(!(object instanceof Integer)){
+                throwException("Não foi recebido a quantidade de bytes.");
             }
             
-            System.out.println("Arquivo criado!");
-            writer.close();
+            bytesRead = (Integer) object;
+            System.out.println("Bytes lidos no Server: " + bytesRead);
+            object = ois.readObject();
             
-            /*BufferedReader in = new BufferedReader(
-                new InputStreamReader(clientSocket.getInputStream()));*/
+            if(!(object instanceof byte[])){
+                throwException("Não foi recebido um vetor de bytes.");
+            }
             
-            //Fecha as conexões
-            scanner.close();
-            clientSocket.close();
-            serverSocket.close();
-                       
-        } catch (IOException ex) { Logger.getLogger(ServerConsole.class.getName()).log(Level.SEVERE, null, ex); }
+            buffer = (byte[]) object;
+            
+            //Escreve dado recebido no arquivo de saida
+            fileOutputStream.write(buffer,0,bytesRead);
+        } while (bytesRead == BUFFER_SIZE);
         
+        System.out.println("Arquivo recebido com sucesso!");
+        
+        fileOutputStream.close();
+        ois.close();
+        oos.close();
+        */
+        System.out.println("Arquivo copiado com sucesso!");
+    }
+    
+    public static void throwException(String message) throws Exception{
+        throw new Exception(message);
     }
     
 }
