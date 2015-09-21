@@ -1,39 +1,38 @@
-package files;
+package dt.directory;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 
-@SuppressWarnings("serial")
+import dt.DirectoryNode;
+import dt.Metadata;
+import dt.file.FileDFS;
+
 public class Directory extends DirectoryNode {
-	private HashMap<String, Directory> directories;
+	private HashMap<String, Directory> dirs;
 	private HashMap<String, FileDFS>   files;
 	
 	public Directory(String name, Directory parent, Metadata metadata) {
 		super(name, parent, metadata);
 		
-		directories = new HashMap<String, Directory>();
-		files		= new HashMap<String, FileDFS>();
+		dirs  = new HashMap<String, Directory>();
+		files = new HashMap<String, FileDFS>();
 	}
 	
+	/*
 	private Directory(Directory src) {
 		super(src.getName(), null, src.getMetadata());
 		
-		this.directories = src.directories;
-		this.files       = src.files;
+		this.dirs  = src.dirs;
+		this.files = src.files;
 	}
-
+	*/
+	
 	public void setFile(FileDFS newFile) {		
 		files.put(newFile.getName(), newFile);
 	}
 	
 	public void setDirectory(Directory newDir) {
-		directories.put(newDir.getName(), newDir);
+		dirs.put(newDir.getName(), newDir);
 	}
 	
 	public FileDFS getFile(String name) {		
@@ -41,22 +40,32 @@ public class Directory extends DirectoryNode {
 	}
 	
 	public Directory getDirectory(String name) {		
-		return (Directory)directories.get(name);
+		return (Directory)dirs.get(name);
+	}
+
+	public void removeFile(String name) {
+		files.remove(name);
 	}
 	
 	public int removeDirectory(String name) {
 		Directory dir = getDirectory(name);
 		int     count = dir.dirCount();
 		
-		directories.remove(name);
+		dirs.remove(name);
 		
 		return count;
 	}
+
+	public boolean existFile(String name) {
+		if(files.get(name) == null) {
+			return false;
+		} else {
+			return true;
+		}
+	}
 	
-	public boolean exists(String name) {
-		Directory dir = directories.get(name);
-		
-		if(dir == null) {
+	public boolean existDir(String name) {
+		if(dirs.get(name) == null) {
 			return false;
 		} else {
 			return true;
@@ -68,7 +77,7 @@ public class Directory extends DirectoryNode {
 	}
 	
 	public int dirCount() {
-		return directories.size();
+		return dirs.size();
 	}
 	
 	public int fileCount() {
@@ -76,8 +85,8 @@ public class Directory extends DirectoryNode {
 	}
 
 	public void list() {
-		for (String keys : directories.keySet()) {
-			Directory dir = directories.get(keys);
+		for (String keys : dirs.keySet()) {
+			Directory dir = dirs.get(keys);
 			System.out.println("<dir>\t"+dir.getName());
 		}
 		for (String keys : files.keySet()) {
@@ -86,13 +95,21 @@ public class Directory extends DirectoryNode {
 		}
 	}
 	
+	public DirEntries getDirEntries() {
+		ArrayList<String> dirs  = new ArrayList<String>(this.dirs.keySet());
+		ArrayList<String> files = new ArrayList<String>(this.files.keySet());		
+		
+		return new DirEntries(getPathStr(), dirs, files);
+	}
+	
+	/*
 	public static byte[] toBytes(Directory dir) {
 		
 		try{
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();
 	        ObjectOutputStream    oos = new ObjectOutputStream(bos);
 			
-	        oos.writeObject(new Directory(dir));
+	        oos.writeObject(dir);
 	        byte[] bytes = bos.toByteArray(); 
 	        oos.close();
 	        bos.close();
@@ -113,10 +130,10 @@ public class Directory extends DirectoryNode {
 			return null;
 		}
 	}
-	
+	*/
 	public void printDir(String sep) {
-		for (String keys : directories.keySet()) {
-			Directory dir = directories.get(keys);
+		for (String keys : dirs.keySet()) {
+			Directory dir = dirs.get(keys);
 			System.out.print("|"+sep+"-"+dir.getName());
 			System.out.print("("+dir.getParent().getName()+")");
 			System.out.println();

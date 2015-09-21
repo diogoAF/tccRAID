@@ -1,27 +1,39 @@
 package client;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import dt.LockList;
+import dt.Metadata;
+import dt.directory.DirEntries;
+import dt.file.BlockList;
 import message.Message;
-import files.Directory;
-import files.Metadata;
 import request.RequestType;
+import result.Result;
 import bftsmart.tom.ServiceProxy;
 
 public class ClientDFS {
     private ServiceProxy proxy;
-	private Directory    current;
-	private Path		 currPath;
+	private Path         currPath;
+	private DirEntries   currDir;
+	private LockList     lockList;
+	
+	private LockManager lm;
 
     public ClientDFS(int id) {
         try {
             proxy    = new ServiceProxy(id);
 	        currPath = Paths.get("");
 	        openDir("root");
+	        
+	        lm = new LockManager(currPath, lockList);
+	        lm.run();
+	        
 		} catch (IOException e) {
 			System.out.println("Nao foi possivel obter o diretorio raiz."); 
 			e.printStackTrace();
@@ -29,44 +41,101 @@ public class ClientDFS {
 		}
     }
     
-    public byte[] create(String path, Metadata metadata) throws IOException {
-    	ByteArrayOutputStream out = new ByteArrayOutputStream();
-    	byte[] bytes = null;
-	
-		ObjectOutputStream oos = new ObjectOutputStream(out);
-		oos.writeInt(RequestType.CREATE);
-		oos.writeObject(path);
-		oos.writeObject(metadata);
-		oos.flush();
-		bytes = this.proxy.invokeOrdered(out.toByteArray());
-		
-		return bytes;
+    public int create(String fileName) throws IOException {
+    	int   result = -1;
+    	
+    	try {
+    		File     file     = new File(fileName);
+        	Metadata metadata = new Metadata(file);
+        	String   tgtName  = file.getName();
+        	
+        	ByteArrayOutputStream out = new ByteArrayOutputStream();
+    		ObjectOutputStream    oos = new ObjectOutputStream(out);
+    		
+    		oos.writeInt(RequestType.CREATE);
+    		oos.writeObject(currPath.toString()+"/"+tgtName);
+    		oos.writeObject(metadata);
+    		oos.writeLong(System.currentTimeMillis());
+    		oos.flush();
+    		
+    		byte[] bytes = this.proxy.invokeOrdered(out.toByteArray());
+    		Message  msg = Message.toMessage(bytes);
+    		result = msg.getResult();
+    		
+        	if(result != Result.SUCCESS) {
+        		return result;
+        	}
+        	
+        	BlockList bList = BlockList.toBlockList(msg.getBytes());
+        	
+        	bList.print();
+        	
+        	
+    	} catch (NoSuchFileException e) {
+    		result = Result.NOSUCHFILE;
+    	}
+    	
+    	
+    	
+    	updateDir();
+    	
+    	return result;
     }
     
-    public byte[] delete(String path) throws IOException {
+    public int delete(String targetName) throws IOException {
     	ByteArrayOutputStream out = new ByteArrayOutputStream();
-    	byte[] bytes = null;
-    	
-		ObjectOutputStream oos = new ObjectOutputStream(out);
+		ObjectOutputStream    oos = new ObjectOutputStream(out);
+		
 		oos.writeInt(RequestType.DELETE);
-		oos.writeObject(path);
+		oos.writeObject(currPath.toString()+"/"+targetName);
 		oos.flush();
-		bytes = this.proxy.invokeOrdered(out.toByteArray());
-			
-    	return bytes;
+		
+		byte[] bytes = this.proxy.invokeOrdered(out.toByteArray());
+		Message  msg = Message.toMessage(bytes);
+		int   result = msg.getResult();
+
+		currDir = DirEntries.toDirEntries(msg.getBytes());
+		
+		return result;
     }
 
-    public byte[] open(String path) throws IOException {
+    public int rename(String oldName, String newName) throws IOException {
     	ByteArrayOutputStream out = new ByteArrayOutputStream();
-    	byte[] bytes = null;
-
-    	ObjectOutputStream oos = new ObjectOutputStream(out);
-		oos.writeInt(RequestType.OPEN);
-		oos.writeObject(path);
+		ObjectOutputStream    oos = new ObjectOutputStream(out);
+		
+		oos.writeInt(RequestType.RENAME);
+		oos.writeObject(currPath.toString()+"/"+oldName);
+		oos.writeObject(newName);
 		oos.flush();
-		bytes = this.proxy.invokeOrdered(out.toByteArray());
+		
+		byte[] bytes = this.proxy.invokeOrdered(out.toByteArray());
+		Message  msg = Message.toMessage(bytes);
+		int   result = msg.getResult();
+
+		currDir = DirEntries.toDirEntries(msg.getBytes());
+		
+		return result;
+    }
+
+    public int open(String tgtName) throws IOException {
+    	String tgtPath = currPath.toString()+"/"+tgtName;
     	
-    	return bytes;
+    	ByteArrayOutputStream out = new ByteArrayOutputStream();
+		ObjectOutputStream    oos = new ObjectOutputStream(out);
+		
+		oos.writeInt(RequestType.OPENDIR);
+		oos.writeObject(tgtPath);
+		oos.writeLong(System.currentTimeMillis());
+		oos.flush();
+		
+		byte[] bytes = this.proxy.invokeOrdered(out.toByteArray());
+		Message  msg = Message.toMessage(bytes);
+		int   result = msg.getResult();
+		
+		currDir  = DirEntries.toDirEntries(msg.getBytes());
+		currPath = Paths.get(currDir.getPath());
+		
+		return result;
     }
 
     public byte[] append(String path) throws IOException {
@@ -82,65 +151,50 @@ public class ClientDFS {
     	return bytes;
     }
 
-    public int openDir(String dirName) throws IOException {
-    	ByteArrayOutputStream out = new ByteArrayOutputStream();
-		ObjectOutputStream    oos = new ObjectOutputStream(out);
+    public int criateDir(String tgtName) throws IOException {
+		Metadata metadata = new Metadata(System.currentTimeMillis());
 		
-		oos.writeInt(RequestType.OPENDIR);
-		oos.writeObject(currPath.toString()+"/"+dirName);
-		oos.flush();
-		
-		byte[] bytes = this.proxy.invokeOrdered(out.toByteArray());
-		Message  msg = Message.toMessage(bytes);
-		int   result = msg.getResult();
-		
-		current  = Directory.toDirectory(msg.getBytes());
-		currPath = Paths.get(msg.getPath());
-		
-		return result;
-    }
-
-    public int criateDir(String dirName, Metadata metadata) throws IOException {
     	ByteArrayOutputStream out = new ByteArrayOutputStream();
 		ObjectOutputStream    oos = new ObjectOutputStream(out);
 		
 		oos.writeInt(RequestType.CREATEDIR);
-		oos.writeObject(currPath.toString()+"/"+dirName);
+		oos.writeObject(currPath.toString()+"/"+tgtName);
 		oos.writeObject(metadata);
+		oos.writeLong(System.currentTimeMillis());
 		oos.flush();
 		
 		byte[] bytes = this.proxy.invokeOrdered(out.toByteArray());
 		Message  msg = Message.toMessage(bytes);
 		int   result = msg.getResult();
 		
-		current = Directory.toDirectory(msg.getBytes());
+		currDir = DirEntries.toDirEntries(msg.getBytes());
 		
     	return result;
     }
 
-    public int deleteDir(String dirName) throws IOException {
+    public int deleteDir(String tgtName) throws IOException {
     	ByteArrayOutputStream out = new ByteArrayOutputStream();
 		ObjectOutputStream    oos = new ObjectOutputStream(out);
 		
 		oos.writeInt(RequestType.DELETEDIR);
-		oos.writeObject(currPath.toString()+"/"+dirName);
+		oos.writeObject(currPath.toString()+"/"+tgtName);
 		oos.flush();
 		
 		byte[] bytes = this.proxy.invokeOrdered(out.toByteArray());
 		Message  msg = Message.toMessage(bytes);
 		int   result = msg.getResult();
 
-		current  = Directory.toDirectory(msg.getBytes());
+		currDir = DirEntries.toDirEntries(msg.getBytes());
 		
 		return result;
     }
 
-    public int renameDir(String dirName, String newName) throws IOException {
+    public int renameDir(String oldName, String newName) throws IOException {
     	ByteArrayOutputStream out = new ByteArrayOutputStream();
 		ObjectOutputStream    oos = new ObjectOutputStream(out);
 		
 		oos.writeInt(RequestType.RENAMEDIR);
-		oos.writeObject(currPath.toString()+"/"+dirName);
+		oos.writeObject(currPath.toString()+"/"+oldName);
 		oos.writeObject(newName);
 		oos.flush();
 		
@@ -148,13 +202,32 @@ public class ClientDFS {
 		Message  msg = Message.toMessage(bytes);
 		int   result = msg.getResult();
 
-		current  = Directory.toDirectory(msg.getBytes());
+		currDir = DirEntries.toDirEntries(msg.getBytes());
 		
 		return result;
     }
-    
+
+    public int openDir(String tgtName) throws IOException {
+    	ByteArrayOutputStream out = new ByteArrayOutputStream();
+		ObjectOutputStream    oos = new ObjectOutputStream(out);
+		
+		oos.writeInt(RequestType.OPENDIR);
+		oos.writeObject(currPath.toString()+"/"+tgtName);
+		oos.writeLong(System.currentTimeMillis());
+		oos.flush();
+		
+		byte[] bytes = this.proxy.invokeOrdered(out.toByteArray());
+		Message  msg = Message.toMessage(bytes);
+		int   result = msg.getResult();
+		
+		currDir  = DirEntries.toDirEntries(msg.getBytes());
+		currPath = Paths.get(currDir.getPath());
+		
+		return result;
+    }
+
     public int closeDir() throws IOException {
-    	if(current.isRoot())
+    	if(currDir.isRoot())
     		return 0;
     	
     	ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -168,22 +241,41 @@ public class ClientDFS {
 		Message  msg = Message.toMessage(bytes);
 		int   result = msg.getResult();
 		
-		current  = Directory.toDirectory(msg.getBytes());
-		currPath = Paths.get(msg.getPath());
+		currDir  = DirEntries.toDirEntries(msg.getBytes());
+		currPath = Paths.get(currDir.getPath());
 		
 		return result;
     }
-    
+
+    public int updateDir() throws IOException {
+    	ByteArrayOutputStream out = new ByteArrayOutputStream();
+		ObjectOutputStream    oos = new ObjectOutputStream(out);
+		
+		oos.writeInt(RequestType.OPENDIR);
+		oos.writeObject(currPath.toString());
+		oos.writeLong(System.currentTimeMillis());
+		oos.flush();
+		
+		byte[] bytes = this.proxy.invokeOrdered(out.toByteArray());
+		Message  msg = Message.toMessage(bytes);
+		int   result = msg.getResult();
+		
+		currDir  = DirEntries.toDirEntries(msg.getBytes());
+		
+		return result;
+    }
+
     public void exit() {
     	this.proxy.close();
     }
     
-    public Directory getCurrent() {
-    	return current;
+    public DirEntries getCurrDir() {
+    	return currDir;
     }
     
     public String getCurrPath() {
     	return currPath.toString();
+    	//return currDir.getPath();
     }
     
     public byte[] executeOrdered(byte[] request){

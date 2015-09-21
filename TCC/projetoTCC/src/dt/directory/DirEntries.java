@@ -1,4 +1,4 @@
-package files;
+package dt.directory;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -6,24 +6,22 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.ArrayList;
 
 @SuppressWarnings("serial")
 public class DirEntries implements Serializable {
-	private String path;
-	private HashMap<String, Metadata> directories;
-	private HashMap<String, Metadata> files;
+	private String      path;
+	private ArrayList<String> dirs;
+	private ArrayList<String> files;
 	
-	public DirEntries(Directory dir) {
-		directories = new HashMap<String, Metadata>();
-		files		= new HashMap<String, Metadata>();
-		
-		path = dir.getPathStr();
-		
+	public DirEntries(String path, ArrayList<String> dirs, ArrayList<String> files) {
+		this.path  = path;
+		this.dirs  = dirs;
+		this.files = files;
 	}
-
+	
 	public int dirCount() {
-		return directories.size();
+		return dirs.size();
 	}
 	
 	public int fileCount() {
@@ -34,35 +32,20 @@ public class DirEntries implements Serializable {
 		return path;
 	}
 	
-	private void setFile(String name, Metadata metadata) {		
-		files.put(name, metadata);
-	}
-	
-	private void setDirectory(String name, Metadata metadata) {
-		directories.put(name, metadata);
-	}
-	
-	public Metadata getFile(String name) {		
-		return (Metadata)files.get(name);
-	}
-	
-	public Metadata getDirectory(String name) {		
-		return (Metadata)directories.get(name);
+	public boolean isRoot() {
+		return path.equals("root");
 	}
 	
 	public void list() {
-		for (String names : directories.keySet()) {
-			//Metadata metadata = getDirectory(names);
+		for (String names : dirs) {
 			System.out.println("<dir>\t"+names);
 		}
-		for (String names : files.keySet()) {
-			//Metadata metadata = getFile(names);
-			System.out.println("<dir>\t"+names);
+		for (String names : files) {
+			System.out.println("\t"+names);
 		}
 	}
 	
 	public static byte[] toBytes(DirEntries entries) {
-		
 		try{
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();
 	        ObjectOutputStream    oos = new ObjectOutputStream(bos);
@@ -77,12 +60,12 @@ public class DirEntries implements Serializable {
 		}
 	}
 	
-	public static DirEntries toDirectory(byte[] bytes) {
+	public static DirEntries toDirEntries(byte[] bytes) {
 		try {
 			ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
 			ObjectInputStream    ois = new ObjectInputStream(bis);
 			
-			DirEntries entries = (DirEntries) ois.readObject();
+			DirEntries entries = (DirEntries)ois.readObject();
 			return entries;
 		} catch (ClassNotFoundException | IOException e) {
 			return null;

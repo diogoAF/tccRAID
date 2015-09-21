@@ -10,7 +10,7 @@ import java.util.Scanner;
 import result.Result;
 
 
-public class ClientConsole {
+public class ClientConsoleTeste {
 	ClientDFS c;
 	
 	public static void main(String[] args) throws IOException {
@@ -19,7 +19,7 @@ public class ClientConsole {
             System.exit(-1);
     	}
     	ClientDFS     c  = new ClientDFS(Integer.parseInt(args[0]));
-    	ClientConsole cc = new ClientConsole(c);
+    	ClientConsoleTeste cc = new ClientConsoleTeste(c);
         
     	cc.run();
     	
@@ -30,7 +30,7 @@ public class ClientConsole {
 		System.exit(0);
     }
 	
-	private ClientConsole(ClientDFS c) {
+	private ClientConsoleTeste(ClientDFS c) {
 		this.c = c;
 	}
 	

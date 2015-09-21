@@ -4,7 +4,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import files.Metadata;
+import dt.Metadata;
 
 public class Test3 {
 	public static void main(String[] args) {

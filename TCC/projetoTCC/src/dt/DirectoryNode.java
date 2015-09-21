@@ -1,12 +1,8 @@
-package files;
+package dt;
 
-import java.io.Serializable;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import dt.directory.Directory;
 
-
-@SuppressWarnings("serial")
-public class DirectoryNode  implements Serializable {
+public class DirectoryNode {
 	private String    name; 
 	private Directory parent;
 	private Metadata  metadata;

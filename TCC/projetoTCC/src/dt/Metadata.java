@@ -1,4 +1,4 @@
-package files;
+package dt;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,7 +27,7 @@ public class Metadata implements Serializable {
 	public Metadata(long time) {
 		this();
 		
-		setTime(time);
+		setTimes(time);
 	}
 	
 	public Metadata(BasicFileAttributes attr) {
@@ -36,23 +36,15 @@ public class Metadata implements Serializable {
 		setAttr(attr);
 	}
 	
-	public Metadata(File file) {
+	public Metadata(File file) throws IOException {
 		this();
 		
 		BasicFileAttributes attr = null;
 		Path path = Paths.get(file.getAbsolutePath());
-		
-		try {
 			
-			attr = Files.readAttributes(path, BasicFileAttributes.class);
+		attr = Files.readAttributes(path, BasicFileAttributes.class);
 
-			setAttr(attr);
-			
-		} catch (IOException e) {
-			System.out.println("File not found.");
-			e.printStackTrace();
-            System.exit(-1);
-		}
+		setAttr(attr);
 	}
 	
 	public void lock() {
@@ -82,8 +74,16 @@ public class Metadata implements Serializable {
 	public FileTime lastModifiedTime() {
 		return FileTime.fromMillis(lastModifiedTimeL);
 	}
+
+	public void setLastAccessTime(long time) {
+		lastAccessTimeL = time;
+	}
+
+	public void setLastModifiedTime(long time) {
+		lastModifiedTimeL = time;
+	}
 	
-	private void setTime(long time) {
+	private void setTimes(long time) {
 		creationTimeL     = time;
 		lastAccessTimeL   = time;
 		lastModifiedTimeL = time;

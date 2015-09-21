@@ -1,4 +1,4 @@
-package message;
+package dt.file;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -7,43 +7,27 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 @SuppressWarnings("serial")
-public class Message implements Serializable{
-	private int               result;
-	private ArrayList<byte[]> bytes;
+public class BlockList implements Serializable {
+	private ArrayList<FileBlockInfo> blocks;
 	
-	public Message(int result) {
-		this.result = result;
-		this.bytes  = new ArrayList<byte[]>();
+	public BlockList() {
+		blocks = new ArrayList<FileBlockInfo>();
 	}
 	
-	public Message(int result, byte[] bytes) {
-		this(result);
-		this.bytes.add(bytes);
+	public void add(FileBlockInfo blockInfo) {
+		blocks.add(blockInfo);
 	}
 	
-	public int getResult() {
-		return result;
-	}
-	public byte[] getBytes() {
-		return bytes.get(0);
-	}
-	
-	public byte[] getBytes(int index) {
-		return bytes.get(index);
-	}
 
-	public void addBytes(byte[] bytes) {
-		this.bytes.add(bytes);
-	}
-	
-	public static byte[] toBytes(Message msg) {
+	public static byte[] toBytes(BlockList entries) {
 		try{
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();
 	        ObjectOutputStream    oos = new ObjectOutputStream(bos);
-	        
-	        oos.writeObject(msg);
+			
+	        oos.writeObject(entries);
 	        byte[] bytes = bos.toByteArray(); 
 	        oos.close();
 	        bos.close();
@@ -53,15 +37,24 @@ public class Message implements Serializable{
 		}
 	}
 	
-	public static Message toMessage(byte[] bytes) {
+	public static BlockList toBlockList(byte[] bytes) {
 		try {
 			ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
 			ObjectInputStream    ois = new ObjectInputStream(bis);
 			
-			Message msg = (Message) ois.readObject();
-			return msg;
+			BlockList entries = (BlockList)ois.readObject();
+			return entries;
 		} catch (ClassNotFoundException | IOException e) {
 			return null;
+		}
+	}
+	
+	public void print() {
+		Iterator<FileBlockInfo> ite = blocks.iterator();
+		
+		while(ite.hasNext()) {
+			FileBlockInfo info = ite.next();
+			info.print();
 		}
 	}
 	
