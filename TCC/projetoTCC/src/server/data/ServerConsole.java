@@ -1,5 +1,6 @@
 package server.data;
 
+import dt.file.Block;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -7,7 +8,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.file.Path;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -15,10 +15,11 @@ import java.util.logging.Logger;
 
 public class ServerConsole {
     public static final int BUFFER_SIZE = 16*1024;
+    private String hostName;
+    private long capacity;
+    private int port;
     
-    public static void main(String[] args) throws IOException, Exception {
-        int portNumber;
-        
+    public static void main(String[] args) throws IOException, Exception {       
     	if(args.length < 1) {
             System.out.println("Use: java ServerConsole <processId>");
             System.exit(-1);
@@ -26,10 +27,7 @@ public class ServerConsole {
     	//ServerData d = new ServerData(Integer.parseInt(args[0]));
     	ServerConsole serverConsole = new ServerConsole();
         
-        //Decide a porta do Servidor
-        portNumber = 4400 + Integer.parseInt(args[0]);
-        
-        serverConsole.start(portNumber);
+        serverConsole.start(Integer.parseInt(args[0]));
 
     }
     
@@ -37,7 +35,9 @@ public class ServerConsole {
         Scanner sc   = new Scanner(System.in);
         do{
             try { 
-                ServerSocket serverSocket = new ServerSocket(portNumber);
+                //Decide a porta do Servidor
+                this.port = 20000 + portNumber;
+                ServerSocket serverSocket = new ServerSocket(this.port);
                 System.out.println("Aguardando cliente...");
                 Socket clientSocket = serverSocket.accept();
                 System.out.println("Cliente conectado do IP "+clientSocket.getInetAddress().
@@ -54,7 +54,8 @@ public class ServerConsole {
         InputStream in = null;
         OutputStream out = null;
         Scanner fileName = null;
-
+        Block block = null;
+        
         try {
             //fileName = new Scanner(clientSocket.getInputStream());
             in = clientSocket.getInputStream();
@@ -64,8 +65,8 @@ public class ServerConsole {
 
         try {
             //out = new FileOutputStream("C:\\Users\\Diogo\\Documents\\UnB\\TCC\\tccRAID\\TCC\\projetoTCC\\testeSaida.txt");
-            System.out.println("Nome do arquivo: " + in.toString());
-            out = new FileOutputStream("testeSaida.txt");
+            //System.out.println("Nome do arquivo: " + in.toString());
+            out = new FileOutputStream("testeSaida" + this.port + ".txt");
         } catch (FileNotFoundException ex) {
             System.out.println("Arquivo não encontrado. ");
         }
@@ -74,62 +75,17 @@ public class ServerConsole {
 
         int count;
         while ((count = in.read(bytes)) > 0) {
-            out.write(bytes, 0, count);
+            block = Block.toBlock(bytes);
+            out.write(block.bytes, 0, block.bytes.length);
+            //out.write(bytes, 0, count);
+            System.out.println("[Porta " + this.port + "] Recebendo " + count + " bytes");
         }
 
         out.close();
         in.close();
         clientSocket.close();
-        
-        /*
-        ObjectOutputStream oos = new ObjectOutputStream(clientSocket.getOutputStream());
-        ObjectInputStream ois = new ObjectInputStream(clientSocket.getInputStream());
-        FileOutputStream fileOutputStream = null;
-        byte [] buffer = new byte[BUFFER_SIZE];
-        
-        //Lê o nome do arquivo
-        Object object = ois.readObject();
-        
-        if(object instanceof String){
-            //fileOutputStream = new FileOutputStream(object.toString());
-            System.out.println("Nome do arquivo recebido: " + object.toString());
-            String fileName = "C:\\Users\\Diogo\\Documents\\UnB\\TCC\\tccRAID\\TCC\\projetoTCC\\testeSaida.txt";
-            FileOutputStream out = new FileOutputStream(fileName);
-        } else {
-            throwException("Não foi informado o nome do arquivo.");
-        }
-        
-        //Percorre todo o arquivo
-        Integer bytesRead = 0;
-        
-        do{
-            object = ois.readObject();
-            
-            if(!(object instanceof Integer)){
-                throwException("Não foi recebido a quantidade de bytes.");
-            }
-            
-            bytesRead = (Integer) object;
-            System.out.println("Bytes lidos no Server: " + bytesRead);
-            object = ois.readObject();
-            
-            if(!(object instanceof byte[])){
-                throwException("Não foi recebido um vetor de bytes.");
-            }
-            
-            buffer = (byte[]) object;
-            
-            //Escreve dado recebido no arquivo de saida
-            fileOutputStream.write(buffer,0,bytesRead);
-        } while (bytesRead == BUFFER_SIZE);
-        
-        System.out.println("Arquivo recebido com sucesso!");
-        
-        fileOutputStream.close();
-        ois.close();
-        oos.close();
-        */
-        System.out.println("Arquivo copiado com sucesso!");
+       
+        System.out.println("Arquivo " + block.getFileName() + " copiado com sucesso!");
     }
     
     public static void throwException(String message) throws Exception{
