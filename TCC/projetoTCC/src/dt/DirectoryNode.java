@@ -29,14 +29,34 @@ public class DirectoryNode {
 		return metadata.isLocked();
 	}
 	
-	public void lock() {
-		metadata.lock();
+	public boolean isLokedR() {
+        return metadata.isLocked(LockType.READ);
+    }
+
+    public boolean isLokedW() {
+        return metadata.isLocked(LockType.WRITE);
+    }
+    
+	public void lock(int lockType) {
+		metadata.lock(lockType);
 	}
+	
+	public void lockR() {
+        metadata.lock(LockType.READ);
+    }
+	
+	public void lockW() {
+        metadata.lock(LockType.WRITE);
+    }
 	
 	public void unlock() {
 		metadata.unlock();
 	}
 
+	public long getLastAccTime() {
+	    return metadata.lastAccessTime().toMillis();
+	}
+	
 	public String getName() {
 		return name;
 	}

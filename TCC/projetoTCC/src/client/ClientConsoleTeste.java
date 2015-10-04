@@ -108,7 +108,15 @@ public class ClientConsoleTeste {
             case(Option.RENAME):
 				rename(con);
 				break;
-			
+
+            case(Option.OPEN):
+                open(con);
+                break;
+
+            case(Option.APPEND):
+                append(con);
+                break;
+            
 			case(Option.EXIT):
 				exit = true;
 				break;
@@ -252,10 +260,6 @@ public class ClientConsoleTeste {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		
-		
-				
 	}
 
 	private void delete(Console con) {
@@ -304,11 +308,54 @@ public class ClientConsoleTeste {
 		}
 	}
 	
+	private void open(Console con) {
+	    System.out.println();
+        System.out.println("Abrir arquivo para leitura");
+        String   tgtName  = con.readLine("Nome do arquivo:\n>");
+        
+        if(tgtName.isEmpty())
+            return;
+            
+        try {
+            int result = c.open(tgtName);
+            
+            if(result == Result.SUCCESS)
+                System.out.println("Abrindo arquivo para leitura");
+            else
+                reportError(result);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+
+    private void append(Console con) {
+        System.out.println();
+        System.out.println("Abrir arquivo para escrita");
+        String   tgtName  = con.readLine("Nome do arquivo:\n>");
+        
+        if(tgtName.isEmpty())
+            return;
+            
+        try {
+            int result = c.append(tgtName);
+            
+            if(result == Result.SUCCESS)
+                System.out.println("Abrindo arquivo para escrita");
+            else
+                reportError(result);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
 	private void reportError(int result) {
 		System.out.print("ERRO: ");
 		switch (result) {
 		case Result.NOSUCHFILE:
-			System.out.println("arquivo nao encontrado");
+			System.out.println("arquivo local nao encontrado");
 			break;
 			
 		case Result.FILEALREADYEXISTS:
@@ -318,7 +365,11 @@ public class ClientConsoleTeste {
 		case Result.FILENOTEXISTS:
 			System.out.println("arquivo nao existe");
 			break;
-			
+
+        case Result.FILELOCKED:
+            System.out.println("arquivo esta bloqueado");
+            break;
+
 		case Result.DIRALREADYEXISTS:
 			System.out.println("diretoroio ja existe");
 			break;
@@ -330,7 +381,11 @@ public class ClientConsoleTeste {
 		case Result.DIRLOCKED:
 			System.out.println("diretorio esta bloqueado");
 			break;
-			
+
+        case Result.SERVERFAULT:
+            System.out.println("numero de servidores insuficiente");
+            break;
+            
 		case Result.FAILURE:
 			System.out.println("falha ao executar operacao");
 			break;

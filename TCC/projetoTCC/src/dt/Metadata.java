@@ -17,11 +17,11 @@ public class Metadata implements Serializable {
 	
 	private long size;
 	
-	private boolean lock;
+	private int lock;
 		
 	private Metadata() {
 		size = 0;
-		lock = false;
+		lock = LockType.UNLOCKED;
 	}
 	
 	public Metadata(long time) {
@@ -47,17 +47,21 @@ public class Metadata implements Serializable {
 		setAttr(attr);
 	}
 	
-	public void lock() {
-		lock = true;
+	public void lock(int lockType) {
+		lock = lockType;
 	}
 	
 	public void unlock() {
-		lock = false;
+		lock = LockType.UNLOCKED;
 	}
 	
 	public boolean isLocked() {
-		return lock;
+		return (lock != LockType.UNLOCKED);
 	}
+	
+	public boolean isLocked(int lockType) {
+        return (lock == lockType);
+    }
 	
 	public long size() {
 		return size;

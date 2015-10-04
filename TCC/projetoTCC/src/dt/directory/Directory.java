@@ -18,21 +18,14 @@ public class Directory extends DirectoryNode {
 		files = new HashMap<String, FileDFS>();
 	}
 	
-	/*
-	private Directory(Directory src) {
-		super(src.getName(), null, src.getMetadata());
-		
-		this.dirs  = src.dirs;
-		this.files = src.files;
-	}
-	*/
-	
-	public void setFile(FileDFS newFile) {		
+	public void setFile(FileDFS newFile, long modTime) {		
 		files.put(newFile.getName(), newFile);
+		getMetadata().setLastModifiedTime(modTime);
 	}
 	
-	public void setDirectory(Directory newDir) {
+	public void setDirectory(Directory newDir, long modTime) {
 		dirs.put(newDir.getName(), newDir);
+        getMetadata().setLastModifiedTime(modTime);
 	}
 	
 	public FileDFS getFile(String name) {		
@@ -43,33 +36,38 @@ public class Directory extends DirectoryNode {
 		return (Directory)dirs.get(name);
 	}
 
-	public void removeFile(String name) {
+	public void removeFile(String name, long modTime) {
 		files.remove(name);
+        getMetadata().setLastModifiedTime(modTime);
 	}
 	
-	public int removeDirectory(String name) {
-		Directory dir = getDirectory(name);
-		int     count = dir.dirCount();
-		
+	public void removeDirectory(String name, long modTime) {
 		dirs.remove(name);
-		
-		return count;
+        getMetadata().setLastModifiedTime(modTime);
 	}
+	
+	public void renameFile(String tgtName, String newName, long modTime) {
+	    FileDFS target = files.get(tgtName);
+        files.remove(tgtName);
+        target.setName(newName);
+        setFile(target, modTime);
+        getMetadata().setLastModifiedTime(modTime);
+    }
 
+    public void renameDirectory(String tgtName, String newName, long modTime) {
+        Directory target = dirs.get(tgtName);
+        dirs.remove(tgtName);
+        target.setName(newName);
+        setDirectory(target, modTime);
+        getMetadata().setLastModifiedTime(modTime);
+    }
+    
 	public boolean existFile(String name) {
-		if(files.get(name) == null) {
-			return false;
-		} else {
-			return true;
-		}
+		return files.containsKey(name);
 	}
 	
 	public boolean existDir(String name) {
-		if(dirs.get(name) == null) {
-			return false;
-		} else {
-			return true;
-		}
+	    return dirs.containsKey(name);
 	}
 	
 	public boolean isRoot() {
@@ -101,36 +99,7 @@ public class Directory extends DirectoryNode {
 		
 		return new DirEntries(getPathStr(), dirs, files);
 	}
-	
-	/*
-	public static byte[] toBytes(Directory dir) {
-		
-		try{
-			ByteArrayOutputStream bos = new ByteArrayOutputStream();
-	        ObjectOutputStream    oos = new ObjectOutputStream(bos);
-			
-	        oos.writeObject(dir);
-	        byte[] bytes = bos.toByteArray(); 
-	        oos.close();
-	        bos.close();
-	        return bytes;
-		} catch(IOException e) {
-			return null;	
-		}
-	}
-	
-	public static Directory toDirectory(byte[] bytes) {
-		try {
-			ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
-			ObjectInputStream    ois = new ObjectInputStream(bis);
-			
-			Directory dir = (Directory) ois.readObject();
-			return dir;
-		} catch (ClassNotFoundException | IOException e) {
-			return null;
-		}
-	}
-	*/
+
 	public void printDir(String sep) {
 		for (String keys : dirs.keySet()) {
 			Directory dir = dirs.get(keys);

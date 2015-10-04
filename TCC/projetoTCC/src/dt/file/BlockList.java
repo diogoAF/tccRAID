@@ -12,16 +12,21 @@ import java.util.Iterator;
 @SuppressWarnings("serial")
 public class BlockList implements Serializable {
 	private ArrayList<FileBlockInfo> blocks;
+	private long blockSize;
 	
-	public BlockList() {
-		blocks = new ArrayList<FileBlockInfo>();
+	public BlockList(long blockSize) {
+		this.blockSize = blockSize;
+		this.blocks    = new ArrayList<FileBlockInfo>(4);
 	}
 	
 	public void add(FileBlockInfo blockInfo) {
 		blocks.add(blockInfo);
 	}
-	
 
+	public long getBlockSize() {
+		return blockSize;
+	}
+	
 	public static byte[] toBytes(BlockList entries) {
 		try{
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -52,6 +57,7 @@ public class BlockList implements Serializable {
 	public void print() {
 		Iterator<FileBlockInfo> ite = blocks.iterator();
 		
+		System.out.println("Block size: "+blockSize);
 		while(ite.hasNext()) {
 			FileBlockInfo info = ite.next();
 			info.print();

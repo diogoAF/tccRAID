@@ -7,10 +7,10 @@ import dt.directory.Directory;
 public class FileDFS extends DirectoryNode {
 	private BlockList blockList;
 	
-	public FileDFS(String name, Directory parent, Metadata metadata) {
+	public FileDFS(String name, Directory parent, Metadata metadata, BlockList blockList) {
 		super(name, parent, metadata);
 		
-		blockList = new BlockList();
+		this.blockList = blockList;
 	}
 	
 	public BlockList getBlockList() {

@@ -5,7 +5,7 @@ import dt.file.FileBlockInfo;
 
 public class BlockListTeste {
 	static BlockList teste() {
-		BlockList bList = new BlockList();
+		BlockList bList = new BlockList(0L);
 		
 		//Teste de blocos. Modifique os valores pra teste =D
 		//bList.add(new FileBlockInfo("hostName", porta, blockID));

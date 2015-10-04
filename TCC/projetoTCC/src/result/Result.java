@@ -12,5 +12,7 @@ public class Result {
 	public static final int DIRALREADYEXISTS = 201;
 	public static final int DIRNOTEXISTS     = 202;
 	public static final int DIRLOCKED        = 203;
-
+	
+	
+	public static final int SERVERFAULT = 301;
 }

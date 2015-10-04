@@ -5,13 +5,17 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 @SuppressWarnings("serial")
-public class LockList implements Serializable{
+public class LockList implements Serializable {
 	ArrayList<String> files;
 	
-	public LockList(String path) {
+	public LockList() {
 		files = new ArrayList<String>();
 	}
 
+	public String get(int i) {
+	    return files.get(i);
+	}
+	
 	public void add(String path) {
 		files.add(path);
 	}
@@ -26,6 +30,10 @@ public class LockList implements Serializable{
 				break;
 			}
 		}	
+	}
+	
+	public int size() {
+	    return files.size();
 	}
 	
 	public void print() {

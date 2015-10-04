@@ -5,34 +5,32 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Iterator;
 
+import server.ServerInfo;
+import server.meta.ServerList;
+
 public class Test1 {
 
 	public static void main(String[] args) {
-		File file = new File("testfile");
-		Path path = Paths.get(file.getAbsolutePath());
-		Iterator<Path> ite;
-		Path sub;
-		Path parent;
-		Path root;
+		ServerList list = new ServerList();
+		Integer i = 1;
+        long currTime = System.currentTimeMillis();
 
-
-		System.out.println(path);
-		parent = path.getParent();
-		ite = parent.iterator();
-		while(ite.hasNext()) {
-			sub = ite.next();
-			System.out.println(sub);
-		}
+		list.add(new ServerInfo(i.toString(), i*100, 100, 11, i*10, currTime));i++;
+		list.add(new ServerInfo(i.toString(), i*100, 100, 4, i*10, currTime));i++;
+		list.add(new ServerInfo(i.toString(), i*100, 100, 4, i*10, currTime));i++;
+		list.add(new ServerInfo(i.toString(), i*100, 100, 25, i*10, currTime));i++;
+		list.add(new ServerInfo(i.toString(), i*100, 100, 12, i*10, currTime));i++;
+		list.add(new ServerInfo(i.toString(), i*100, 100, 80, i*10, currTime));i++;
+		list.add(new ServerInfo(i.toString(), i*100, 100, 10, i*10, currTime));i++;
+		list.add(new ServerInfo(i.toString(), i*100, 100, 5, i*10, currTime));i++;
 		
-		root = Paths.get("root/folder");
+		
+		list.print();
+		list.nexts();
 
-		System.out.println(root);
-		ite = root.iterator();
-		sub = ite.next();
-		while(ite.hasNext()) {
-			sub = ite.next();
-			System.out.println(sub);
-		}
+		System.out.println();
+		list.print();
+		
 	}
 	
 	

@@ -18,9 +18,12 @@ public class RequestType {
 	public static final int UPDATEDIR = 106;
 	
 
+    public static final int UPDATEACC = 111;
+    public static final int OPENROOT  = 112;
 	
 	//DataServer
-	public static final int JOIN = 1001;
+	public static final int JOIN      = 1001;
+	public static final int KEEPALIVE = 1002;
 	
 
 }
