@@ -20,7 +20,13 @@ public class RequestType {
 
     public static final int UPDATEACC = 111;
     public static final int OPENROOT  = 112;
-	
+    
+    public static final int FAILURE = 301;
+   /* public static final int CREATEFAILURE = 301;
+    public static final int OPENFAILURE   = 302;
+    public static final int DELETEFAILURE = 303;
+	*/
+    
 	//DataServer
 	public static final int JOIN      = 1001;
 	public static final int KEEPALIVE = 1002;

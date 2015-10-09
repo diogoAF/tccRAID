@@ -11,12 +11,12 @@ import dt.LockList;
 import dt.Metadata;
 import dt.directory.DirEntries;
 import dt.directory.Directory;
-import dt.file.BlockList;
-import dt.file.FileBlockInfo;
+import dt.file.BlockInfoList;
+import dt.file.BlockInfo;
 import dt.file.FileDFS;
 import message.Message;
+import message.Result;
 import request.RequestType;
-import result.Result;
 import server.ServerInfo;
 import server.meta.manager.LockManager;
 import server.meta.manager.ServerManager;
@@ -40,7 +40,7 @@ public class ServerDFS extends DefaultSingleRecoverable {
          servMan = new ServerManager(list);
          
          //lockMan.run();
-         servMan.start();
+         //servMan.start();
     }
     
     @Override
@@ -112,6 +112,10 @@ public class ServerDFS extends DefaultSingleRecoverable {
 
                 case RequestType.OPENROOT:
                     resultBytes = openRoot();
+                    break;
+
+                case RequestType.FAILURE:
+                    resultBytes = failure(ois);
                     break;
 
 				case RequestType.JOIN:
@@ -372,6 +376,32 @@ public class ServerDFS extends DefaultSingleRecoverable {
         return Message.toBytes(msg);
     }
     
+    private byte[] failure(ObjectInputStream ois) throws ClassNotFoundException, IOException {
+        int       opType = ois.readInt();
+        BlockInfo info  = (BlockInfo)ois.readObject();
+        
+        System.out.println("Reporting data server error");
+        
+            
+        String hostName = info.getHostName();
+        int    port     = info.getPort();
+        
+        list.remove(hostName, port);
+    
+        list.print();
+        
+        if(opType == RequestType.CREATE) {
+            String currPath = (String)ois.readObject();
+            String tgtName  = (String)ois.readObject();
+
+            Directory currDir = dt.getDirectory(currPath);
+            
+            currDir.removeFile(tgtName);
+        }
+        
+        return null;
+    }
+    
     private byte[] create(ObjectInputStream ois) throws ClassNotFoundException, IOException {
     	Path     currPath = Paths.get((String)ois.readObject());
     	String   tgtName  = (String)ois.readObject();
@@ -384,7 +414,7 @@ public class ServerDFS extends DefaultSingleRecoverable {
         Directory currDir = dt.openDirectory(currPath, accTime);
 		int       result  = -1;
 		long      bSize   = (long) Math.ceil((double)metadata.size()/3.0D);
-		BlockList bList   = null;
+		BlockInfoList bList   = null;
 		
 		try{
 			if(currDir == null) {
@@ -394,12 +424,12 @@ public class ServerDFS extends DefaultSingleRecoverable {
 			} else {
 			    list.nexts();
 			    
-	            bList = new BlockList(bSize);
+	            bList = new BlockInfoList(bSize);
 	            for(int i=0; i<4; i++) {
 	                ServerInfo info = list.get(i);
 	                
 	                info.addSize(bSize);
-	                bList.add(new FileBlockInfo(info.getHostName(), info.getPort(), info.getID()));
+	                bList.add(new BlockInfo(info.getHostName(), info.getPort(), info.getID()));
 	            }
 			    
 			    currDir.setFile(new FileDFS(tgtName, currDir, metadata, bList), accTime);
@@ -410,7 +440,7 @@ public class ServerDFS extends DefaultSingleRecoverable {
 			result = Result.SERVERFAULT;
 		}
 		
-		Message   msg = new Message( result, BlockList.toBytes(bList) );
+		Message   msg = new Message( result, BlockInfoList.toBytes(bList) );
 		
 		if(result == Result.SUCCESS) {
 			dt.print();
@@ -432,7 +462,7 @@ public class ServerDFS extends DefaultSingleRecoverable {
 
 		Directory currDir = dt.openDirectory(currPath, accTime);
 		int       result  = -1;
-		BlockList bList   = null;
+		BlockInfoList bList   = null;
 		
 		if(currDir == null) {
             result = Result.FAILURE;
@@ -454,7 +484,7 @@ public class ServerDFS extends DefaultSingleRecoverable {
         }
 		
 		
-		Message   msg = new Message( result, BlockList.toBytes(bList) );
+		Message   msg = new Message( result, BlockInfoList.toBytes(bList) );
 		
 		if(result == Result.SUCCESS) {
 			dt.print();
@@ -518,7 +548,7 @@ public class ServerDFS extends DefaultSingleRecoverable {
         Directory currDir = dt.openDirectory(currPath, accTime);
         int       result  = -1;
         FileDFS   target  = null;
-        BlockList bList   = null;
+        BlockInfoList bList   = null;
 		
         if(currDir == null) {
             result = Result.FAILURE;
@@ -536,7 +566,7 @@ public class ServerDFS extends DefaultSingleRecoverable {
             }
         }
 		
-		Message msg = new Message( result, BlockList.toBytes(bList) );
+		Message msg = new Message( result, BlockInfoList.toBytes(bList) );
 
 		return Message.toBytes(msg);
     }
@@ -552,7 +582,7 @@ public class ServerDFS extends DefaultSingleRecoverable {
         Directory currDir = dt.openDirectory(currPath, accTime);
         int       result  = -1;
         FileDFS   target  = null;
-        BlockList bList   = null;
+        BlockInfoList bList   = null;
         
         if(currDir == null) {
             result = Result.FAILURE;
@@ -569,7 +599,7 @@ public class ServerDFS extends DefaultSingleRecoverable {
             }
         }
         
-        Message msg = new Message( result, BlockList.toBytes(bList) );
+        Message msg = new Message( result, BlockInfoList.toBytes(bList) );
 
         return Message.toBytes(msg);
     }

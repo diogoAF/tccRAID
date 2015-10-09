@@ -1,4 +1,4 @@
-package result;
+package message;
 
 public class Result {
 	public static final int FAILURE	= 0;

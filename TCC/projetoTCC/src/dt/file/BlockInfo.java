@@ -3,18 +3,18 @@ package dt.file;
 import java.io.Serializable;
 
 @SuppressWarnings("serial")
-public class FileBlockInfo implements Serializable {
+public class BlockInfo implements Serializable {
     private String hostName; 
 	private int    port;
 	private long   blockID;
 	
-	public FileBlockInfo(String hostName, int port, long blockID) {
+	public BlockInfo(String hostName, int port, long blockID) {
 		this.hostName = hostName;
 		this.port     = port;
 		this.blockID  = blockID;
 	}
 	
-	public boolean equals(FileBlockInfo comp) {
+	public boolean equals(BlockInfo comp) {
 		if(this.hostName.equals(comp.getHostName()) &&
 		   this.port    == comp.getPort()           &&
 		   this.blockID == comp.getBlockID()

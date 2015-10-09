@@ -4,9 +4,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Iterator;
 
+import message.Result;
 import dt.directory.Directory;
 import dt.file.FileDFS;
-import result.Result;
 
 
 public class DirectoryTree {

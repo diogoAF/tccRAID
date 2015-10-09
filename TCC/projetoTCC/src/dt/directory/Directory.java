@@ -36,6 +36,10 @@ public class Directory extends DirectoryNode {
 		return (Directory)dirs.get(name);
 	}
 
+    public void removeFile(String name) {
+        files.remove(name);
+    }
+    
 	public void removeFile(String name, long modTime) {
 		files.remove(name);
         getMetadata().setLastModifiedTime(modTime);

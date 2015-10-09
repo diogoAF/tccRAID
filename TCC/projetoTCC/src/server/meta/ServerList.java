@@ -19,7 +19,20 @@ public class ServerList {
 	public void remove(int i) {
         list.remove(i);
     }
-	
+
+    public void remove(String hostName, int port) {
+        Iterator<ServerInfo> ite = list.iterator();
+        ServerInfo info = null;
+        
+        while(ite.hasNext()) {
+            info = ite.next();
+            if(info.equals(hostName, port)) {
+                ite.remove();
+            }
+        }
+        
+    }
+    	
 	public ServerInfo get(int i) {
 		return list.get(i);
 	}

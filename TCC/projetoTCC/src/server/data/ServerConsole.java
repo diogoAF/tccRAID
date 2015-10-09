@@ -11,6 +11,8 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import dt.file.Block;
+
 
 public class ServerConsole {
     public static final int BUFFER_SIZE = 16*1024;
@@ -36,6 +38,7 @@ public class ServerConsole {
             try { 
                 //Decide a porta do Servidor
                 this.port = 20000 + portNumber;
+                this.port = 20010;
                 ServerSocket serverSocket = new ServerSocket(this.port);
                 System.out.println("Aguardando cliente...");
                 Socket clientSocket = serverSocket.accept();

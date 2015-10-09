@@ -10,24 +10,32 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 @SuppressWarnings("serial")
-public class BlockList implements Serializable {
-	private ArrayList<FileBlockInfo> blocks;
+public class BlockInfoList implements Serializable {
+	private ArrayList<BlockInfo> blocks;
 	private long blockSize;
 	
-	public BlockList(long blockSize) {
+	public BlockInfoList(long blockSize) {
 		this.blockSize = blockSize;
-		this.blocks    = new ArrayList<FileBlockInfo>(4);
+		this.blocks    = new ArrayList<BlockInfo>(4);
 	}
 	
-	public void add(FileBlockInfo blockInfo) {
+	public void add(BlockInfo blockInfo) {
 		blocks.add(blockInfo);
 	}
+	
+    public BlockInfo  get(int i) {
+        return blocks.get(i);
+    }
 
 	public long getBlockSize() {
 		return blockSize;
 	}
 	
-	public static byte[] toBytes(BlockList entries) {
+	public int size() {
+        return blocks.size();
+    }
+    
+	public static byte[] toBytes(BlockInfoList entries) {
 		try{
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();
 	        ObjectOutputStream    oos = new ObjectOutputStream(bos);
@@ -42,12 +50,12 @@ public class BlockList implements Serializable {
 		}
 	}
 	
-	public static BlockList toBlockList(byte[] bytes) {
+	public static BlockInfoList toBlockList(byte[] bytes) {
 		try {
 			ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
 			ObjectInputStream    ois = new ObjectInputStream(bis);
 			
-			BlockList entries = (BlockList)ois.readObject();
+			BlockInfoList entries = (BlockInfoList)ois.readObject();
 			return entries;
 		} catch (ClassNotFoundException | IOException e) {
 			return null;
@@ -55,11 +63,11 @@ public class BlockList implements Serializable {
 	}
 	
 	public void print() {
-		Iterator<FileBlockInfo> ite = blocks.iterator();
+		Iterator<BlockInfo> ite = blocks.iterator();
 		
 		System.out.println("Block size: "+blockSize);
 		while(ite.hasNext()) {
-			FileBlockInfo info = ite.next();
+			BlockInfo info = ite.next();
 			info.print();
 		}
 	}

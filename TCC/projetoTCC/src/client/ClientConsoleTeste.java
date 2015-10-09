@@ -7,7 +7,7 @@ import java.net.Socket;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-import result.Result;
+import message.Result;
 
 
 public class ClientConsoleTeste {

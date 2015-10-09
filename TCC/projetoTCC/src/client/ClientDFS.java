@@ -2,8 +2,11 @@ package client;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectOutputStream;
+import java.net.ConnectException;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -11,10 +14,12 @@ import java.nio.file.Paths;
 import dt.LockList;
 import dt.Metadata;
 import dt.directory.DirEntries;
-import dt.file.BlockList;
+import dt.file.Block;
+import dt.file.BlockInfo;
+import dt.file.BlockInfoList;
 import message.Message;
+import message.Result;
 import request.RequestType;
-import result.Result;
 import bftsmart.tom.ServiceProxy;
 
 public class ClientDFS extends Thread{
@@ -185,6 +190,38 @@ public class ClientDFS extends Thread{
         return result;
     }
 
+    public void failure(BlockInfo bInfo, String tgtName) throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ObjectOutputStream    oos = new ObjectOutputStream(out);
+        
+        System.out.println("Nao foi possivel conectar com um dos servidores de dado");
+        
+        
+        oos.writeInt(RequestType.FAILURE);
+        oos.writeInt(RequestType.CREATE);
+        oos.writeObject(bInfo);
+        oos.writeObject(currPath.toString());
+        oos.writeObject(tgtName);
+        oos.flush();
+        
+        this.proxy.invokeOrdered(out.toByteArray());
+    }
+    
+    public void failure(BlockInfo bInfo) throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ObjectOutputStream    oos = new ObjectOutputStream(out);
+        
+        System.out.println("Nao foi possivel conectar com um dos servidores de dado");
+        
+        
+        oos.writeInt(RequestType.FAILURE);
+        oos.writeInt(0);
+        oos.writeObject(bInfo);
+        oos.flush();
+        
+        this.proxy.invokeOrdered(out.toByteArray());
+    }
+    
     public int create(String fileName) throws IOException {
     	try {
     		File     file     = new File(fileName);
@@ -209,10 +246,45 @@ public class ClientDFS extends Thread{
         		return result;
         	}
         	
-        	BlockList bList = BlockList.toBlockList(message.getBytes());
+        	BlockInfoList bList = BlockInfoList.toBlockList(message.getBytes());
         	
         	bList.print();
 
+        	
+        	
+            BlockInfo bInfo = null;
+        	try {
+
+        	    for(int i=0; i<4; i++) {
+        	        bInfo = bList.get(i);
+        	        
+                    InputStream fileInputStream = new FileInputStream(file);
+                    int bytesRead;
+                    int bytesReadTotal = 0;
+                    byte [] fileContent = new byte[(int)file.length()];
+                    while ((bytesRead = fileInputStream.read(fileContent)) > 0){
+                        bytesReadTotal += bytesRead;
+                    }
+                    fileInputStream.close();
+                    
+
+                    Block block = new Block(bytesReadTotal, bInfo.getBlockID());
+                    
+
+                    block.setBytes(fileContent, 0, bytesReadTotal);
+        	        
+        	        ClientServerSocket css = new ClientServerSocket(bInfo);
+                    css.sendFile(block);   
+        	    }
+        	} catch(ConnectException e) {
+        	    if(true) {
+                    failure(bInfo, tgtName);
+                    
+                    result = Result.FAILURE;
+                }
+        	}
+        	
+        	
         	
         	
         	
@@ -241,9 +313,16 @@ public class ClientDFS extends Thread{
 		int     result  = message.getResult();
 
 		if(result == Result.SUCCESS) {
-        	BlockList bList = BlockList .toBlockList (message.getBytes());
+        	BlockInfoList bList = BlockInfoList .toBlockList (message.getBytes());
         	
-        	
+    	    boolean response = ( (System.currentTimeMillis()%2L) == 0 );
+            
+            if(response) {
+
+                //failure(bList);
+                
+                result = Result.FAILURE;
+            }
         	
         	
         	
@@ -294,7 +373,7 @@ public class ClientDFS extends Thread{
 		int     result  = message.getResult();
 		
 		if(result == Result.SUCCESS) {
-            BlockList bList = BlockList .toBlockList (message.getBytes());
+            BlockInfoList bList = BlockInfoList .toBlockList (message.getBytes());
             
             
             
@@ -322,7 +401,7 @@ public class ClientDFS extends Thread{
         int     result  = message.getResult();
         
         if(result == Result.SUCCESS) {
-            BlockList bList = BlockList .toBlockList (message.getBytes());
+            BlockInfoList bList = BlockInfoList .toBlockList (message.getBytes());
             
             
             

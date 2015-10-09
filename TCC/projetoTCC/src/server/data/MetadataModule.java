@@ -28,7 +28,7 @@ public class MetadataModule extends Thread {
 			System.out.println("can't connect to metadata server");
 			System.exit(-1);
 		}
-    	start();
+    	//start();
     }
 	
 	public int join(String hostName, int port, long capacity) throws IOException {
