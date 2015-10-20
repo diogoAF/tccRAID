@@ -17,7 +17,7 @@ public class BlockInfo implements Serializable {
 	public boolean equals(BlockInfo comp) {
 		if(this.hostName.equals(comp.getHostName()) &&
 		   this.port    == comp.getPort()           &&
-		   this.blockID == comp.getBlockID()
+		   this.blockID == comp.getID()
 		) {
 			return true;
 		} else {
@@ -33,7 +33,7 @@ public class BlockInfo implements Serializable {
 		return port;
 	}
 
-	public long getBlockID() {
+	public long getID() {
 		return blockID;
 	}
 

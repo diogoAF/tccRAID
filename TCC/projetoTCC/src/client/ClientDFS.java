@@ -1,10 +1,12 @@
 package client;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.ObjectOutputStream;
 import java.net.ConnectException;
 import java.nio.file.NoSuchFileException;
@@ -18,7 +20,7 @@ import dt.file.Block;
 import dt.file.BlockInfo;
 import dt.file.BlockInfoList;
 import message.Message;
-import message.Result;
+import message.ResultType;
 import request.RequestType;
 import bftsmart.tom.ServiceProxy;
 
@@ -61,7 +63,7 @@ public class ClientDFS extends Thread{
         Message message = Message.toMessage(bytes);
         int     result  = message.getResult();
         
-        if(result != Result.SUCCESS) {
+        if(result != ResultType.SUCCESS) {
             throw new IOException();
         }
         
@@ -242,7 +244,7 @@ public class ClientDFS extends Thread{
     		Message message = Message.toMessage(bytes);
     		int     result  = message.getResult();
     		
-        	if(result != Result.SUCCESS) {
+        	if(result != ResultType.SUCCESS) {
         		return result;
         	}
         	
@@ -250,51 +252,36 @@ public class ClientDFS extends Thread{
         	
         	bList.print();
 
-        	
-        	
             BlockInfo bInfo = null;
         	try {
 
         	    for(int i=0; i<4; i++) {
         	        bInfo = bList.get(i);
         	        
-                    InputStream fileInputStream = new FileInputStream(file);
-                    int bytesRead;
-                    int bytesReadTotal = 0;
-                    byte [] fileContent = new byte[(int)file.length()];
-                    while ((bytesRead = fileInputStream.read(fileContent)) > 0){
-                        bytesReadTotal += bytesRead;
-                    }
-                    fileInputStream.close();
+        	        FileInputStream     fis = new FileInputStream(file);
+                    BufferedInputStream bis = new BufferedInputStream(fis);
                     
-
-                    Block block = new Block(bytesReadTotal, bInfo.getBlockID());
+                    byte [] buffer = new byte[(int)file.length()];
+                    int length = bis.read(buffer);
+                    fis.close();
                     
+                    Block block = new Block(bInfo.getID(),buffer);
 
-                    block.setBytes(fileContent, 0, bytesReadTotal);
-        	        
         	        ClientServerSocket css = new ClientServerSocket(bInfo);
-                    css.sendFile(block);   
+                    css.create(block);   
         	    }
+        	    
         	} catch(ConnectException e) {
-        	    if(true) {
-                    failure(bInfo, tgtName);
-                    
-                    result = Result.FAILURE;
-                }
+                failure(bInfo, tgtName);
+                
+                result = ResultType.FAILURE;
         	}
-        	
-        	
-        	
-        	
-        	
-        	
         	
             updateDir();
             
             return result;
     	} catch (NoSuchFileException e) {
-    	    return Result.NOSUCHFILE;
+    	    return ResultType.NOSUCHFILE;
     	}
     }
     
@@ -312,29 +299,32 @@ public class ClientDFS extends Thread{
 		Message message = Message.toMessage(bytes);
 		int     result  = message.getResult();
 
-		if(result == Result.SUCCESS) {
+		if(result == ResultType.SUCCESS) {
         	BlockInfoList bList = BlockInfoList .toBlockList (message.getBytes());
-        	
-    	    boolean response = ( (System.currentTimeMillis()%2L) == 0 );
-            
-            if(response) {
 
-                //failure(bList);
+            bList.print();
+            
+        	BlockInfo bInfo = null;
+            try {
+
+                for(int i=0; i<4; i++) {
+                    bInfo = bList.get(i);
+
+                    Block block = new Block(bInfo.getID(), null);
+                    
+                    ClientServerSocket css = new ClientServerSocket(bInfo);
+                    css.delete(block);   
+                }
                 
-                result = Result.FAILURE;
+            } catch(ConnectException e) {
+                failure(bInfo);
+                
+                result = ResultType.FAILURE;
             }
-        	
-        	
-        	
-        	
-        	
-        	bList.print();
         	
         	updateDir();
 		}
-		
-		
-		
+
 		return result;
     }
 
@@ -372,14 +362,43 @@ public class ClientDFS extends Thread{
 		Message message = Message.toMessage(bytes);
 		int     result  = message.getResult();
 		
-		if(result == Result.SUCCESS) {
+		if(result == ResultType.SUCCESS) {
             BlockInfoList bList = BlockInfoList .toBlockList (message.getBytes());
             
-            
-            
-            
-            
             bList.print();
+
+            BlockInfo bInfo = null;
+            try {
+                byte[][] fileBlock = new byte[4][];
+
+                for(int i=0; i<4; i++) {
+                    bInfo = bList.get(i);
+
+                    Block block = new Block(bInfo.getID(), null);
+                    
+                    ClientServerSocket css = new ClientServerSocket(bInfo);
+                    fileBlock[i] = css.open(block);   
+                }
+                
+                File file = new File("temp");
+                if(!file.exists()) {
+                    file.mkdir();
+                }
+                file = new File("temp/"+tgtName);
+                
+                FileOutputStream     fos = new FileOutputStream(file);
+                BufferedOutputStream bos = new BufferedOutputStream(fos);
+                
+                bos.write(fileBlock[0]);
+                
+                bos.flush();
+                bos.close();
+            } catch(ConnectException e) {
+                failure(bInfo);
+                
+                result = ResultType.FAILURE;
+            }
+            lockList.add(getCurrPath()+"/"+tgtName);
             
         }
 		
@@ -400,23 +419,71 @@ public class ClientDFS extends Thread{
         Message message = Message.toMessage(bytes);
         int     result  = message.getResult();
         
-        if(result == Result.SUCCESS) {
+        if(result == ResultType.SUCCESS) {
             BlockInfoList bList = BlockInfoList .toBlockList (message.getBytes());
             
-            
-            
-            
-            
-            
-            
-            
             bList.print();
+
+            BlockInfo bInfo = null;
+            try {
+                byte[][] fileBlock = new byte[4][];
+
+                for(int i=0; i<4; i++) {
+                    bInfo = bList.get(i);
+
+                    Block block = new Block(bInfo.getID(), null);
+                    
+                    ClientServerSocket css = new ClientServerSocket(bInfo);
+                    fileBlock[i] = css.open(block);   
+                }
+                
+                File file = new File("temp");
+                if(!file.exists()) {
+                    file.mkdir();
+                }
+                file = new File("temp/"+tgtName);
+                
+                FileOutputStream     fos = new FileOutputStream(file);
+                BufferedOutputStream bos = new BufferedOutputStream(fos);
+                
+                bos.write(fileBlock[0]);
+                
+                bos.flush();
+                bos.close();
+            } catch(ConnectException e) {
+                failure(bInfo);
+                
+                result = ResultType.FAILURE;
+            }
+            lockList.add(getCurrPath()+"/"+tgtName);
             
         }
         
         return result;
     }
+    
+    public int close(int tgtIndex) throws IOException {
+        try {
+            String tgtPath = lockList.get(tgtIndex);
+            
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            ObjectOutputStream    oos = new ObjectOutputStream(out);
+            
+            oos.writeInt(RequestType.CLOSE);
+            oos.writeObject(tgtPath);
+            oos.writeLong(System.currentTimeMillis());
+            oos.flush();
+            
+            byte[]  bytes   = this.proxy.invokeOrdered(out.toByteArray());
+            Message message = Message.toMessage(bytes);
+            int     result  = message.getResult();
 
+            return result;
+        } catch (IndexOutOfBoundsException e) {
+            return ResultType.WRONGINDEX;
+        }
+    }
+    
     public void run() {
         while(true) {
             try {
@@ -439,6 +506,10 @@ public class ClientDFS extends Thread{
         }
     }
 
+    public LockList getLockList() {
+        return lockList;
+    }
+    
     public void exit() {
         this.proxy.close();
     }

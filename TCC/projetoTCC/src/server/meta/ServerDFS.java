@@ -15,7 +15,7 @@ import dt.file.BlockInfoList;
 import dt.file.BlockInfo;
 import dt.file.FileDFS;
 import message.Message;
-import message.Result;
+import message.ResultType;
 import request.RequestType;
 import server.ServerInfo;
 import server.meta.manager.LockManager;
@@ -47,7 +47,7 @@ public class ServerDFS extends DefaultSingleRecoverable {
     public byte[] appExecuteOrdered(byte[] command, MessageContext msgCtx) {
         ByteArrayInputStream in = new ByteArrayInputStream(command);
 		
-        int    reqType	   = -1;
+        //reqType	   = -1;
 		byte[] resultBytes = null;
 
         System.out.println("");
@@ -55,7 +55,8 @@ public class ServerDFS extends DefaultSingleRecoverable {
 
 		try {
 			ObjectInputStream ois = new ObjectInputStream(in);
-			reqType = ois.readInt();
+			
+			int reqType = ois.readInt();
 
 			switch(reqType) {
 				case RequestType.CREATEDIR:
@@ -171,17 +172,17 @@ public class ServerDFS extends DefaultSingleRecoverable {
         int       result  = -1;
 		
         if(currDir == null) {
-            result = Result.FAILURE;
+            result = ResultType.FAILURE;
         } else if(currDir.existDir(tgtName)) {
-            result = Result.DIRALREADYEXISTS;
+            result = ResultType.DIRALREADYEXISTS;
         } else {
             currDir.setDirectory(new Directory(tgtName, currDir, metadata), accTime);
-            result = Result.SUCCESS;
+            result = ResultType.SUCCESS;
         }
       
 		Message   msg = new Message( result, DirEntries.toBytes(currDir.getDirEntries()) );
 		
-		if(result == Result.SUCCESS) {
+		if(result == ResultType.SUCCESS) {
 			dt.print();
 		} else {
 			System.out.println("create directory failured");
@@ -202,25 +203,25 @@ public class ServerDFS extends DefaultSingleRecoverable {
         int       result  = -1;
         
         if(currDir == null) {
-            result = Result.FAILURE;
+            result = ResultType.FAILURE;
         } else if(!currDir.existDir(tgtName)) {
-            result = Result.DIRNOTEXISTS;
+            result = ResultType.DIRNOTEXISTS;
         } else {
             Directory target = currDir.getDirectory(tgtName);
             
             if( ( target.isLoked() ) &&
                 ( System.currentTimeMillis()-target.getLastAccTime() ) <= 30*1000) 
             {
-                    result = Result.DIRLOCKED;
+                    result = ResultType.DIRLOCKED;
             } else {
                 currDir.removeDirectory(tgtName, accTime);
-                result = Result.SUCCESS;
+                result = ResultType.SUCCESS;
             }
         }
       
 		Message   msg = new Message( result, DirEntries.toBytes(currDir.getDirEntries()) );
 		
-		if(result == Result.SUCCESS) {
+		if(result == ResultType.SUCCESS) {
 			dt.print();
 		} else {
 			System.out.println("delete directory failured");
@@ -242,26 +243,26 @@ public class ServerDFS extends DefaultSingleRecoverable {
         int       result  = -1;
 
         if(currDir == null) {
-            result = Result.FAILURE;
+            result = ResultType.FAILURE;
         } else if(!currDir.existDir(tgtName)) {
-            result = Result.DIRNOTEXISTS;
+            result = ResultType.DIRNOTEXISTS;
         } else if(currDir.existDir(newName)) {
-            result = Result.DIRALREADYEXISTS;
+            result = ResultType.DIRALREADYEXISTS;
         } else {
             Directory target = currDir.getDirectory(tgtName);
             
             if( ( target.isLoked() ) &&
                 ( System.currentTimeMillis()-target.getLastAccTime() ) <= 30*1000) 
             {
-                    result = Result.DIRLOCKED;
+                    result = ResultType.DIRLOCKED;
             }
             currDir.renameDirectory(tgtName, newName, accTime);
-            result = Result.SUCCESS;
+            result = ResultType.SUCCESS;
         }
 
 		Message   msg = new Message( result, DirEntries.toBytes(currDir.getDirEntries()) );
 		
-		if(result == Result.SUCCESS) {
+		if(result == ResultType.SUCCESS) {
 			dt.print();
 		} else {
 			System.out.println("rename directory failured");
@@ -281,16 +282,16 @@ public class ServerDFS extends DefaultSingleRecoverable {
         int       result  = -1;
 		
         if(currDir == null) {
-            result = Result.FAILURE;
+            result = ResultType.FAILURE;
         } else if(!currDir.existDir(tgtName)) {
-            result = Result.DIRNOTEXISTS;
+            result = ResultType.DIRNOTEXISTS;
         } else {
             currDir = currDir.getDirectory(tgtName);
             currDir.lockR();
-            result  = Result.SUCCESS;
+            result  = ResultType.SUCCESS;
         }
         
-		if(result == Result.SUCCESS) {
+		if(result == ResultType.SUCCESS) {
 		} else {
 			System.out.println("open directory failured");
 		}
@@ -310,16 +311,16 @@ public class ServerDFS extends DefaultSingleRecoverable {
         int       result  = -1;
 		
         if(currDir == null) {
-            result = Result.FAILURE;
+            result = ResultType.FAILURE;
         } else {
             currDir.unlock();
             currDir = currDir.getParent();
-            result  = Result.SUCCESS;
+            result  = ResultType.SUCCESS;
         }
         
 		Message   msg = new Message( result, DirEntries.toBytes(currDir.getDirEntries()) );
 		
-		if(result == Result.SUCCESS) {
+		if(result == ResultType.SUCCESS) {
 		} else {
 			System.out.println("close directory failured");
 		}
@@ -338,12 +339,12 @@ public class ServerDFS extends DefaultSingleRecoverable {
 		int       result  = -1;
 		
 		if(currDir == null) {
-		    result = Result.FAILURE;
+		    result = ResultType.FAILURE;
 		} else {
-		    result = Result.SUCCESS;
+		    result = ResultType.SUCCESS;
 		}
 		
-		if(result == Result.SUCCESS) {
+		if(result == ResultType.SUCCESS) {
 		} else {
 			System.out.println("update directory failured");
 		}
@@ -361,12 +362,12 @@ public class ServerDFS extends DefaultSingleRecoverable {
         int       result  = -1;
         
         if(currDir == null) {
-            result = Result.FAILURE;
+            result = ResultType.FAILURE;
         } else {
-            result = Result.SUCCESS;
+            result = ResultType.SUCCESS;
         }
         
-        if(result == Result.SUCCESS) {
+        if(result == ResultType.SUCCESS) {
         } else {
             System.out.println("open root failured");
         }
@@ -418,9 +419,9 @@ public class ServerDFS extends DefaultSingleRecoverable {
 		
 		try{
 			if(currDir == null) {
-			    result = Result.FAILURE;
+			    result = ResultType.FAILURE;
 			} else if(currDir.existFile(tgtName)) {
-			    result = Result.FILEALREADYEXISTS;
+			    result = ResultType.FILEALREADYEXISTS;
 			} else {
 			    list.nexts();
 			    
@@ -433,16 +434,16 @@ public class ServerDFS extends DefaultSingleRecoverable {
 	            }
 			    
 			    currDir.setFile(new FileDFS(tgtName, currDir, metadata, bList), accTime);
-                result = Result.SUCCESS;
+                result = ResultType.SUCCESS;
 			}
 		} catch(IndexOutOfBoundsException e) {
 			System.out.println("number of data servers is less than 4");
-			result = Result.SERVERFAULT;
+			result = ResultType.SERVERFAULT;
 		}
 		
 		Message   msg = new Message( result, BlockInfoList.toBytes(bList) );
 		
-		if(result == Result.SUCCESS) {
+		if(result == ResultType.SUCCESS) {
 			dt.print();
 		} else {
 			System.out.println("create file failured");
@@ -465,20 +466,20 @@ public class ServerDFS extends DefaultSingleRecoverable {
 		BlockInfoList bList   = null;
 		
 		if(currDir == null) {
-            result = Result.FAILURE;
+            result = ResultType.FAILURE;
         } else if(!currDir.existFile(tgtName)) {
-            result = Result.FILENOTEXISTS;
+            result = ResultType.FILENOTEXISTS;
         } else {
             FileDFS target = currDir.getFile(tgtName);
                 
             if( ( target.isLoked() ) &&
                 ( System.currentTimeMillis()-target.getLastAccTime() ) <= 30*1000) 
             {
-                result = Result.FILELOCKED;
+                result = ResultType.FILELOCKED;
             } else {   
                 currDir.removeFile(tgtName, accTime);
                 bList = target.getBlockList();
-                result = Result.SUCCESS;
+                result = ResultType.SUCCESS;
                 
             }
         }
@@ -486,7 +487,7 @@ public class ServerDFS extends DefaultSingleRecoverable {
 		
 		Message   msg = new Message( result, BlockInfoList.toBytes(bList) );
 		
-		if(result == Result.SUCCESS) {
+		if(result == ResultType.SUCCESS) {
 			dt.print();
 		} else {
 			System.out.println("delete file failured");
@@ -508,27 +509,27 @@ public class ServerDFS extends DefaultSingleRecoverable {
         int       result  = -1;
         
         if(currDir == null) {
-            result = Result.FAILURE;
+            result = ResultType.FAILURE;
         } else if(!currDir.existFile(tgtName)) {
-            result = Result.FILENOTEXISTS;
+            result = ResultType.FILENOTEXISTS;
         } else if(currDir.existFile(newName)) {
-            result = Result.FILEALREADYEXISTS;
+            result = ResultType.FILEALREADYEXISTS;
         } else {
             FileDFS   target = currDir.getFile(tgtName);
             
             if( ( target.isLoked() ) &&
                 ( System.currentTimeMillis()-target.getLastAccTime() ) <= 30*1000) 
             {
-                result = Result.FILELOCKED;
+                result = ResultType.FILELOCKED;
             } else {
                 currDir.renameFile(tgtName, newName, accTime);
-                result = Result.SUCCESS;
+                result = ResultType.SUCCESS;
             }
         }
         
 		Message msg = new Message( result, DirEntries.toBytes(currDir.getDirEntries()) );
 		
-		if(result == Result.SUCCESS) {
+		if(result == ResultType.SUCCESS) {
 			dt.print();
 		} else {
 			System.out.println("rename file failured");
@@ -551,17 +552,17 @@ public class ServerDFS extends DefaultSingleRecoverable {
         BlockInfoList bList   = null;
 		
         if(currDir == null) {
-            result = Result.FAILURE;
+            result = ResultType.FAILURE;
         } else if(!currDir.existFile(tgtName)) {
-            result = Result.FILENOTEXISTS;
+            result = ResultType.FILENOTEXISTS;
         } else {
             target = currDir.getFile(tgtName);
             if(target.isLokedW()) {
-                result = Result.FILELOCKED;
+                result = ResultType.FILELOCKED;
             } else {
                 target.lockR();
-                bList = target.getBlockList();
-                result = Result.SUCCESS;
+                bList  = target.getBlockList();
+                result = ResultType.SUCCESS;
                 
             }
         }
@@ -585,17 +586,17 @@ public class ServerDFS extends DefaultSingleRecoverable {
         BlockInfoList bList   = null;
         
         if(currDir == null) {
-            result = Result.FAILURE;
+            result = ResultType.FAILURE;
         } else if(!currDir.existFile(tgtName)) {
-            result = Result.FILENOTEXISTS;
+            result = ResultType.FILENOTEXISTS;
         } else {
             target = currDir.getFile(tgtName);
             if(target.isLoked()) {
-                result = Result.FILELOCKED;
+                result = ResultType.FILELOCKED;
             } else {
                 target.lockW();
                 bList = target.getBlockList();
-                result = Result.SUCCESS;
+                result = ResultType.SUCCESS;
             }
         }
         
@@ -605,13 +606,29 @@ public class ServerDFS extends DefaultSingleRecoverable {
     }
 
     private byte[] close(ObjectInputStream ois) throws ClassNotFoundException, IOException {
-    	Path path;
+        Path tgtPath = Paths.get((String)ois.readObject());
+        long accTime = ois.readLong();
+        
+        System.out.println("Request for close file: ");
+        System.out.println(tgtPath.toString());
+        
+        Directory currDir = dt.getDirectory(tgtPath.getParent());
+        int       result  = -1;
+        String    tgtName = tgtPath.getFileName().toString();
+        
+        if(currDir == null) {
+            result = ResultType.FAILURE;
+        } else if(!currDir.existFile(tgtName)) {
+            result = ResultType.FAILURE;
+        } else {
+            FileDFS target = currDir.getFile(tgtName);
+            target.unlock();
+            result = ResultType.SUCCESS;
+        }
 
-    	path = Paths.get((String)ois.readObject());
-		System.out.println("Request for close file: ");
-		System.out.println(path.toString());
-		
-		return (new String("CLOSE!")).getBytes();
+        Message msg = new Message( result );
+        
+        return Message.toBytes(msg);
     }
    
     private byte[] updateAccess(ObjectInputStream ois) throws ClassNotFoundException, IOException {
@@ -639,10 +656,10 @@ public class ServerDFS extends DefaultSingleRecoverable {
                 file.getMetadata().setLastAccessTime(accTime);
             }
             
-            result = Result.SUCCESS;
+            result = ResultType.SUCCESS;
             message = new Message(result);
         } catch(NullPointerException e) {
-            result = Result.FAILURE;
+            result = ResultType.FAILURE;
             message = new Message(result, DirEntries.toBytes(dt.getRoot().getDirEntries()));
         }
 
@@ -660,7 +677,7 @@ public class ServerDFS extends DefaultSingleRecoverable {
 		list.add(new ServerInfo(hostName, port, capacity, accTime));
 		list.print();
 		
-		Message msg = new Message(Result.SUCCESS);
+		Message msg = new Message(ResultType.SUCCESS);
 		
 		return Message.toBytes(msg);
     }

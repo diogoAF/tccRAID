@@ -35,10 +35,23 @@ public class LockList implements Serializable {
 	public int size() {
 	    return files.size();
 	}
+
+	public boolean isEmpty() {
+	    return files.isEmpty();
+	}
+	
+	public void list() {
+	    int max = files.size();
+	    
+	    for(int i=0; i<max; i++) {
+	        String path = files.get(i);
+            System.out.println("["+i+"] "+path);
+	    }
+	}
 	
 	public void print() {
 		Iterator<String> ite = files.iterator();
-		
+
 		while(ite.hasNext()) {
 			String path = ite.next();
 			System.out.println(path);

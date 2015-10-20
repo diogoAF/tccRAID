@@ -1,6 +1,6 @@
 package message;
 
-public class Result {
+public class ResultType {
 	public static final int FAILURE	= 0;
 	public static final int SUCCESS	= 1;
 	
@@ -15,4 +15,6 @@ public class Result {
 	
 	
 	public static final int SERVERFAULT = 301;
+	
+    public static final int WRONGINDEX = 401;
 }

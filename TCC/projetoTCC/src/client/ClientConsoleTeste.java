@@ -7,7 +7,7 @@ import java.net.Socket;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-import message.Result;
+import message.ResultType;
 
 
 public class ClientConsoleTeste {
@@ -149,7 +149,7 @@ public class ClientConsoleTeste {
 		try {
 			int result = c.criateDir(dirName);
 			
-			if(result == Result.SUCCESS)
+			if(result == ResultType.SUCCESS)
 				System.out.println("Diretorio criado");
 			else
 				reportError(result);
@@ -170,7 +170,7 @@ public class ClientConsoleTeste {
 		try {
 			int result = c.deleteDir(dirName);
 			
-			if(result == Result.SUCCESS)
+			if(result == ResultType.SUCCESS)
 				System.out.println("Diretorio deletado");
 			else
 				reportError(result);
@@ -196,7 +196,7 @@ public class ClientConsoleTeste {
 		try {
 			int result = c.renameDir(dirName, newName);
 			
-			if(result == Result.SUCCESS)
+			if(result == ResultType.SUCCESS)
 				System.out.println("Diretorio renomeado");
 			else
 				reportError(result);
@@ -217,7 +217,7 @@ public class ClientConsoleTeste {
 		try {
 			int result = c.openDir(dirName);
 			
-			if(result == Result.SUCCESS)
+			if(result == ResultType.SUCCESS)
 				System.out.println("Abrindo diretorio");
 			else
 				reportError(result);
@@ -231,7 +231,7 @@ public class ClientConsoleTeste {
 		try {
 			int result = c.closeDir();
 			
-			if(result == Result.SUCCESS)
+			if(result == ResultType.SUCCESS)
 				System.out.println("Fechando diretorio");
 			else
 				reportError(result);
@@ -252,7 +252,7 @@ public class ClientConsoleTeste {
 		try {
 			int result = c.create(name);
 			
-			if(result == Result.SUCCESS)
+			if(result == ResultType.SUCCESS)
 				System.out.println("Arquivo criado");
 			else
 				reportError(result);
@@ -273,7 +273,7 @@ public class ClientConsoleTeste {
 		try {
 			int result = c.delete(tgtName);
 			
-			if(result == Result.SUCCESS)
+			if(result == ResultType.SUCCESS)
 				System.out.println("Arquivo deletado");
 			else
 				reportError(result);
@@ -298,7 +298,7 @@ public class ClientConsoleTeste {
 		try {
 			int result = c.rename(tgtName, newName);
 			
-			if(result == Result.SUCCESS)
+			if(result == ResultType.SUCCESS)
 				System.out.println("Arquivo renomeado");
 			else
 				reportError(result);
@@ -319,7 +319,7 @@ public class ClientConsoleTeste {
         try {
             int result = c.open(tgtName);
             
-            if(result == Result.SUCCESS)
+            if(result == ResultType.SUCCESS)
                 System.out.println("Abrindo arquivo para leitura");
             else
                 reportError(result);
@@ -341,7 +341,7 @@ public class ClientConsoleTeste {
         try {
             int result = c.append(tgtName);
             
-            if(result == Result.SUCCESS)
+            if(result == ResultType.SUCCESS)
                 System.out.println("Abrindo arquivo para escrita");
             else
                 reportError(result);
@@ -354,39 +354,39 @@ public class ClientConsoleTeste {
 	private void reportError(int result) {
 		System.out.print("ERRO: ");
 		switch (result) {
-		case Result.NOSUCHFILE:
+		case ResultType.NOSUCHFILE:
 			System.out.println("arquivo local nao encontrado");
 			break;
 			
-		case Result.FILEALREADYEXISTS:
+		case ResultType.FILEALREADYEXISTS:
 			System.out.println("arquivo ja existe");
 			break;
 			
-		case Result.FILENOTEXISTS:
+		case ResultType.FILENOTEXISTS:
 			System.out.println("arquivo nao existe");
 			break;
 
-        case Result.FILELOCKED:
+        case ResultType.FILELOCKED:
             System.out.println("arquivo esta bloqueado");
             break;
 
-		case Result.DIRALREADYEXISTS:
+		case ResultType.DIRALREADYEXISTS:
 			System.out.println("diretoroio ja existe");
 			break;
 			
-		case Result.DIRNOTEXISTS:
+		case ResultType.DIRNOTEXISTS:
 			System.out.println("diretorio nao existe");
 			break;
 
-		case Result.DIRLOCKED:
+		case ResultType.DIRLOCKED:
 			System.out.println("diretorio esta bloqueado");
 			break;
 
-        case Result.SERVERFAULT:
+        case ResultType.SERVERFAULT:
             System.out.println("numero de servidores insuficiente");
             break;
             
-		case Result.FAILURE:
+		case ResultType.FAILURE:
 			System.out.println("falha ao executar operacao");
 			break;
 			

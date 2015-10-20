@@ -13,6 +13,11 @@ public class Block implements Serializable {
     private long ID;
     private String fileName;
     
+    public Block(long ID, byte[] bytes){
+        this.ID    = ID;
+        this.bytes = bytes;
+    }
+    
     public Block(long bytesLength, long ID, String fileName){
         this.bytes = new byte[(int)bytesLength];
         this.ID = ID;
@@ -27,7 +32,11 @@ public class Block implements Serializable {
     public byte[] getBytes() {
         return bytes;
     }
-
+    
+    public void setBytes(byte[] bytes) {
+        this.bytes = bytes;
+    }
+    
     public void setBytes(byte[] bytes,int start_offset, int end_offset) {
         int j = 0;
         for(int i = start_offset; i < end_offset; i++){

@@ -1,24 +1,45 @@
 package server.data;
 
-import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
 
-import request.RequestType;
-import bftsmart.tom.ServiceProxy;
-
-public class ServerData {
-    public static final int BUFFER_SIZE = 16*1024;
+public class ServerData extends Thread{
     private String hostName;
-    private long capacity;
-    private int port;
+    private int    port;
+    private long   capacity;
     
     private MetadataModule metaModule;
-    
 
-    public ServerData(int id) {
+    public ServerData(int id, String host, int port, long cap) {
+        this.hostName = host;
+        this.port     = port;
+        this.capacity = cap;
         
+        this.metaModule = new MetadataModule(id, this.hostName, this.port, this.capacity);
+        
+
+        ServerSocket serverSocket = null;
+        String dirName = Integer.toString(id);
+        try {
+            File dir = new File(dirName);
+            
+            dir.mkdir();
+            
+            serverSocket = new ServerSocket(this.port);
+            
+            while(true) {
+                System.out.println("Aguardando cliente...");
+                Socket clientSocket = serverSocket.accept();
+                
+                Operation op = new Operation(clientSocket, dirName);
+                op.start();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(0);
+        }
+       
     }
-    
-    
 }

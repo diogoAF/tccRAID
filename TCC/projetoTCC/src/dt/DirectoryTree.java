@@ -4,7 +4,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Iterator;
 
-import message.Result;
+import message.ResultType;
 import dt.directory.Directory;
 import dt.file.FileDFS;
 
@@ -30,12 +30,12 @@ public class DirectoryTree {
 		Directory dir = getDirectory(path);
 		
 		if(dir == null) {
-			return Result.FAILURE;
+			return ResultType.FAILURE;
 		}
 		
 		dir.unlock();
 		
-		return Result.SUCCESS;
+		return ResultType.SUCCESS;
 	}
 	
 	public FileDFS getFile(Path path) {

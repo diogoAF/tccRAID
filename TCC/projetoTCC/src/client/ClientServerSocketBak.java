@@ -63,7 +63,7 @@ public class ClientServerSocketBak {
             blockInfo = getFileBlockInfo(i);
             Socket clientSocket = connectSocket(blockInfo);
 
-            Block block = new Block(newFile.length(),blockInfo.getBlockID(),newFile.getName());
+            Block block = new Block(newFile.length(),blockInfo.getID(),newFile.getName());
 
             OutputStream out = clientSocket.getOutputStream();
 
