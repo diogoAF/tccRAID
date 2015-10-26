@@ -15,6 +15,7 @@ public class RequestType {
 	public static final int OPENDIR   = 103;
 	public static final int RENAMEDIR = 104;
 	public static final int CLOSEDIR  = 105;
+	
 	public static final int UPDATEDIR = 106;
 	
 

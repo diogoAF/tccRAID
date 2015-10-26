@@ -10,6 +10,7 @@ public class ServerData extends Thread{
     private int    port;
     private long   capacity;
     
+    @SuppressWarnings("unused")
     private MetadataModule metaModule;
 
     public ServerData(int id, String host, int port, long cap) {

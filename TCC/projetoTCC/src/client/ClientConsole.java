@@ -2,12 +2,10 @@ package client;
 
 import java.io.Console;
 import java.io.IOException;
-import java.io.PrintStream;
-import java.net.Socket;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-import message.ResultType;
+import result.ResultType;
 
 
 public class ClientConsole {
@@ -75,61 +73,66 @@ public class ClientConsole {
 				sc.nextLine();
 				option = -1;
 			}
-			
-			switch(option) {
-			case(Option.OPENDIR):
-				openDir(con);
-				break;
-			
-			case(Option.CREATEDIR):
-				criateDir(con);
-				break;
 
-			case(Option.DELETEDIR):
-				deleteDir(con);
-				break;
-
-			case(Option.RENAMEDIR):
-				renameDir(con);
-				break;
-
-			case(Option.CLOSEDIR):
-				closeDir();
-				break;
-                            
-            case(Option.CREATE):
-				create(con);
-				break;
-		        
-            case(Option.DELETE):
-				delete(con);
-				break;
-
-            case(Option.RENAME):
-				rename(con);
-				break;
-
-            case(Option.OPEN):
-                open(con);
-                break;
-
-            case(Option.APPEND):
-                append(con);
-                break;
-
-            case(Option.CLOSE):
-                close(con);
-                break;
+            try {
+    			switch(option) {
+    			case(Option.OPENDIR):
+    				openDir(con);
+    				break;
+    			
+    			case(Option.CREATEDIR):
+    				criateDir(con);
+    				break;
+    
+    			case(Option.DELETEDIR):
+    				deleteDir(con);
+    				break;
+    
+    			case(Option.RENAMEDIR):
+    				renameDir(con);
+    				break;
+    
+    			case(Option.CLOSEDIR):
+    				closeDir();
+    				break;
+                                
+                case(Option.CREATE):
+    				create(con);
+    				break;
+    		        
+                case(Option.DELETE):
+    				delete(con);
+    				break;
+    
+                case(Option.RENAME):
+    				rename(con);
+    				break;
+    
+                case(Option.OPEN):
+                    open(con);
+                    break;
+    
+                case(Option.APPEND):
+                    append(con);
+                    break;
+    
+                case(Option.CLOSE):
+                    close(con);
+                    break;
+                
+    			case(Option.EXIT):
+    				exit = true;
+    				break;
+    				
+    			default:
+    				System.out.println("ERRO: opcao invalida");
+    				break;
+    			}
+    		} catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
+                System.exit(-1);
+            }
             
-			case(Option.EXIT):
-				exit = true;
-				break;
-				
-			default:
-				System.out.println("ERRO: opcao invalida");
-				break;
-			}
-			
 			System.out.println();
 			try {
 				Thread.sleep(500);
@@ -142,7 +145,7 @@ public class ClientConsole {
 		sc.close();
 	}
 	
-	private void criateDir(Console con) {
+	private void criateDir(Console con) throws ClassNotFoundException, IOException {
 	    System.out.println();
 	    System.out.println("Criar diretorio");
 		String   dirName  = con.readLine("Nome do diretorio:\n>");
@@ -150,20 +153,15 @@ public class ClientConsole {
 		if(dirName.isEmpty())
 			return;
 		
-		try {
-			int result = c.criateDir(dirName);
-			
-			if(result == ResultType.SUCCESS)
-				System.out.println("Diretorio criado");
-			else
-				reportError(result);
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		int result = c.criateDir(dirName);
+        
+        if(result == ResultType.SUCCESS)
+        	System.out.println("Diretorio criado");
+        else
+        	reportError(result);
 	}
 
-	private void deleteDir(Console con) {
+	private void deleteDir(Console con) throws ClassNotFoundException, IOException {
 	    System.out.println();
 	    System.out.println("Deletar diretorio");
 		String   dirName  = con.readLine("Nome do diretorio:\n>");
@@ -171,20 +169,15 @@ public class ClientConsole {
 		if(dirName.isEmpty())
 			return;
 
-		try {
-			int result = c.deleteDir(dirName);
-			
-			if(result == ResultType.SUCCESS)
-				System.out.println("Diretorio deletado");
-			else
-				reportError(result);
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		int result = c.deleteDir(dirName);
+		
+		if(result == ResultType.SUCCESS)
+			System.out.println("Diretorio deletado");
+		else
+			reportError(result);
 	}
 	
-	private void renameDir(Console con) {
+	private void renameDir(Console con) throws ClassNotFoundException, IOException {
 	    System.out.println();
 	    System.out.println("Renomear diretorio");
 		String   dirName  = con.readLine("Nome do diretorio:\n>");
@@ -197,20 +190,15 @@ public class ClientConsole {
 			return;
 
 
-		try {
-			int result = c.renameDir(dirName, newName);
-			
-			if(result == ResultType.SUCCESS)
-				System.out.println("Diretorio renomeado");
-			else
-				reportError(result);
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		int result = c.renameDir(dirName, newName);
+        
+        if(result == ResultType.SUCCESS)
+        	System.out.println("Diretorio renomeado");
+        else
+        	reportError(result);
 	}
 
-	private void openDir(Console con) {
+	private void openDir(Console con) throws ClassNotFoundException, IOException {
 	    System.out.println();
 	    System.out.println("Abrir diretorio");
 		String   dirName  = con.readLine("Nome do diretorio:\n>");
@@ -218,34 +206,24 @@ public class ClientConsole {
 		if(dirName.isEmpty())
 			return;
 			
-		try {
-			int result = c.openDir(dirName);
-			
-			if(result == ResultType.SUCCESS)
-				System.out.println("Abrindo diretorio");
-			else
-				reportError(result);
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		int result = c.openDir(dirName);
+		
+		if(result == ResultType.SUCCESS)
+			System.out.println("Abrindo diretorio");
+		else
+			reportError(result);
 	}
 	
-	private void closeDir() {
-		try {
+	private void closeDir() throws ClassNotFoundException, IOException {
 			int result = c.closeDir();
 			
 			if(result == ResultType.SUCCESS)
 				System.out.println("Fechando diretorio");
 			else
 				reportError(result);
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 	
-	private void create(Console con) throws IOException {
+	private void create(Console con) throws ClassNotFoundException, IOException  {
 		System.out.println();
 		System.out.println("Criar arquivo");
 		String name  = con.readLine("Nome ou local do arquivo:\n>");
@@ -253,20 +231,15 @@ public class ClientConsole {
 		if(name.isEmpty())
 			return;
 		
-		try {
-			int result = c.create(name);
-			
-			if(result == ResultType.SUCCESS)
-				System.out.println("Arquivo criado");
-			else
-				reportError(result);
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		int result = c.create(name);
+		
+		if(result == ResultType.SUCCESS)
+			System.out.println("Arquivo criado");
+		else
+			reportError(result);
 	}
 
-	private void delete(Console con) {
+	private void delete(Console con) throws ClassNotFoundException, IOException {
 	    System.out.println();
 	    System.out.println("Deletar arquivo");
 		String tgtName  = con.readLine("Nome do arquivo:\n>");
@@ -274,20 +247,15 @@ public class ClientConsole {
 		if(tgtName.isEmpty())
 			return;
 
-		try {
-			int result = c.delete(tgtName);
-			
-			if(result == ResultType.SUCCESS)
-				System.out.println("Arquivo deletado");
-			else
-				reportError(result);
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		int result = c.delete(tgtName);
+		
+		if(result == ResultType.SUCCESS)
+			System.out.println("Arquivo deletado");
+		else
+			reportError(result);
 	}
 
-	private void rename(Console con) {
+	private void rename(Console con) throws ClassNotFoundException, IOException {
 	    System.out.println();
 	    System.out.println("Renomear arquivo");
 		String tgtName  = con.readLine("Nome do arquivo:\n>");
@@ -299,20 +267,15 @@ public class ClientConsole {
 		if(newName .isEmpty())
 			return;
 		
-		try {
-			int result = c.rename(tgtName, newName);
-			
-			if(result == ResultType.SUCCESS)
-				System.out.println("Arquivo renomeado");
-			else
-				reportError(result);
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		int result = c.rename(tgtName, newName);
+		
+		if(result == ResultType.SUCCESS)
+			System.out.println("Arquivo renomeado");
+		else
+			reportError(result);
 	}
 	
-	private void open(Console con) {
+	private void open(Console con) throws ClassNotFoundException, IOException {
 	    System.out.println();
         System.out.println("Abrir arquivo para leitura");
         String   tgtName  = con.readLine("Nome do arquivo:\n>");
@@ -320,21 +283,16 @@ public class ClientConsole {
         if(tgtName.isEmpty())
             return;
             
-        try {
-            int result = c.open(tgtName);
-            
-            if(result == ResultType.SUCCESS)
-                System.out.println("Abrindo arquivo para leitura");
-            else
-                reportError(result);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        int result = c.open(tgtName);
+        
+        if(result == ResultType.SUCCESS)
+            System.out.println("Abrindo arquivo para leitura");
+        else
+            reportError(result);
     }
     
 
-    private void append(Console con) {
+    private void append(Console con) throws ClassNotFoundException, IOException {
         System.out.println();
         System.out.println("Abrir arquivo para escrita");
         String   tgtName  = con.readLine("Nome do arquivo:\n>");
@@ -342,20 +300,15 @@ public class ClientConsole {
         if(tgtName.isEmpty())
             return;
             
-        try {
-            int result = c.append(tgtName);
-            
-            if(result == ResultType.SUCCESS)
-                System.out.println("Abrindo arquivo para escrita");
-            else
-                reportError(result);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        int result = c.append(tgtName);
+        
+        if(result == ResultType.SUCCESS)
+            System.out.println("Abrindo arquivo para escrita");
+        else
+            reportError(result);
     }
     
-    private void close(Console con) {
+    private void close(Console con) throws ClassNotFoundException, IOException {
         if(c.getLockList().isEmpty()) {
             System.out.println("Nao existe nenhum arquivo aberto");
             return;
@@ -369,17 +322,12 @@ public class ClientConsole {
         if(tgtIndex.isEmpty())
             return;
             
-        try {
-            int result = c.close(Integer.parseInt(tgtIndex));
-            
-            if(result == ResultType.SUCCESS)
-                System.out.println("Arquivo fechado com sucesso");
-            else
-                reportError(result);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        int result = c.close(Integer.parseInt(tgtIndex));
+        
+        if(result == ResultType.SUCCESS)
+            System.out.println("Arquivo fechado com sucesso");
+        else
+            reportError(result);
     }
     
 	private void reportError(int result) {

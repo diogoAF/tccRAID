@@ -27,7 +27,8 @@ public class ClientServerSocket extends Thread {
     Socket    clientSocket;
     BlockInfo blockInfo;
 	
-	public static void main(String[] args)  {
+	@SuppressWarnings("unused")
+    public static void main(String[] args)  {
         try {
             //sendFile();
             BlockInfo blockInfo = new BlockInfo("127.0.0.1",20010,666L);

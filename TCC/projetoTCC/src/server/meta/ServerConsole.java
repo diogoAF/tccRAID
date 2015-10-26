@@ -7,7 +7,7 @@ public class ServerConsole {
             System.out.println("Use: java ServerConsole <processId>");
             System.exit(-1);
         }
-    	new ServerDFS(Integer.parseInt(args[0]));
+    	new ServerMeta(Integer.parseInt(args[0]));
    
         
     }

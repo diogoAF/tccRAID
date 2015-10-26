@@ -1,7 +1,5 @@
 package server;
 
-import java.util.Comparator;
-
 public class ServerInfo {
     private String hostName;
 	private int    port;

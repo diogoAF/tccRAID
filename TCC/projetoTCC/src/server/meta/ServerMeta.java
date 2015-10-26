@@ -1,8 +1,10 @@
 package server.meta;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -14,40 +16,27 @@ import dt.directory.Directory;
 import dt.file.BlockInfoList;
 import dt.file.BlockInfo;
 import dt.file.FileDFS;
-import message.Message;
-import message.ResultType;
 import request.RequestType;
+import result.ResultType;
 import server.ServerInfo;
-import server.meta.manager.LockManager;
-import server.meta.manager.ServerManager;
 import bftsmart.tom.MessageContext;
 import bftsmart.tom.ServiceReplica;
 import bftsmart.tom.server.defaultservices.DefaultSingleRecoverable;
 
-public class ServerDFS extends DefaultSingleRecoverable {
+public class ServerMeta extends DefaultSingleRecoverable {
 	private DirectoryTree dt;
 	private ServerList    list;
 
-	private LockManager   lockMan;
-	private ServerManager servMan;
-
-	public ServerDFS(int id){
+	public ServerMeta(int id){
          new ServiceReplica(id, this, this);
          dt   = new DirectoryTree();
          list = new ServerList(); 
-         
-         lockMan = new LockManager(dt);
-         servMan = new ServerManager(list);
-         
-         //lockMan.run();
-         //servMan.start();
     }
     
     @Override
     public byte[] appExecuteOrdered(byte[] command, MessageContext msgCtx) {
         ByteArrayInputStream in = new ByteArrayInputStream(command);
 		
-        //reqType	   = -1;
 		byte[] resultBytes = null;
 
         System.out.println("");
@@ -75,14 +64,6 @@ public class ServerDFS extends DefaultSingleRecoverable {
 					resultBytes = openDir(ois);
 					break;
 	
-				case RequestType.CLOSEDIR:
-					resultBytes = closeDir(ois);
-					break;
-
-				case RequestType.UPDATEDIR:
-					resultBytes = updateDir(ois);
-					break;
-
 				case RequestType.CREATE:
 					resultBytes = create(ois);
 					break;
@@ -111,30 +92,14 @@ public class ServerDFS extends DefaultSingleRecoverable {
                     resultBytes = updateAccess(ois);
                     break;
 
-                case RequestType.OPENROOT:
-                    resultBytes = openRoot();
-                    break;
-
-                case RequestType.FAILURE:
-                    resultBytes = failure(ois);
-                    break;
-
-				case RequestType.JOIN:
-					resultBytes = join(ois);
-					break;
-
-                case RequestType.KEEPALIVE:
-                    resultBytes = keepAlive(ois);
-                    break;
-                    
 				default:
 					System.out.println("Unknown request number " + reqType);
 					break;
 			}
 			
-		} catch (IOException | ClassNotFoundException e) {
+		} catch (ClassNotFoundException | IOException e) {
 			e.printStackTrace();
-			return null;
+			System.exit(-1);
 		}
 		
         return resultBytes;
@@ -142,37 +107,98 @@ public class ServerDFS extends DefaultSingleRecoverable {
 
     @Override
     public byte[] executeUnordered(byte[] command, MessageContext msgCtx) {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        System.out.println("executeUnordered");
-        return command;
-    }
-
-    @Override
-    public void installSnapshot(byte[] state) {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public byte[] getSnapshot() {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        return new byte[0];
+        ByteArrayInputStream in = new ByteArrayInputStream(command);
         
+        byte[] resultBytes = null;
+
+        System.out.println("");
+        System.out.println("executeUnordered");
+
+        try {
+            ObjectInputStream ois = new ObjectInputStream(in);
+            
+            int reqType = ois.readInt();
+
+            switch(reqType) {
+                case RequestType.OPENROOT:
+                    resultBytes = openRoot();
+                    break;
+
+                case RequestType.CLOSEDIR:
+                    resultBytes = closeDir(ois);
+                    break;
+
+                case RequestType.UPDATEDIR:
+                    resultBytes = updateDir(ois);
+                    break;
+
+                case RequestType.FAILURE:
+                    resultBytes = failure(ois);
+                    break;
+
+                case RequestType.JOIN:
+                    resultBytes = join(ois);
+                    break;
+
+                default:
+                    System.out.println("Unknown request number " + reqType);
+                    break;
+            }
+            
+        } catch (ClassNotFoundException | IOException e) {
+            e.printStackTrace();
+            System.exit(-1);
+        }
+        
+        return resultBytes;
     }
 
+    private byte[] openRoot() throws IOException {
+        System.out.println("Request for open root directory");
+        
+        Directory  currDir = dt.getRoot();
+        int        result  = -1;
+
+        DirEntries entries;
+        if(currDir == null) {
+            entries = null;
+            result = ResultType.FAILURE;
+        } else {
+            entries = currDir.getDirEntries();
+            result = ResultType.SUCCESS;
+        }
+        
+        if(result == ResultType.SUCCESS) {
+            System.out.println("open root success");
+        } else {
+            System.out.println("open root failed");
+        }
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ObjectOutputStream    oos = new ObjectOutputStream(out);
+
+        oos.writeInt(result);
+        oos.writeObject(entries);
+        oos.flush();
+        
+        return out.toByteArray();
+    }
+    
     private byte[] criateDir(ObjectInputStream ois) throws ClassNotFoundException, IOException {
-        Path     currPath = Paths.get((String)ois.readObject());
+        String   currPath = (String)ois.readObject();
         String   tgtName  = (String)ois.readObject();
         Metadata metadata = (Metadata)ois.readObject();
         long     accTime  = ois.readLong();
 
         System.out.println("Request for create directory: ");
-        System.out.println(currPath.toString()+"/"+tgtName);
+        System.out.println(currPath+"/"+tgtName);
         
         Directory currDir = dt.openDirectory(currPath, accTime);
         int       result  = -1;
-		
+
         if(currDir == null) {
-            result = ResultType.FAILURE;
+            currDir = dt.getRoot();
+            result  = ResultType.FAILURE;
         } else if(currDir.existDir(tgtName)) {
             result = ResultType.DIRALREADYEXISTS;
         } else {
@@ -180,70 +206,82 @@ public class ServerDFS extends DefaultSingleRecoverable {
             result = ResultType.SUCCESS;
         }
       
-		Message   msg = new Message( result, DirEntries.toBytes(currDir.getDirEntries()) );
-		
 		if(result == ResultType.SUCCESS) {
 			dt.print();
 		} else {
-			System.out.println("create directory failured");
+			System.out.println("create directory failed");
 		}
-		
-		return Message.toBytes(msg);
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ObjectOutputStream    oos = new ObjectOutputStream(out);
+        
+        oos.writeInt(result);
+        oos.writeObject(currDir.getDirEntries());
+        oos.flush();
+        
+        return out.toByteArray();
     }
     
     private byte[] deleteDir(ObjectInputStream ois) throws ClassNotFoundException, IOException {
-        Path     currPath = Paths.get((String)ois.readObject());
+        String   currPath = (String)ois.readObject();
         String   tgtName  = (String)ois.readObject();
         long     accTime  = ois.readLong();
 
         System.out.println("Request for delete directory: ");
-        System.out.println(currPath.toString()+"/"+tgtName);
+        System.out.println(currPath+"/"+tgtName);
         
         Directory currDir = dt.openDirectory(currPath, accTime);
         int       result  = -1;
         
         if(currDir == null) {
-            result = ResultType.FAILURE;
+            currDir = dt.getRoot();
+            result  = ResultType.FAILURE;
         } else if(!currDir.existDir(tgtName)) {
             result = ResultType.DIRNOTEXISTS;
         } else {
             Directory target = currDir.getDirectory(tgtName);
             
-            if( ( target.isLoked() ) &&
+            if( ( target.isLoked() ) && 
                 ( System.currentTimeMillis()-target.getLastAccTime() ) <= 30*1000) 
             {
-                    result = ResultType.DIRLOCKED;
+                result = ResultType.DIRLOCKED;
             } else {
                 currDir.removeDirectory(tgtName, accTime);
                 result = ResultType.SUCCESS;
             }
         }
       
-		Message   msg = new Message( result, DirEntries.toBytes(currDir.getDirEntries()) );
-		
 		if(result == ResultType.SUCCESS) {
 			dt.print();
 		} else {
-			System.out.println("delete directory failured");
+			System.out.println("delete directory failed");
 		}
-		
-		return Message.toBytes(msg);
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ObjectOutputStream    oos = new ObjectOutputStream(out);
+        
+        oos.writeInt(result);
+        oos.writeObject(currDir.getDirEntries());
+        oos.flush();
+        
+        return out.toByteArray();
     }
     
     private byte[] renameDir(ObjectInputStream ois) throws ClassNotFoundException, IOException {
-        Path     currPath = Paths.get((String)ois.readObject());
+        String   currPath = (String)ois.readObject();
         String   tgtName  = (String)ois.readObject();
         String   newName  = (String)ois.readObject();
         long     accTime  = ois.readLong();
 
         System.out.println("Request for rename directory: ");
-        System.out.println(currPath.toString()+"/"+tgtName+" to "+newName);
+        System.out.println(currPath+"/"+tgtName+" to "+newName);
         
         Directory currDir = dt.openDirectory(currPath, accTime);
         int       result  = -1;
 
         if(currDir == null) {
-            result = ResultType.FAILURE;
+            currDir = dt.getRoot();
+            result  = ResultType.FAILURE;
         } else if(!currDir.existDir(tgtName)) {
             result = ResultType.DIRNOTEXISTS;
         } else if(currDir.existDir(newName)) {
@@ -260,29 +298,36 @@ public class ServerDFS extends DefaultSingleRecoverable {
             result = ResultType.SUCCESS;
         }
 
-		Message   msg = new Message( result, DirEntries.toBytes(currDir.getDirEntries()) );
-		
 		if(result == ResultType.SUCCESS) {
 			dt.print();
 		} else {
-			System.out.println("rename directory failured");
+			System.out.println("rename directory failed");
 		}
-		
-		return Message.toBytes(msg);
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ObjectOutputStream    oos = new ObjectOutputStream(out);
+        
+        oos.writeInt(result);
+        oos.writeObject(currDir.getDirEntries());
+        oos.flush();
+        
+        return out.toByteArray();
     }
+    
     private byte[] openDir(ObjectInputStream ois) throws ClassNotFoundException, IOException {
-        Path     currPath = Paths.get((String)ois.readObject());
+        String   currPath = (String)ois.readObject();
         String   tgtName  = (String)ois.readObject();
         long     accTime  = ois.readLong();
 
 		System.out.println("Request for open directory: ");
-        System.out.println(currPath.toString()+"/"+tgtName);
+        System.out.println(currPath+"/"+tgtName);
 
         Directory currDir = dt.openDirectory(currPath, accTime);
         int       result  = -1;
 		
         if(currDir == null) {
-            result = ResultType.FAILURE;
+            currDir = dt.getRoot();
+            result  = ResultType.FAILURE;
         } else if(!currDir.existDir(tgtName)) {
             result = ResultType.DIRNOTEXISTS;
         } else {
@@ -292,94 +337,91 @@ public class ServerDFS extends DefaultSingleRecoverable {
         }
         
 		if(result == ResultType.SUCCESS) {
+            System.out.println("open directory done");
 		} else {
-			System.out.println("open directory failured");
+			System.out.println("open directory failed");
 		}
-		
-		Message msg = new Message( result, DirEntries.toBytes(currDir.getDirEntries()) );
 
-		return Message.toBytes(msg);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ObjectOutputStream    oos = new ObjectOutputStream(out);
+        
+        oos.writeInt(result);
+        oos.writeObject(currDir.getDirEntries());
+        oos.flush();
+        
+        return out.toByteArray();
     }
  
     private byte[] closeDir(ObjectInputStream ois) throws ClassNotFoundException, IOException {
-    	Path currPath = Paths.get((String)ois.readObject());
+        String currPath = (String)ois.readObject();
     	
 		System.out.println("Request for close directory: ");
-		System.out.println(currPath.toString());
+		System.out.println(currPath);
 		
 		Directory currDir = dt.getDirectory(currPath);
         int       result  = -1;
 		
         if(currDir == null) {
-            result = ResultType.FAILURE;
+            currDir = dt.getRoot();
+            result  = ResultType.FAILURE;
         } else {
             currDir.unlock();
             currDir = currDir.getParent();
             result  = ResultType.SUCCESS;
         }
         
-		Message   msg = new Message( result, DirEntries.toBytes(currDir.getDirEntries()) );
-		
 		if(result == ResultType.SUCCESS) {
+            System.out.println("close directory done");
 		} else {
-			System.out.println("close directory failured");
+			System.out.println("close directory failed");
 		}
-		
-		return Message.toBytes(msg);
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ObjectOutputStream    oos = new ObjectOutputStream(out);
+        
+        oos.writeInt(result);
+        oos.writeObject(currDir.getDirEntries());
+        oos.flush();
+        
+        return out.toByteArray();
     }
 
     private byte[] updateDir(ObjectInputStream ois) throws ClassNotFoundException, IOException {
-    	Path currPath = Paths.get((String)ois.readObject());
-        long accTime  = ois.readLong();
+    	String currPath = (String)ois.readObject();
+        long   accTime  = ois.readLong();
     	
 		System.out.println("Request for update directory: ");
-		System.out.println(currPath.toString());
+		System.out.println(currPath);
 
 		Directory currDir = dt.openDirectory(currPath, accTime);
 		int       result  = -1;
 		
 		if(currDir == null) {
-		    result = ResultType.FAILURE;
+            currDir = dt.getRoot();
+		    result  = ResultType.FAILURE;
 		} else {
 		    result = ResultType.SUCCESS;
 		}
 		
 		if(result == ResultType.SUCCESS) {
+            System.out.println("update directory done");
 		} else {
-			System.out.println("update directory failured");
+			System.out.println("update directory failed");
 		}
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ObjectOutputStream    oos = new ObjectOutputStream(out);
         
-		Message   msg = new Message( result, DirEntries.toBytes(currDir.getDirEntries()) );
-		
-		return Message.toBytes(msg);
+        oos.writeInt(result);
+        oos.writeObject(currDir.getDirEntries());
+        oos.flush();
+        
+        return out.toByteArray();
     }
 
-    private byte[] openRoot() {
-
-        System.out.println("Request for open root directory");
-        
-        Directory currDir = dt.getRoot();
-        int       result  = -1;
-        
-        if(currDir == null) {
-            result = ResultType.FAILURE;
-        } else {
-            result = ResultType.SUCCESS;
-        }
-        
-        if(result == ResultType.SUCCESS) {
-        } else {
-            System.out.println("open root failured");
-        }
-        
-        Message msg = new Message( result, DirEntries.toBytes(currDir.getDirEntries()) );
-
-        return Message.toBytes(msg);
-    }
-    
     private byte[] failure(ObjectInputStream ois) throws ClassNotFoundException, IOException {
         int       opType = ois.readInt();
-        BlockInfo info  = (BlockInfo)ois.readObject();
+        BlockInfo info   = (BlockInfo)ois.readObject();
         
         System.out.println("Reporting data server error");
         
@@ -399,18 +441,24 @@ public class ServerDFS extends DefaultSingleRecoverable {
             
             currDir.removeFile(tgtName);
         }
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ObjectOutputStream    oos = new ObjectOutputStream(out);
         
-        return null;
+        oos.writeObject(dt.getRoot().getDirEntries());
+        oos.flush();
+
+        return out.toByteArray();
     }
     
     private byte[] create(ObjectInputStream ois) throws ClassNotFoundException, IOException {
-    	Path     currPath = Paths.get((String)ois.readObject());
+        String   currPath = (String)ois.readObject();
     	String   tgtName  = (String)ois.readObject();
     	Metadata metadata = (Metadata)ois.readObject();
     	long     accTime  = ois.readLong();
     	
 		System.out.println("Request for create file: ");
-		System.out.println(currPath.toString()+"/"+tgtName);
+		System.out.println(currPath+"/"+tgtName);
 
         Directory currDir = dt.openDirectory(currPath, accTime);
 		int       result  = -1;
@@ -419,7 +467,8 @@ public class ServerDFS extends DefaultSingleRecoverable {
 		
 		try{
 			if(currDir == null) {
-			    result = ResultType.FAILURE;
+			    currDir = dt.getRoot();
+			    result  = ResultType.FAILURE;
 			} else if(currDir.existFile(tgtName)) {
 			    result = ResultType.FILEALREADYEXISTS;
 			} else {
@@ -441,32 +490,38 @@ public class ServerDFS extends DefaultSingleRecoverable {
 			result = ResultType.SERVERFAULT;
 		}
 		
-		Message   msg = new Message( result, BlockInfoList.toBytes(bList) );
-		
 		if(result == ResultType.SUCCESS) {
 			dt.print();
 		} else {
-			System.out.println("create file failured");
-			return Message.toBytes(msg);
+			System.out.println("create file failed");
 		}
 		
-		return Message.toBytes(msg);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ObjectOutputStream    oos = new ObjectOutputStream(out);
+        
+        oos.writeInt(result);
+        oos.writeObject(currDir.getDirEntries());
+        oos.writeObject(bList);
+        oos.flush();
+        
+        return out.toByteArray();
     }
 
     private byte[] delete(ObjectInputStream ois) throws ClassNotFoundException, IOException {
-        Path     currPath = Paths.get((String)ois.readObject());
+        String   currPath = (String)ois.readObject();
         String   tgtName  = (String)ois.readObject();
         long     accTime  = ois.readLong();
     	
 		System.out.println("Request for delete file: ");
-        System.out.println(currPath.toString()+"/"+tgtName);
+        System.out.println(currPath+"/"+tgtName);
 
 		Directory currDir = dt.openDirectory(currPath, accTime);
 		int       result  = -1;
 		BlockInfoList bList   = null;
 		
 		if(currDir == null) {
-            result = ResultType.FAILURE;
+            currDir = dt.getRoot();
+            result  = ResultType.FAILURE;
         } else if(!currDir.existFile(tgtName)) {
             result = ResultType.FILENOTEXISTS;
         } else {
@@ -484,32 +539,38 @@ public class ServerDFS extends DefaultSingleRecoverable {
             }
         }
 		
-		
-		Message   msg = new Message( result, BlockInfoList.toBytes(bList) );
-		
 		if(result == ResultType.SUCCESS) {
 			dt.print();
 		} else {
-			System.out.println("delete file failured");
+			System.out.println("delete file failed");
 		}
-		
-		return Message.toBytes(msg);
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ObjectOutputStream    oos = new ObjectOutputStream(out);
+        
+        oos.writeInt(result);
+        oos.writeObject(currDir.getDirEntries());
+        oos.writeObject(bList);
+        oos.flush();
+        
+        return out.toByteArray();
     }
 
     private byte[] rename(ObjectInputStream ois) throws ClassNotFoundException, IOException {
-        Path     currPath = Paths.get((String)ois.readObject());
+        String   currPath = (String)ois.readObject();
         String   tgtName  = (String)ois.readObject();
         String   newName  = (String)ois.readObject();
         long     accTime  = ois.readLong();
         
 		System.out.println("Request for rename file: ");
-        System.out.println(currPath.toString()+"/"+tgtName+" to " + newName);
+        System.out.println(currPath+"/"+tgtName+" to " + newName);
 
         Directory currDir = dt.openDirectory(currPath, accTime);
         int       result  = -1;
         
         if(currDir == null) {
-            result = ResultType.FAILURE;
+            currDir = dt.getRoot();
+            result  = ResultType.FAILURE;
         } else if(!currDir.existFile(tgtName)) {
             result = ResultType.FILENOTEXISTS;
         } else if(currDir.existFile(newName)) {
@@ -526,25 +587,30 @@ public class ServerDFS extends DefaultSingleRecoverable {
                 result = ResultType.SUCCESS;
             }
         }
-        
-		Message msg = new Message( result, DirEntries.toBytes(currDir.getDirEntries()) );
 		
 		if(result == ResultType.SUCCESS) {
 			dt.print();
 		} else {
-			System.out.println("rename file failured");
+			System.out.println("rename file failed");
 		}
-		
-		return Message.toBytes(msg);
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ObjectOutputStream    oos = new ObjectOutputStream(out);
+        
+        oos.writeInt(result);
+        oos.writeObject(currDir.getDirEntries());
+        oos.flush();
+        
+        return out.toByteArray();
     }
 
     private byte[] open(ObjectInputStream ois) throws ClassNotFoundException, IOException {
-        Path     currPath = Paths.get((String)ois.readObject());
+        String   currPath = (String)ois.readObject();
         String   tgtName  = (String)ois.readObject();
         long     accTime  = ois.readLong();
         
         System.out.println("Request for open(read) file: ");
-        System.out.println(currPath.toString()+"/"+tgtName);
+        System.out.println(currPath+"/"+tgtName);
         
         Directory currDir = dt.openDirectory(currPath, accTime);
         int       result  = -1;
@@ -552,12 +618,15 @@ public class ServerDFS extends DefaultSingleRecoverable {
         BlockInfoList bList   = null;
 		
         if(currDir == null) {
-            result = ResultType.FAILURE;
+            currDir = dt.getRoot();
+            result  = ResultType.FAILURE;
         } else if(!currDir.existFile(tgtName)) {
             result = ResultType.FILENOTEXISTS;
         } else {
             target = currDir.getFile(tgtName);
-            if(target.isLokedW()) {
+            if( ( target.isLokedW() ) &&
+                ( System.currentTimeMillis()-target.getLastAccTime() ) <= 30*1000 ) 
+            {
                 result = ResultType.FILELOCKED;
             } else {
                 target.lockR();
@@ -566,19 +635,25 @@ public class ServerDFS extends DefaultSingleRecoverable {
                 
             }
         }
-		
-		Message msg = new Message( result, BlockInfoList.toBytes(bList) );
 
-		return Message.toBytes(msg);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ObjectOutputStream    oos = new ObjectOutputStream(out);
+        
+        oos.writeInt(result);
+        oos.writeObject(currDir.getDirEntries());
+        oos.writeObject(bList);
+        oos.flush();
+        
+        return out.toByteArray();
     }
 
     private byte[] append(ObjectInputStream ois) throws ClassNotFoundException, IOException {
-        Path     currPath = Paths.get((String)ois.readObject());
+        String   currPath = (String)ois.readObject();
         String   tgtName  = (String)ois.readObject();
         long     accTime  = ois.readLong();
         
         System.out.println("Request for open(write) file: ");
-        System.out.println(currPath.toString()+"/"+tgtName);
+        System.out.println(currPath+"/"+tgtName);
         
         Directory currDir = dt.openDirectory(currPath, accTime);
         int       result  = -1;
@@ -586,12 +661,15 @@ public class ServerDFS extends DefaultSingleRecoverable {
         BlockInfoList bList   = null;
         
         if(currDir == null) {
-            result = ResultType.FAILURE;
+            currDir = dt.getRoot();
+            result  = ResultType.FAILURE;
         } else if(!currDir.existFile(tgtName)) {
             result = ResultType.FILENOTEXISTS;
         } else {
             target = currDir.getFile(tgtName);
-            if(target.isLoked()) {
+            if( ( target.isLoked() ) &&
+                ( System.currentTimeMillis()-target.getLastAccTime() ) <= 30*1000 ) 
+            {
                 result = ResultType.FILELOCKED;
             } else {
                 target.lockW();
@@ -599,36 +677,49 @@ public class ServerDFS extends DefaultSingleRecoverable {
                 result = ResultType.SUCCESS;
             }
         }
-        
-        Message msg = new Message( result, BlockInfoList.toBytes(bList) );
 
-        return Message.toBytes(msg);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ObjectOutputStream    oos = new ObjectOutputStream(out);
+        
+        oos.writeInt(result);
+        oos.writeObject(currDir.getDirEntries());
+        oos.writeObject(bList);
+        oos.flush();
+        
+        return out.toByteArray();
     }
 
+    @SuppressWarnings("unused")
     private byte[] close(ObjectInputStream ois) throws ClassNotFoundException, IOException {
-        Path tgtPath = Paths.get((String)ois.readObject());
-        long accTime = ois.readLong();
+        String tgtPath = (String)ois.readObject();
+        String tgtName = (String)ois.readObject();
+        long   accTime = ois.readLong();
         
         System.out.println("Request for close file: ");
-        System.out.println(tgtPath.toString());
+        System.out.println(tgtPath+"/"+tgtName);
         
-        Directory currDir = dt.getDirectory(tgtPath.getParent());
+        Directory currDir = dt.getDirectory(tgtPath);
         int       result  = -1;
-        String    tgtName = tgtPath.getFileName().toString();
         
         if(currDir == null) {
-            result = ResultType.FAILURE;
+            currDir = dt.getRoot();
+            result  = ResultType.FAILURE;
         } else if(!currDir.existFile(tgtName)) {
-            result = ResultType.FAILURE;
+            result = ResultType.FILENOTEXISTS;
         } else {
             FileDFS target = currDir.getFile(tgtName);
             target.unlock();
             result = ResultType.SUCCESS;
         }
 
-        Message msg = new Message( result );
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ObjectOutputStream    oos = new ObjectOutputStream(out);
         
-        return Message.toBytes(msg);
+        oos.writeInt(result);
+        oos.writeObject(currDir.getDirEntries());
+        oos.flush();
+        
+        return out.toByteArray();
     }
    
     private byte[] updateAccess(ObjectInputStream ois) throws ClassNotFoundException, IOException {
@@ -637,33 +728,38 @@ public class ServerDFS extends DefaultSingleRecoverable {
         long     accTime  = ois.readLong();
 
         System.out.println("Request for update access");
-        System.out.println(currPath);
+        System.out.println(currPath.toString());
         lockList.print();
 
         int       result  = -1;
-        Directory target  = dt.getDirectory(currPath);
-        Message   message = null;
+        Directory currDir = dt.getDirectory(currPath);
+        
         
         try {
-            while(!target.getName().equals("root")) {
-                target.getMetadata().setLastAccessTime(accTime);
-                target = target.getParent();
+            while(!currDir.getName().equals("root")) {
+                currDir.getMetadata().setLastAccessTime(accTime);
+                currDir = currDir.getParent();
             }
             
             int max =lockList.size();
             for(int i = 0; i<max; i++) {
-                FileDFS file = dt.getFile(Paths.get( lockList.get(i)));
+                FileDFS file = dt.getFile(lockList.get(i));
                 file.getMetadata().setLastAccessTime(accTime);
             }
             
             result = ResultType.SUCCESS;
-            message = new Message(result);
         } catch(NullPointerException e) {
             result = ResultType.FAILURE;
-            message = new Message(result, DirEntries.toBytes(dt.getRoot().getDirEntries()));
         }
-
-        return Message.toBytes(message);
+        
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ObjectOutputStream    oos = new ObjectOutputStream(out);
+        
+        oos.writeInt(result);
+        oos.writeObject(dt.getRoot().getDirEntries());
+        oos.flush();
+        
+        return out.toByteArray();
     }
     
     private byte[] join(ObjectInputStream ois) throws ClassNotFoundException, IOException {
@@ -673,31 +769,32 @@ public class ServerDFS extends DefaultSingleRecoverable {
         long   accTime  = ois.readLong();
     	
 		System.out.println("Request for join: ");
-		
+
+        int result = ResultType.SUCCESS;
+        
 		list.add(new ServerInfo(hostName, port, capacity, accTime));
 		list.print();
-		
-		Message msg = new Message(ResultType.SUCCESS);
-		
-		return Message.toBytes(msg);
+
+        
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ObjectOutputStream    oos = new ObjectOutputStream(out);
+        
+        oos.writeInt(result);
+        oos.flush();
+        
+        return out.toByteArray();
     }
     
-    private byte[] keepAlive(ObjectInputStream ois) throws ClassNotFoundException, IOException  {
-        String hostName = (String)ois.readObject();
-        int    port     = ois.readInt();
-        long   accTime  = ois.readLong();
-        
-        System.out.println("Request for keep alive: ");
-        System.out.println(hostName+":"+port);
-        
-        ServerInfo info = list.get(hostName, port);
-        info.setLastAccTime(accTime);
-        
-        return null;
+    @Override
+    public void installSnapshot(byte[] state) {
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
-    public void run() {
-    	System.out.println("running!");
-    	while(true);
+
+    @Override
+    public byte[] getSnapshot() {
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new byte[0];
+        
     }
+
 }

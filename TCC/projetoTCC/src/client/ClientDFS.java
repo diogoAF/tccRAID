@@ -2,11 +2,13 @@ package client;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ConnectException;
 import java.nio.file.NoSuchFileException;
@@ -19,60 +21,56 @@ import dt.directory.DirEntries;
 import dt.file.Block;
 import dt.file.BlockInfo;
 import dt.file.BlockInfoList;
-import message.Message;
-import message.ResultType;
 import request.RequestType;
+import result.ResultType;
 import bftsmart.tom.ServiceProxy;
 
 public class ClientDFS extends Thread{
     private ServiceProxy proxy;
-	private Path         currPath;
+	private String       currPath;
 	private DirEntries   currDir;
 	private LockList     lockList;
 	
 	//private LockManager lm;
 
     public ClientDFS(int id) {
+        proxy    = new ServiceProxy(id);
+        lockList = new LockList();
+        
+        this.openRoot();
+        this.start();
+	        
+    }
+    
+    private void openRoot() {
         try {
-            proxy    = new ServiceProxy(id);
-	        currPath = Paths.get("");
-	        openRoot();
-	        
-	        lockList = new LockList();
-	        
-	        this.start();
-	        /*
-	        lm = new LockManager(currPath, lockList);
-	        lm.run();*/
-	        
-		} catch (IOException e) {
-			System.out.println("Nao foi possivel obter o diretorio raiz."); 
-			e.printStackTrace();
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            ObjectOutputStream    oos = new ObjectOutputStream(out);
+            
+            oos.writeInt(RequestType.OPENROOT);
+            oos.flush();
+            
+            byte[]  bytes   = this.proxy.invokeUnordered(out.toByteArray());
+    
+            ByteArrayInputStream in  = new ByteArrayInputStream(bytes);
+            ObjectInputStream    ois = new ObjectInputStream(in);
+            
+            int result = ois.readInt();
+            
+            if(result != ResultType.SUCCESS) {
+                throw new IOException();
+            }
+            
+            currDir  = (DirEntries) ois.readObject();
+            currPath = currDir.getPath();
+        } catch (IOException | ClassNotFoundException e) {
+            System.out.println("Nao foi possivel abrir o diretorio raiz."); 
+            e.printStackTrace();
             System.exit(-1);
-		}
-    }
-    
-    public void openRoot() throws IOException {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        ObjectOutputStream    oos = new ObjectOutputStream(out);
-        
-        oos.writeInt(RequestType.OPENROOT);
-        oos.flush();
-        
-        byte[]  bytes   = this.proxy.invokeOrdered(out.toByteArray());
-        Message message = Message.toMessage(bytes);
-        int     result  = message.getResult();
-        
-        if(result != ResultType.SUCCESS) {
-            throw new IOException();
         }
-        
-        currDir  = DirEntries.toDirEntries(message.getBytes());
-        currPath = Paths.get(currDir.getPath());
-        
     }
     
-    public int criateDir(String tgtName) throws IOException {
+    public int criateDir(String tgtName) throws ClassNotFoundException, IOException {
         Metadata metadata = new Metadata(System.currentTimeMillis());
         
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -86,15 +84,21 @@ public class ClientDFS extends Thread{
         oos.flush();
         
         byte[]  bytes   = this.proxy.invokeOrdered(out.toByteArray());
-        Message message = Message.toMessage(bytes);
-        int     result  = message.getResult();
         
-        currDir = DirEntries.toDirEntries(message.getBytes());
+        ByteArrayInputStream in  = new ByteArrayInputStream(bytes);
+        ObjectInputStream    ois = new ObjectInputStream(in);
+
+        int result = ois.readInt();
+        currDir    = (DirEntries)ois.readObject();
+
+        if(result == ResultType.FAILURE) {
+            currPath = currDir.getPath();
+        }
         
         return result;
     }
 
-    public int deleteDir(String tgtName) throws IOException {
+    public int deleteDir(String tgtName) throws ClassNotFoundException, IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ObjectOutputStream    oos = new ObjectOutputStream(out);
         
@@ -105,15 +109,21 @@ public class ClientDFS extends Thread{
         oos.flush();
         
         byte[] bytes = this.proxy.invokeOrdered(out.toByteArray());
-        Message  message = Message.toMessage(bytes);
-        int   result = message.getResult();
 
-        currDir = DirEntries.toDirEntries(message.getBytes());
+        ByteArrayInputStream in  = new ByteArrayInputStream(bytes);
+        ObjectInputStream    ois = new ObjectInputStream(in);
+        
+        int result = ois.readInt();
+        currDir    = (DirEntries)ois.readObject();
+
+        if(result == ResultType.FAILURE) {
+            currPath = currDir.getPath();
+        }
         
         return result;
     }
 
-    public int renameDir(String tgtName, String newName) throws IOException {
+    public int renameDir(String tgtName, String newName) throws ClassNotFoundException, IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ObjectOutputStream    oos = new ObjectOutputStream(out);
         
@@ -125,15 +135,21 @@ public class ClientDFS extends Thread{
         oos.flush();
         
         byte[] bytes = this.proxy.invokeOrdered(out.toByteArray());
-        Message  message = Message.toMessage(bytes);
-        int   result = message.getResult();
 
-        currDir = DirEntries.toDirEntries(message.getBytes());
+        ByteArrayInputStream in  = new ByteArrayInputStream(bytes);
+        ObjectInputStream    ois = new ObjectInputStream(in);
+        
+        int result = ois.readInt();
+        currDir    = (DirEntries)ois.readObject();
+
+        if(result == ResultType.FAILURE) {
+            currPath = currDir.getPath();
+        }
         
         return result;
     }
 
-    public int openDir(String tgtName) throws IOException {
+    public int openDir(String tgtName) throws ClassNotFoundException, IOException  {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ObjectOutputStream    oos = new ObjectOutputStream(out);
         
@@ -144,16 +160,18 @@ public class ClientDFS extends Thread{
         oos.flush();
         
         byte[] bytes = this.proxy.invokeOrdered(out.toByteArray());
-        Message  message = Message.toMessage(bytes);
-        int   result = message.getResult();
         
-        currDir  = DirEntries.toDirEntries(message.getBytes());
-        currPath = Paths.get(currDir.getPath());
+        ByteArrayInputStream in  = new ByteArrayInputStream(bytes);
+        ObjectInputStream    ois = new ObjectInputStream(in);
+        
+        int result = ois.readInt();
+        currDir    = (DirEntries)ois.readObject();
+        currPath   = currDir.getPath();
         
         return result;
     }
 
-    public int closeDir() throws IOException {
+    public int closeDir() throws ClassNotFoundException, IOException {
         if(currDir.isRoot())
             return 0;
         
@@ -164,17 +182,19 @@ public class ClientDFS extends Thread{
         oos.writeObject(currPath.toString());
         oos.flush();
         
-        byte[] bytes = this.proxy.invokeOrdered(out.toByteArray());
-        Message  message = Message.toMessage(bytes);
-        int   result = message.getResult();
+        byte[] bytes = this.proxy.invokeUnordered(out.toByteArray());
+
+        ByteArrayInputStream in  = new ByteArrayInputStream(bytes);
+        ObjectInputStream    ois = new ObjectInputStream(in);
         
-        currDir  = DirEntries.toDirEntries(message.getBytes());
-        currPath = Paths.get(currDir.getPath());
+        int result = ois.readInt();
+        currDir    = (DirEntries)ois.readObject();
+        currPath   = currDir.getPath();
         
         return result;
     }
 
-    public int updateDir() throws IOException {
+    public int updateDir() throws ClassNotFoundException, IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ObjectOutputStream    oos = new ObjectOutputStream(out);
         
@@ -183,16 +203,22 @@ public class ClientDFS extends Thread{
         oos.writeLong(System.currentTimeMillis());
         oos.flush();
         
-        byte[] bytes = this.proxy.invokeOrdered(out.toByteArray());
-        Message  message = Message.toMessage(bytes);
-        int   result = message.getResult();
+        byte[] bytes = this.proxy.invokeUnordered(out.toByteArray());
+
+        ByteArrayInputStream in  = new ByteArrayInputStream(bytes);
+        ObjectInputStream    ois = new ObjectInputStream(in);
         
-        currDir  = DirEntries.toDirEntries(message.getBytes());
+        int result = ois.readInt();
+        currDir    = (DirEntries)ois.readObject();
+        
+        if(result == ResultType.FAILURE) {
+            currPath = currDir.getPath();
+        }
         
         return result;
     }
 
-    public void failure(BlockInfo bInfo, String tgtName) throws IOException {
+    public void failure(BlockInfo bInfo, String tgtName) throws ClassNotFoundException, IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ObjectOutputStream    oos = new ObjectOutputStream(out);
         
@@ -206,10 +232,16 @@ public class ClientDFS extends Thread{
         oos.writeObject(tgtName);
         oos.flush();
         
-        this.proxy.invokeOrdered(out.toByteArray());
+        byte[] bytes = this.proxy.invokeUnordered(out.toByteArray());
+
+        ByteArrayInputStream in  = new ByteArrayInputStream(bytes);
+        ObjectInputStream    ois = new ObjectInputStream(in);
+        
+        currDir  = (DirEntries)ois.readObject();
+        currPath = currDir.getPath();
     }
     
-    public void failure(BlockInfo bInfo) throws IOException {
+    public void failure(BlockInfo bInfo) throws IOException, ClassNotFoundException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ObjectOutputStream    oos = new ObjectOutputStream(out);
         
@@ -221,10 +253,17 @@ public class ClientDFS extends Thread{
         oos.writeObject(bInfo);
         oos.flush();
         
-        this.proxy.invokeOrdered(out.toByteArray());
+        byte[] bytes = this.proxy.invokeUnordered(out.toByteArray());
+
+        ByteArrayInputStream in  = new ByteArrayInputStream(bytes);
+        ObjectInputStream    ois = new ObjectInputStream(in);
+        
+        currDir  = (DirEntries)ois.readObject();
+        currPath = currDir.getPath();
     }
     
-    public int create(String fileName) throws IOException {
+    @SuppressWarnings("unused")
+    public int create(String fileName) throws ClassNotFoundException, IOException  {
     	try {
     		File     file     = new File(fileName);
         	Metadata metadata = new Metadata(file);
@@ -241,20 +280,26 @@ public class ClientDFS extends Thread{
     		oos.flush();
     		
     		byte[]  bytes   = this.proxy.invokeOrdered(out.toByteArray());
-    		Message message = Message.toMessage(bytes);
-    		int     result  = message.getResult();
-    		
+
+            ByteArrayInputStream in  = new ByteArrayInputStream(bytes);
+            ObjectInputStream    ois = new ObjectInputStream(in);
+            
+            int result = ois.readInt();
+            currDir    = (DirEntries)ois.readObject();
+            
         	if(result != ResultType.SUCCESS) {
+                if(result == ResultType.FAILURE) {
+                    currPath = currDir.getPath();
+                }
         		return result;
         	}
-        	
-        	BlockInfoList bList = BlockInfoList.toBlockList(message.getBytes());
+            
+            BlockInfoList bList = (BlockInfoList)ois.readObject();
         	
         	bList.print();
 
             BlockInfo bInfo = null;
         	try {
-
         	    for(int i=0; i<4; i++) {
         	        bInfo = bList.get(i);
         	        
@@ -270,22 +315,18 @@ public class ClientDFS extends Thread{
         	        ClientServerSocket css = new ClientServerSocket(bInfo);
                     css.create(block);   
         	    }
-        	    
         	} catch(ConnectException e) {
                 failure(bInfo, tgtName);
-                
                 result = ResultType.FAILURE;
         	}
         	
-            updateDir();
-            
             return result;
     	} catch (NoSuchFileException e) {
     	    return ResultType.NOSUCHFILE;
     	}
     }
     
-    public int delete(String tgtName) throws IOException {
+    public int delete(String tgtName) throws ClassNotFoundException, IOException  {
     	ByteArrayOutputStream out = new ByteArrayOutputStream();
 		ObjectOutputStream    oos = new ObjectOutputStream(out);
 		
@@ -296,39 +337,45 @@ public class ClientDFS extends Thread{
 		oos.flush();
 		
 		byte[]  bytes   = this.proxy.invokeOrdered(out.toByteArray());
-		Message message = Message.toMessage(bytes);
-		int     result  = message.getResult();
 
-		if(result == ResultType.SUCCESS) {
-        	BlockInfoList bList = BlockInfoList .toBlockList (message.getBytes());
-
-            bList.print();
-            
-        	BlockInfo bInfo = null;
-            try {
-
-                for(int i=0; i<4; i++) {
-                    bInfo = bList.get(i);
-
-                    Block block = new Block(bInfo.getID(), null);
-                    
-                    ClientServerSocket css = new ClientServerSocket(bInfo);
-                    css.delete(block);   
-                }
-                
-            } catch(ConnectException e) {
-                failure(bInfo);
-                
-                result = ResultType.FAILURE;
+        ByteArrayInputStream in  = new ByteArrayInputStream(bytes);
+        ObjectInputStream    ois = new ObjectInputStream(in);
+        
+        int result = ois.readInt();
+        currDir    = (DirEntries)ois.readObject();
+        
+        if(result != ResultType.SUCCESS) {
+            if(result == ResultType.FAILURE) {
+                currPath = currDir.getPath();
             }
-        	
-        	updateDir();
-		}
+            return result;
+        }
+        
+        BlockInfoList bList = (BlockInfoList)ois.readObject();
 
+        bList.print();
+        
+    	BlockInfo bInfo = null;
+        try {
+
+            for(int i=0; i<4; i++) {
+                bInfo = bList.get(i);
+
+                Block block = new Block(bInfo.getID(), null);
+                
+                ClientServerSocket css = new ClientServerSocket(bInfo);
+                css.delete(block);   
+            }
+            
+        } catch(ConnectException e) {
+            failure(bInfo);
+            result = ResultType.FAILURE;
+        }
+    	
 		return result;
     }
 
-    public int rename(String tgtName, String newName) throws IOException {
+    public int rename(String tgtName, String newName) throws ClassNotFoundException, IOException {
     	ByteArrayOutputStream out = new ByteArrayOutputStream();
 		ObjectOutputStream    oos = new ObjectOutputStream(out);
 		
@@ -340,15 +387,21 @@ public class ClientDFS extends Thread{
 		oos.flush();
 		
 		byte[]  bytes   = this.proxy.invokeOrdered(out.toByteArray());
-		Message message = Message.toMessage(bytes);
-		int     result  = message.getResult();
 
-		currDir = DirEntries.toDirEntries(message.getBytes());
-		
+        ByteArrayInputStream in  = new ByteArrayInputStream(bytes);
+        ObjectInputStream    ois = new ObjectInputStream(in);
+        
+        int result = ois.readInt();
+        currDir    = (DirEntries)ois.readObject();
+        
+        if(result == ResultType.FAILURE) {
+            currPath = currDir.getPath();
+        }
+        
 		return result;
     }
 
-    public int open(String tgtName) throws IOException {
+    public int open(String tgtName) throws ClassNotFoundException, IOException {
     	ByteArrayOutputStream out = new ByteArrayOutputStream();
 		ObjectOutputStream    oos = new ObjectOutputStream(out);
 		
@@ -359,53 +412,60 @@ public class ClientDFS extends Thread{
 		oos.flush();
 		
 		byte[]  bytes   = this.proxy.invokeOrdered(out.toByteArray());
-		Message message = Message.toMessage(bytes);
-		int     result  = message.getResult();
-		
-		if(result == ResultType.SUCCESS) {
-            BlockInfoList bList = BlockInfoList .toBlockList (message.getBytes());
-            
-            bList.print();
 
-            BlockInfo bInfo = null;
-            try {
-                byte[][] fileBlock = new byte[4][];
-
-                for(int i=0; i<4; i++) {
-                    bInfo = bList.get(i);
-
-                    Block block = new Block(bInfo.getID(), null);
-                    
-                    ClientServerSocket css = new ClientServerSocket(bInfo);
-                    fileBlock[i] = css.open(block);   
-                }
-                
-                File file = new File("temp");
-                if(!file.exists()) {
-                    file.mkdir();
-                }
-                file = new File("temp/"+tgtName);
-                
-                FileOutputStream     fos = new FileOutputStream(file);
-                BufferedOutputStream bos = new BufferedOutputStream(fos);
-                
-                bos.write(fileBlock[0]);
-                
-                bos.flush();
-                bos.close();
-            } catch(ConnectException e) {
-                failure(bInfo);
-                
-                result = ResultType.FAILURE;
+        ByteArrayInputStream in  = new ByteArrayInputStream(bytes);
+        ObjectInputStream    ois = new ObjectInputStream(in);
+        
+        int result = ois.readInt();
+        currDir    = (DirEntries)ois.readObject();
+        
+        if(result != ResultType.SUCCESS) {
+            if(result == ResultType.FAILURE) {
+                currPath = currDir.getPath();
             }
-            lockList.add(getCurrPath()+"/"+tgtName);
-            
+            return result;
         }
-		
+
+        BlockInfoList bList = (BlockInfoList)ois.readObject();
+        
+        bList.print();
+
+        BlockInfo bInfo = null;
+        try {
+            byte[][] fileBlock = new byte[4][];
+
+            for(int i=0; i<4; i++) {
+                bInfo = bList.get(i);
+
+                Block block = new Block(bInfo.getID(), null);
+                
+                ClientServerSocket css = new ClientServerSocket(bInfo);
+                fileBlock[i] = css.open(block);   
+            }
+            
+            File file = new File("temp");
+            if(!file.exists()) {
+                file.mkdir();
+            }
+            file = new File("temp/"+tgtName);
+            
+            FileOutputStream     fos = new FileOutputStream(file);
+            BufferedOutputStream bos = new BufferedOutputStream(fos);
+            
+            bos.write(fileBlock[0]);
+            
+            bos.flush();
+            bos.close();
+        } catch(ConnectException e) {
+            failure(bInfo);
+            result = ResultType.FAILURE;
+        }
+        lockList.add(getCurrPath()+"/"+tgtName);
+        
 		return result;
     }
 
-    public int append(String tgtName) throws IOException {
+    public int append(String tgtName) throws ClassNotFoundException, IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ObjectOutputStream    oos = new ObjectOutputStream(out);
         
@@ -414,76 +474,95 @@ public class ClientDFS extends Thread{
         oos.writeObject(tgtName);
         oos.writeLong(System.currentTimeMillis());
         oos.flush();
-        
+
         byte[]  bytes   = this.proxy.invokeOrdered(out.toByteArray());
-        Message message = Message.toMessage(bytes);
-        int     result  = message.getResult();
+
+        ByteArrayInputStream in  = new ByteArrayInputStream(bytes);
+        ObjectInputStream    ois = new ObjectInputStream(in);
         
-        if(result == ResultType.SUCCESS) {
-            BlockInfoList bList = BlockInfoList .toBlockList (message.getBytes());
-            
-            bList.print();
-
-            BlockInfo bInfo = null;
-            try {
-                byte[][] fileBlock = new byte[4][];
-
-                for(int i=0; i<4; i++) {
-                    bInfo = bList.get(i);
-
-                    Block block = new Block(bInfo.getID(), null);
-                    
-                    ClientServerSocket css = new ClientServerSocket(bInfo);
-                    fileBlock[i] = css.open(block);   
-                }
-                
-                File file = new File("temp");
-                if(!file.exists()) {
-                    file.mkdir();
-                }
-                file = new File("temp/"+tgtName);
-                
-                FileOutputStream     fos = new FileOutputStream(file);
-                BufferedOutputStream bos = new BufferedOutputStream(fos);
-                
-                bos.write(fileBlock[0]);
-                
-                bos.flush();
-                bos.close();
-            } catch(ConnectException e) {
-                failure(bInfo);
-                
-                result = ResultType.FAILURE;
+        int result = ois.readInt();
+        currDir    = (DirEntries)ois.readObject();
+        
+        if(result != ResultType.SUCCESS) {
+            if(result == ResultType.FAILURE) {
+                currPath = currDir.getPath();
             }
-            lockList.add(getCurrPath()+"/"+tgtName);
-            
+            return result;
         }
+
+        BlockInfoList bList = (BlockInfoList)ois.readObject();
+        
+        bList.print();
+
+        BlockInfo bInfo = null;
+        try {
+            byte[][] fileBlock = new byte[4][];
+
+            for(int i=0; i<4; i++) {
+                bInfo = bList.get(i);
+
+                Block block = new Block(bInfo.getID(), null);
+                
+                ClientServerSocket css = new ClientServerSocket(bInfo);
+                fileBlock[i] = css.open(block);   
+            }
+            
+            File file = new File("temp");
+            if(!file.exists()) {
+                file.mkdir();
+            }
+            file = new File("temp/"+tgtName);
+            
+            FileOutputStream     fos = new FileOutputStream(file);
+            BufferedOutputStream bos = new BufferedOutputStream(fos);
+            
+            bos.write(fileBlock[0]);
+            
+            bos.flush();
+            bos.close();
+        } catch(ConnectException e) {
+            failure(bInfo);
+            result = ResultType.FAILURE;
+        }
+        lockList.add(getCurrPath()+"/"+tgtName);
         
         return result;
     }
     
-    public int close(int tgtIndex) throws IOException {
+    public int close(int tgtIndex) throws ClassNotFoundException, IOException {
         try {
-            String tgtPath = lockList.get(tgtIndex);
+            Path tgtPath = Paths.get(lockList.get(tgtIndex));
             
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             ObjectOutputStream    oos = new ObjectOutputStream(out);
             
             oos.writeInt(RequestType.CLOSE);
-            oos.writeObject(tgtPath);
+            oos.writeObject(tgtPath.getParent());
+            oos.writeObject(tgtPath.getFileName());
             oos.writeLong(System.currentTimeMillis());
             oos.flush();
             
             byte[]  bytes   = this.proxy.invokeOrdered(out.toByteArray());
-            Message message = Message.toMessage(bytes);
-            int     result  = message.getResult();
 
+            ByteArrayInputStream in  = new ByteArrayInputStream(bytes);
+            ObjectInputStream    ois = new ObjectInputStream(in);
+            
+            int result = ois.readInt();
+            
+            if(result != ResultType.SUCCESS) {
+                currDir = (DirEntries)ois.readObject();
+                if(result == ResultType.FAILURE) {
+                    currPath = currDir.getPath();
+                }
+            }
+            
             return result;
         } catch (IndexOutOfBoundsException e) {
             return ResultType.WRONGINDEX;
         }
     }
     
+    @SuppressWarnings("unused")
     public void run() {
         while(true) {
             try {

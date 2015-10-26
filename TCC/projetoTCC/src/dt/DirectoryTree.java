@@ -4,7 +4,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Iterator;
 
-import message.ResultType;
+import result.ResultType;
 import dt.directory.Directory;
 import dt.file.FileDFS;
 
@@ -17,6 +17,15 @@ public class DirectoryTree {
 	}
 	
 	public Directory openDirectory(Path path, long accTime) {
+	    return openDirectory(path.toString(), accTime);
+	}
+	public int closeDirectory(Path path){
+	    return closeDirectory(path.toString());
+	}
+	
+	
+	
+	public Directory openDirectory(String path, long accTime) {
 		Directory dir = getDirectory(path);
 		
 		if(dir == null) {
@@ -26,7 +35,8 @@ public class DirectoryTree {
 		
 		return dir;
 	}
-	public int closeDirectory(Path path){
+	
+	public int closeDirectory(String path) {
 		Directory dir = getDirectory(path);
 		
 		if(dir == null) {
