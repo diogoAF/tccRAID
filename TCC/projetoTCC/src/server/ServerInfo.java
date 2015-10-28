@@ -33,8 +33,12 @@ public class ServerInfo {
 	public void addSize(long size) {
 		this.size += size;
 	}
-	
-	public float usedRate() {
+
+    public void subSize(long size) {
+        this.size -= size;
+    }
+    
+	public float usageRate() {
 		return (float)size/(float)capacity;
 	}
 
@@ -96,7 +100,7 @@ public class ServerInfo {
 	
 	public void print() {
 		System.out.printf("host %s:%d\tused %1.4f(%d/%d)\tlastID %d",
-				hostName, port, usedRate(), size, capacity, lastID);
+				hostName, port, usageRate(), size, capacity, lastID);
 		System.out.println();
 	}
 

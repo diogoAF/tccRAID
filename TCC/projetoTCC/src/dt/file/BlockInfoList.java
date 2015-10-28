@@ -1,10 +1,5 @@
 package dt.file;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -13,59 +8,46 @@ import java.util.Iterator;
 public class BlockInfoList implements Serializable {
 	private ArrayList<BlockInfo> blocks;
 	private long blockSize;
+    private int  raidType;
+	private int  nServers;
 	
-	public BlockInfoList(long blockSize) {
-		this.blockSize = blockSize;
-		this.blocks    = new ArrayList<BlockInfo>(4);
-	}
+	public BlockInfoList(long bSize, int raid, int n) {
+        this.blockSize = bSize;
+        this.raidType  = raid;
+        this.nServers  = n;
+        this.blocks    = new ArrayList<BlockInfo>(nServers);
+    }
 	
 	public void add(BlockInfo blockInfo) {
 		blocks.add(blockInfo);
 	}
 	
-    public BlockInfo  get(int i) {
+    public BlockInfo get(int i) {
         return blocks.get(i);
     }
 
-	public long getBlockSize() {
-		return blockSize;
+	public int getBlockSize() {
+		return (int)blockSize;
 	}
 	
 	public int size() {
         return blocks.size();
     }
     
-	public static byte[] toBytes(BlockInfoList entries) {
-		try{
-			ByteArrayOutputStream bos = new ByteArrayOutputStream();
-	        ObjectOutputStream    oos = new ObjectOutputStream(bos);
-			
-	        oos.writeObject(entries);
-	        byte[] bytes = bos.toByteArray(); 
-	        oos.close();
-	        bos.close();
-	        return bytes;
-		} catch(IOException e) {
-			return null;	
-		}
+	public int getRaidType() {
+	    return raidType;
 	}
-	
-	public static BlockInfoList toBlockList(byte[] bytes) {
-		try {
-			ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
-			ObjectInputStream    ois = new ObjectInputStream(bis);
-			
-			BlockInfoList entries = (BlockInfoList)ois.readObject();
-			return entries;
-		} catch (ClassNotFoundException | IOException e) {
-			return null;
-		}
-	}
-	
+
+    public int getNServers() {
+        return nServers;
+    }
+    
 	public void print() {
-		Iterator<BlockInfo> ite = blocks.iterator();
-		
-		System.out.println("Block size: "+blockSize);
+        System.out.println("Block size: "+blockSize);
+        System.out.println("RAID type:  "+raidType);
+        System.out.println("Number of servers:  "+nServers);
+
+        Iterator<BlockInfo> ite = blocks.iterator();
 		while(ite.hasNext()) {
 			BlockInfo info = ite.next();
 			info.print();

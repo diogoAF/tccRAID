@@ -24,26 +24,53 @@ import bftsmart.tom.ServiceReplica;
 import bftsmart.tom.server.defaultservices.DefaultSingleRecoverable;
 
 public class ServerMeta extends DefaultSingleRecoverable {
+    private int raidType;
+    private int nServers;
+    
 	private DirectoryTree dt;
 	private ServerList    list;
-
+	
 	public ServerMeta(int id){
          new ServiceReplica(id, this, this);
          dt   = new DirectoryTree();
          list = new ServerList(); 
     }
-    
+
+    public ServerMeta(int id, int raid, int n){
+        switch(raid) {
+        case(RaidType.RAID0):
+            // Mesma operacao para RAID1
+        case(RaidType.RAID1):
+            if(n<2) {
+                System.out.println("Number of servers should be at least 2");
+                System.exit(-1);
+            }
+            break;
+        default:
+            System.out.println("Unknown RAID type "+raid);
+            System.exit(-1);
+            break;
+        }
+        
+        this.raidType = raid; 
+        this.nServers = n;
+         
+        this.dt   = new DirectoryTree();
+        this.list = new ServerList(); 
+        
+        new ServiceReplica(id, this, this);
+    }
+        
     @Override
     public byte[] appExecuteOrdered(byte[] command, MessageContext msgCtx) {
-        ByteArrayInputStream in = new ByteArrayInputStream(command);
-		
-		byte[] resultBytes = null;
-
-        System.out.println("");
+        System.out.println();
         System.out.println("executeOrdered");
 
+        byte[] resultBytes = null;
+
 		try {
-			ObjectInputStream ois = new ObjectInputStream(in);
+	        ByteArrayInputStream in  = new ByteArrayInputStream(command);
+			ObjectInputStream    ois = new ObjectInputStream(in);
 			
 			int reqType = ois.readInt();
 
@@ -107,15 +134,14 @@ public class ServerMeta extends DefaultSingleRecoverable {
 
     @Override
     public byte[] executeUnordered(byte[] command, MessageContext msgCtx) {
-        ByteArrayInputStream in = new ByteArrayInputStream(command);
-        
-        byte[] resultBytes = null;
-
-        System.out.println("");
+        System.out.println();
         System.out.println("executeUnordered");
 
+        byte[] resultBytes = null;
+
         try {
-            ObjectInputStream ois = new ObjectInputStream(in);
+            ByteArrayInputStream in  = new ByteArrayInputStream(command);
+            ObjectInputStream    ois = new ObjectInputStream(in);
             
             int reqType = ois.readInt();
 
@@ -162,14 +188,14 @@ public class ServerMeta extends DefaultSingleRecoverable {
         DirEntries entries;
         if(currDir == null) {
             entries = null;
-            result = ResultType.FAILURE;
+            result  = ResultType.FAILURE;
         } else {
             entries = currDir.getDirEntries();
-            result = ResultType.SUCCESS;
+            result  = ResultType.SUCCESS;
         }
         
         if(result == ResultType.SUCCESS) {
-            System.out.println("open root success");
+            System.out.println("open root done");
         } else {
             System.out.println("open root failed");
         }
@@ -462,8 +488,22 @@ public class ServerMeta extends DefaultSingleRecoverable {
 
         Directory currDir = dt.openDirectory(currPath, accTime);
 		int       result  = -1;
-		long      bSize   = (long) Math.ceil((double)metadata.size()/3.0D);
-		BlockInfoList bList   = null;
+		long      bSize   = 0;
+		
+		BlockInfoList bList = null;
+		
+		switch(raidType) {
+        case(RaidType.RAID0):
+            bSize = (long) Math.ceil((double)metadata.size()/(double)(nServers));
+            break;
+        case(RaidType.RAID1):
+            bSize = metadata.size();
+            break;
+        default:
+            System.out.println("Unknown RAID type");
+            System.exit(-1);
+            break;
+        }
 		
 		try{
 			if(currDir == null) {
@@ -472,10 +512,10 @@ public class ServerMeta extends DefaultSingleRecoverable {
 			} else if(currDir.existFile(tgtName)) {
 			    result = ResultType.FILEALREADYEXISTS;
 			} else {
-			    list.nexts();
+			    list.nexts(nServers);
 			    
-	            bList = new BlockInfoList(bSize);
-	            for(int i=0; i<4; i++) {
+	            bList = new BlockInfoList(bSize, raidType, nServers);
+	            for(int i=0; i<nServers; i++) {
 	                ServerInfo info = list.get(i);
 	                
 	                info.addSize(bSize);
@@ -486,12 +526,13 @@ public class ServerMeta extends DefaultSingleRecoverable {
                 result = ResultType.SUCCESS;
 			}
 		} catch(IndexOutOfBoundsException e) {
-			System.out.println("number of data servers is less than 4");
+			System.out.println("number of data servers is not enough: "+nServers+" servers");
 			result = ResultType.SERVERFAULT;
 		}
 		
 		if(result == ResultType.SUCCESS) {
 			dt.print();
+			list.print();
 		} else {
 			System.out.println("create file failed");
 		}
@@ -534,13 +575,23 @@ public class ServerMeta extends DefaultSingleRecoverable {
             } else {   
                 currDir.removeFile(tgtName, accTime);
                 bList = target.getBlockList();
-                result = ResultType.SUCCESS;
                 
+                int  n    = bList.getNServers();
+                long size = bList.getBlockSize();
+                for(int i=0;i<n;i++) {
+                    BlockInfo  bInfo = bList.get(i);
+                    ServerInfo sInfo = list.get(bInfo.getHostName(), bInfo.getPort());
+                    
+                    sInfo.subSize(size);
+                }
+                
+                result = ResultType.SUCCESS;
             }
         }
 		
 		if(result == ResultType.SUCCESS) {
 			dt.print();
+            list.print();
 		} else {
 			System.out.println("delete file failed");
 		}

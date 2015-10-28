@@ -21,8 +21,6 @@ public class ClientConsole {
         
     	cc.run();
     	
-    	//cc.test();
-
 		c.exit();
 		System.out.println("Programa terminado");
 		System.exit(0);
@@ -45,9 +43,6 @@ public class ClientConsole {
 		    System.out.println(String.format("%1$3d", c.getCurrDir().dirCount()) +" diretorios");
 		    System.out.println(String.format("%1$3d", c.getCurrDir().fileCount())+" arquivos");
 
-			System.out.println();
-		    System.out.println("Escolha a opcao desejada");
-		    
 		    System.out.println(String.format("%1$2d", Option.CREATEDIR) +": Criar diretorio");
 		    System.out.println(String.format("%1$2d", Option.DELETEDIR) +": Deletar diretorio");
 		    System.out.println(String.format("%1$2d", Option.RENAMEDIR) +": Renomear diretorio");
@@ -63,8 +58,11 @@ public class ClientConsole {
 		    
 		    System.out.println();
 		    System.out.println(Option.EXIT+": Terminar");
-		    
-		    System.out.print(">");
+
+            System.out.println();
+            System.out.println("Escolha a opcao desejada");
+            
+		    //System.out.print(">");
 		    
 			int option;
 			try {
@@ -128,18 +126,18 @@ public class ClientConsole {
     				System.out.println("ERRO: opcao invalida");
     				break;
     			}
+
+                System.out.println();
+
+                Thread.sleep(500);
     		} catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
                 System.exit(-1);
-            }
-            
-			System.out.println();
-			try {
-				Thread.sleep(500);
-			} catch (InterruptedException e) {
+            } catch (InterruptedException e) {
 				e.printStackTrace();
 	            System.exit(-1);
 			}
+            
         } while(!exit);
 		
 		sc.close();
@@ -342,7 +340,7 @@ public class ClientConsole {
 			break;
 			
 		case ResultType.FILENOTEXISTS:
-			System.out.println("arquivo nao existe");
+			System.out.println("arquivo nao encontrado");
 			break;
 
         case ResultType.FILELOCKED:
@@ -350,11 +348,11 @@ public class ClientConsole {
             break;
 
 		case ResultType.DIRALREADYEXISTS:
-			System.out.println("diretoroio ja existe");
+			System.out.println("diretorio ja existe");
 			break;
 			
 		case ResultType.DIRNOTEXISTS:
-			System.out.println("diretorio nao existe");
+			System.out.println("diretorio nao encontrado");
 			break;
 
 		case ResultType.DIRLOCKED:
@@ -366,7 +364,7 @@ public class ClientConsole {
             break;
             
         case ResultType.WRONGINDEX:
-            System.out.println("o indice esta errado");
+            System.out.println("indice esta errado");
             break;
             
 		case ResultType.FAILURE:

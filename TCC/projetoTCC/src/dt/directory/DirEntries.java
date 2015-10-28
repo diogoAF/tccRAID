@@ -1,10 +1,5 @@
 package dt.directory;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -42,33 +37,6 @@ public class DirEntries implements Serializable {
 		}
 		for (String names : files) {
 			System.out.println("\t"+names);
-		}
-	}
-	
-	public static byte[] toBytes(DirEntries entries) {
-		try{
-			ByteArrayOutputStream bos = new ByteArrayOutputStream();
-	        ObjectOutputStream    oos = new ObjectOutputStream(bos);
-			
-	        oos.writeObject(entries);
-	        byte[] bytes = bos.toByteArray(); 
-	        oos.close();
-	        bos.close();
-	        return bytes;
-		} catch(IOException e) {
-			return null;	
-		}
-	}
-	
-	public static DirEntries toDirEntries(byte[] bytes) {
-		try {
-			ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
-			ObjectInputStream    ois = new ObjectInputStream(bis);
-			
-			DirEntries entries = (DirEntries)ois.readObject();
-			return entries;
-		} catch (ClassNotFoundException | IOException e) {
-			return null;
 		}
 	}
 }

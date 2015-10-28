@@ -54,7 +54,25 @@ public class ServerList {
 	public int size() {
 		return list.size();
 	}
-	
+
+    public void nexts(int n) throws IndexOutOfBoundsException {
+        
+        int max = list.size();
+        for(int i=0; i<n; i++) {
+            int min = i;
+            for(int j=n ; j<max; j++) {
+                if(list.get(min).usageRate() > list.get(j).usageRate()) {
+                    min = j;
+                }
+            }
+            if(i != min) {
+                ServerInfo temp = list.get(i);
+                list.set(i, list.get(min));
+                list.set(min, temp);
+            }
+        }
+    }
+    
 	public ServerInfo[] nexts() throws IndexOutOfBoundsException {
 		ServerInfo[] nexts = new ServerInfo[4];
 		
@@ -62,7 +80,7 @@ public class ServerList {
 		for(int i = 0; i<4; i++) {
 			int min = i;
 			for(int j = 4 ; j<max; j++) {
-				if(list.get(min).usedRate() > list.get(j).usedRate()) {
+				if(list.get(min).usageRate() > list.get(j).usageRate()) {
 					min = j;
 				}
 			}
