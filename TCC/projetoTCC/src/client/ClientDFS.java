@@ -42,6 +42,13 @@ public class ClientDFS extends Thread{
 	        
     }
     
+    public ClientDFS(int id, boolean test) {
+        proxy = new ServiceProxy(id);
+        lockList = new LockList();
+        
+        this.openRoot();
+    }
+    
     private void openRoot() {
         try {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -365,6 +372,110 @@ public class ClientDFS extends Thread{
     	} catch (NoSuchFileException e) {
     	    return ResultType.NOSUCHFILE;
     	}
+    }
+    
+    public int create(String fileName, String tgtName) throws ClassNotFoundException, IOException  {
+        try {
+            File     file     = new File(fileName);
+            Metadata metadata = new Metadata(file);
+            
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            ObjectOutputStream    oos = new ObjectOutputStream(out);
+            
+            oos.writeInt(RequestType.CREATE);
+            oos.writeObject(currPath.toString());
+            oos.writeObject(tgtName);
+            oos.writeObject(metadata);
+            oos.writeLong(System.currentTimeMillis());
+            oos.flush();
+            
+            byte[]  bytes   = this.proxy.invokeOrdered(out.toByteArray());
+
+            ByteArrayInputStream in  = new ByteArrayInputStream(bytes);
+            ObjectInputStream    ois = new ObjectInputStream(in);
+            
+            int result = ois.readInt();
+            currDir    = (DirEntries)ois.readObject();
+            
+            if(result != ResultType.SUCCESS) {
+                if(result == ResultType.FAILURE) {
+                    currPath = currDir.getPath();
+                }
+                return result;
+            }
+            
+            BlockInfoList bList = (BlockInfoList)ois.readObject();
+            
+            bList.print();
+            
+            int raidType  = bList.getRaidType();
+            int nServers  = bList.getNServers();
+            int blockSize = bList.getBlockSize();
+
+            FileInputStream     fis = new FileInputStream(file);
+            BufferedInputStream bis = new BufferedInputStream(fis);
+            
+            BlockInfo bInfo = null;
+            switch(raidType) {
+            case(RaidType.RAID0):
+                for(int i=0; i<nServers; i++) {
+                    byte [] buffer = new byte[blockSize];
+                    Arrays.fill(buffer, (byte) 0);
+                    
+                    try {
+                        bInfo = bList.get(i);
+                        
+                        int length = bis.read(buffer, 0, blockSize);
+                        System.out.println("read "+length+" bytes");
+                        
+                        Block block = new Block(bInfo.getID(),buffer);
+
+                        ClientServerSocket css = new ClientServerSocket(bInfo);
+                        css.create(block);   
+                    } catch(ConnectException e) {
+                        failure(bInfo);
+                        result = ResultType.FAILURE;
+                        break;
+                    }
+                }
+                break;
+
+            case(RaidType.RAID1):
+                int buffSize = (int)file.length();
+                for(int i=0; i<nServers; i++) {
+                    byte [] buffer = new byte[buffSize];
+                    
+                    try {
+                        bInfo = bList.get(i);
+                        
+                        int length = bis.read(buffer);
+                        System.out.println("read "+length+" bytes");
+                        
+                        Block block = new Block(bInfo.getID(),buffer);
+
+                        ClientServerSocket css = new ClientServerSocket(bInfo);
+                        css.create(block);   
+                    } catch(ConnectException e) {
+                        failure(bInfo);
+                        result = ResultType.FAILURE;
+                        break;
+                    }
+                }
+                break;
+                
+            default:
+                result = ResultType.FAILURE;
+                break;
+                
+            }
+            
+
+            fis.close();
+            
+            return result;
+        } catch (NoSuchFileException e) {
+            return ResultType.NOSUCHFILE;
+        }
     }
     
     public int delete(String tgtName) throws ClassNotFoundException, IOException  {

@@ -42,7 +42,7 @@ public class ClientConsole {
 			c.getCurrDir().list();
 		    System.out.println(String.format("%1$3d", c.getCurrDir().dirCount()) +" diretorios");
 		    System.out.println(String.format("%1$3d", c.getCurrDir().fileCount())+" arquivos");
-
+            System.out.println();
 		    System.out.println(String.format("%1$2d", Option.CREATEDIR) +": Criar diretorio");
 		    System.out.println(String.format("%1$2d", Option.DELETEDIR) +": Deletar diretorio");
 		    System.out.println(String.format("%1$2d", Option.RENAMEDIR) +": Renomear diretorio");
@@ -55,7 +55,6 @@ public class ClientConsole {
 		    System.out.println(String.format("%1$2d", Option.OPEN)      +": Abrir arquivo(leitura)");
 		    System.out.println(String.format("%1$2d", Option.APPEND)    +": Abrir arquivo(escrita)");
 		    System.out.println(String.format("%1$2d", Option.CLOSE)     +": Fechar arquivo");
-		    
 		    System.out.println();
 		    System.out.println(Option.EXIT+": Terminar");
 
@@ -213,12 +212,12 @@ public class ClientConsole {
 	}
 	
 	private void closeDir() throws ClassNotFoundException, IOException {
-			int result = c.closeDir();
-			
-			if(result == ResultType.SUCCESS)
-				System.out.println("Fechando diretorio");
-			else
-				reportError(result);
+		int result = c.closeDir();
+		
+		if(result == ResultType.SUCCESS)
+			System.out.println("Fechando diretorio");
+		else
+			reportError(result);
 	}
 	
 	private void create(Console con) throws ClassNotFoundException, IOException  {
