@@ -5,7 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
-public class ServerConsole {
+public class ServerTest {
     
     public static void main(String[] args) {
         if(args.length < 1) {
@@ -32,7 +32,7 @@ public class ServerConsole {
             }
             String[] strs = str.split(" ");
             
-            new ServerData( Integer.parseInt(args[0]), strs[1], Integer.parseInt(strs[2]), 1000L, true );
+            new ServerData( Integer.parseInt(args[0]), strs[1], Integer.parseInt(strs[2]), 1000L, false );
         
         } catch (IOException e) {
             System.out.println("Erro");

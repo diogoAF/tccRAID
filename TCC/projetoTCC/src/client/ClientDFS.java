@@ -229,7 +229,7 @@ public class ClientDFS extends Thread{
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ObjectOutputStream    oos = new ObjectOutputStream(out);
         
-        System.out.println("Nao foi possivel conectar com um dos servidores de dado");
+        //System.out.println("Nao foi possivel conectar com um dos servidores de dado");
         
         
         oos.writeInt(RequestType.FAILURE);
@@ -252,7 +252,7 @@ public class ClientDFS extends Thread{
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ObjectOutputStream    oos = new ObjectOutputStream(out);
         
-        System.out.println("Nao foi possivel conectar com um dos servidores de dado");
+        //System.out.println("Nao foi possivel conectar com um dos servidores de dado");
         
         
         oos.writeInt(RequestType.FAILURE);
@@ -269,115 +269,13 @@ public class ClientDFS extends Thread{
         currPath = currDir.getPath();
     }
     
-    public int create(String fileName) throws ClassNotFoundException, IOException  {
-    	try {
-    		File     file     = new File(fileName);
-        	Metadata metadata = new Metadata(file);
-        	String   tgtName  = file.getName();
-        	
-        	ByteArrayOutputStream out = new ByteArrayOutputStream();
-    		ObjectOutputStream    oos = new ObjectOutputStream(out);
-    		
-    		oos.writeInt(RequestType.CREATE);
-    		oos.writeObject(currPath.toString());
-            oos.writeObject(tgtName);
-    		oos.writeObject(metadata);
-    		oos.writeLong(System.currentTimeMillis());
-    		oos.flush();
-    		
-    		byte[]  bytes   = this.proxy.invokeOrdered(out.toByteArray());
-
-            ByteArrayInputStream in  = new ByteArrayInputStream(bytes);
-            ObjectInputStream    ois = new ObjectInputStream(in);
-            
-            int result = ois.readInt();
-            currDir    = (DirEntries)ois.readObject();
-            
-        	if(result != ResultType.SUCCESS) {
-                if(result == ResultType.FAILURE) {
-                    currPath = currDir.getPath();
-                }
-        		return result;
-        	}
-            
-            BlockInfoList bList = (BlockInfoList)ois.readObject();
-        	
-        	bList.print();
-        	
-        	int raidType  = bList.getRaidType();
-        	int nServers  = bList.getNServers();
-            int blockSize = bList.getBlockSize();
-
-            FileInputStream     fis = new FileInputStream(file);
-            BufferedInputStream bis = new BufferedInputStream(fis);
-            
-            BlockInfo bInfo = null;
-            switch(raidType) {
-            case(RaidType.RAID0):
-                for(int i=0; i<nServers; i++) {
-                    byte [] buffer = new byte[blockSize];
-                    Arrays.fill(buffer, (byte) 0);
-                    
-                    try {
-                        bInfo = bList.get(i);
-                        
-                        int length = bis.read(buffer, 0, blockSize);
-                        System.out.println("read "+length+" bytes");
-                        
-                        Block block = new Block(bInfo.getID(),buffer);
-
-                        ClientServerSocket css = new ClientServerSocket(bInfo);
-                        css.create(block);   
-                    } catch(ConnectException e) {
-                        failure(bInfo);
-                        result = ResultType.FAILURE;
-                        break;
-                    }
-                }
-                break;
-
-            case(RaidType.RAID1):
-                int buffSize = (int)file.length();
-                for(int i=0; i<nServers; i++) {
-                    byte [] buffer = new byte[buffSize];
-                    
-                    try {
-                        bInfo = bList.get(i);
-                        
-                        int length = bis.read(buffer);
-                        System.out.println("read "+length+" bytes");
-                        
-                        Block block = new Block(bInfo.getID(),buffer);
-
-                        ClientServerSocket css = new ClientServerSocket(bInfo);
-                        css.create(block);   
-                    } catch(ConnectException e) {
-                        failure(bInfo);
-                        result = ResultType.FAILURE;
-                        break;
-                    }
-                }
-                break;
-                
-            default:
-                result = ResultType.FAILURE;
-                break;
-                
-            }
-    	    
-
-            fis.close();
-            
-            return result;
-    	} catch (NoSuchFileException e) {
-    	    return ResultType.NOSUCHFILE;
-    	}
-    }
-    
     public int create(String fileName, String tgtName) throws ClassNotFoundException, IOException  {
         try {
             File     file     = new File(fileName);
             Metadata metadata = new Metadata(file);
+            
+            if(tgtName == null)
+                tgtName  = file.getName();
             
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             ObjectOutputStream    oos = new ObjectOutputStream(out);
@@ -426,7 +324,7 @@ public class ClientDFS extends Thread{
                         bInfo = bList.get(i);
                         
                         int length = bis.read(buffer, 0, blockSize);
-                        System.out.println("read "+length+" bytes");
+                        //System.out.println("read "+length+" bytes");
                         
                         Block block = new Block(bInfo.getID(),buffer);
 
@@ -449,7 +347,7 @@ public class ClientDFS extends Thread{
                         bInfo = bList.get(i);
                         
                         int length = bis.read(buffer);
-                        System.out.println("read "+length+" bytes");
+                        //System.out.println("read "+length+" bytes");
                         
                         Block block = new Block(bInfo.getID(),buffer);
 
@@ -460,6 +358,45 @@ public class ClientDFS extends Thread{
                         result = ResultType.FAILURE;
                         break;
                     }
+                }
+                break;
+                
+            case(RaidType.RAID5):
+                byte [] parityBlock = new byte[blockSize];
+                Arrays.fill(parityBlock, (byte) 0);
+                
+                for(int i=0; i<nServers-1; i++) {
+                    byte [] buffer = new byte[blockSize];
+                    Arrays.fill(buffer, (byte) 0);
+                    
+                    try {
+                        bInfo = bList.get(i);
+                        
+                        int length = bis.read(buffer, 0, blockSize);
+                        //System.out.println("read "+length+" bytes");
+                        
+                        Block block = new Block(bInfo.getID(),buffer);
+
+                        ClientServerSocket css = new ClientServerSocket(bInfo);
+                        css.create(block);  
+                        
+                        for (int j = 0; j<blockSize; j++)
+                            parityBlock[j] ^= buffer[j];
+                    } catch(ConnectException e) {
+                        failure(bInfo);
+                        result = ResultType.FAILURE;
+                        break;
+                    }
+                }
+                try {
+                    bInfo = bList.get(nServers-1);
+                    Block block = new Block(bInfo.getID(),parityBlock);
+                    
+                    ClientServerSocket css = new ClientServerSocket(bInfo);
+                    css.create(block); 
+                } catch(ConnectException e) {
+                    failure(bInfo);
+                    result = ResultType.FAILURE;
                 }
                 break;
                 
@@ -581,11 +518,13 @@ public class ClientDFS extends Thread{
         }
 
         BlockInfoList bList = (BlockInfoList)ois.readObject();
+        long fileSize       = ois.readLong();
         
         bList.print();
 
         int raidType  = bList.getRaidType();
         int nServers  = bList.getNServers();
+        int bSize     = bList.getBlockSize();
         
         File file = new File("temp");
         if(!file.exists()) {
@@ -596,21 +535,24 @@ public class ClientDFS extends Thread{
         FileOutputStream     fos = new FileOutputStream(file);
         BufferedOutputStream bos = new BufferedOutputStream(fos);
         
-        BlockInfo bInfo = null;
+        BlockInfo bInfo        = null;
+        int       failureCount = 0;
+        
         switch(raidType) {
         case(RaidType.RAID0):
             for(int i=0; i<nServers; i++) {
                 try {
                     bInfo = bList.get(i);
 
-                    Block block = new Block(bInfo.getID(), null);
-                    
-                    ClientServerSocket css = new ClientServerSocket(bInfo);
+                    ClientServerSocket css   = new ClientServerSocket(bInfo);
 
-                    byte[] fileBlock = css.open(block); 
-                    
-                    bos.write(fileBlock);
-                    
+                    byte[] fileBlock = css.open(new Block(bInfo.getID(), null)); 
+                    if(fileSize < bSize)
+                        bos.write(fileBlock, 0, (int) fileSize);
+                    else {
+                        bos.write(fileBlock);
+                        fileSize -= bSize;
+                    }
                 } catch(ConnectException e) {
                     failure(bInfo);
                     file.delete();
@@ -621,19 +563,14 @@ public class ClientDFS extends Thread{
             break;
 
         case(RaidType.RAID1):
-            int failureCount = 0;
             for(int i=0; i<nServers; ) {
                 try {
                     bInfo = bList.get(i);
 
-                    Block block = new Block(bInfo.getID(), null);
-                    
                     ClientServerSocket css = new ClientServerSocket(bInfo);
 
-                    byte[] fileBlock = css.open(block); 
-
+                    byte[] fileBlock = css.open(new Block(bInfo.getID(), null)); 
                     bos.write(fileBlock);
-                    break;
                 } catch(ConnectException e) {
                     failureCount++;
                     failure(bInfo);
@@ -645,6 +582,56 @@ public class ClientDFS extends Thread{
                     i++;
                 }
             }
+            break;
+            
+        case(RaidType.RAID5):
+            int failureIndex = -1;
+            byte[] buffer = new byte[nServers*bSize];
+            for(int i=0; i<nServers-1; i++) {
+                try {
+                    bInfo  = bList.get(i);
+    
+                    ClientServerSocket css   = new ClientServerSocket(bInfo);
+    
+                    byte[] fileBlock = css.open(new Block(bInfo.getID(), null)); 
+                    blockConcat(buffer, fileBlock, i*bSize, bSize);
+    
+                } catch(ConnectException e) {
+                    failureCount++;
+                    failureIndex = i;
+                    failure(bInfo);
+                    if(failureCount>1) {
+                        file.delete();
+                        result = ResultType.FAILURE;
+                        break;
+                    }
+                }
+            }
+            
+            if(failureCount > 0) {
+                try {
+                    bInfo = bList.get(nServers-1);
+                    
+                    ClientServerSocket css   = new ClientServerSocket(bInfo);
+                    
+                    byte[] fileBlock = css.open(new Block(bInfo.getID(), null));
+                    blockConcat(buffer, fileBlock, failureIndex*bSize, bSize);
+                    for(int i=0; i<nServers; i++) {
+                        if(i != failureIndex){
+                            for(int j=0; j<bSize; j++) {
+                                buffer[failureIndex*bSize+j] ^= buffer[i*bSize+j];                            }
+                        }
+                    }
+                } catch(ConnectException e) {
+                    failure(bInfo);
+                    if(failureCount>1) {
+                        file.delete();
+                        result = ResultType.FAILURE;
+                        break;
+                    }
+                }
+            }
+            bos.write(buffer, 0, (int) fileSize);
             break;
             
         default:
@@ -688,11 +675,13 @@ public class ClientDFS extends Thread{
         }
 
         BlockInfoList bList = (BlockInfoList)ois.readObject();
+        long fileSize       = ois.readLong();
         
         bList.print();
 
         int raidType  = bList.getRaidType();
         int nServers  = bList.getNServers();
+        int bSize     = bList.getBlockSize();
         
         File file = new File("temp");
         if(!file.exists()) {
@@ -703,21 +692,24 @@ public class ClientDFS extends Thread{
         FileOutputStream     fos = new FileOutputStream(file);
         BufferedOutputStream bos = new BufferedOutputStream(fos);
         
-        BlockInfo bInfo = null;
+        BlockInfo bInfo        = null;
+        int       failureCount = 0;
+        
         switch(raidType) {
         case(RaidType.RAID0):
             for(int i=0; i<nServers; i++) {
                 try {
                     bInfo = bList.get(i);
 
-                    Block block = new Block(bInfo.getID(), null);
-                    
-                    ClientServerSocket css = new ClientServerSocket(bInfo);
+                    ClientServerSocket css   = new ClientServerSocket(bInfo);
 
-                    byte[] fileBlock = css.open(block); 
-                    
-                    bos.write(fileBlock);
-                    
+                    byte[] fileBlock = css.open(new Block(bInfo.getID(), null)); 
+                    if(fileSize < bSize)
+                        bos.write(fileBlock, 0, (int) fileSize);
+                    else {
+                        bos.write(fileBlock);
+                        fileSize -= bSize;
+                    }
                 } catch(ConnectException e) {
                     failure(bInfo);
                     file.delete();
@@ -728,19 +720,14 @@ public class ClientDFS extends Thread{
             break;
 
         case(RaidType.RAID1):
-            int failureCount = 0;
             for(int i=0; i<nServers; ) {
                 try {
                     bInfo = bList.get(i);
 
-                    Block block = new Block(bInfo.getID(), null);
-                    
                     ClientServerSocket css = new ClientServerSocket(bInfo);
 
-                    byte[] fileBlock = css.open(block); 
-
+                    byte[] fileBlock = css.open(new Block(bInfo.getID(), null)); 
                     bos.write(fileBlock);
-                    break;
                 } catch(ConnectException e) {
                     failureCount++;
                     failure(bInfo);
@@ -752,6 +739,56 @@ public class ClientDFS extends Thread{
                     i++;
                 }
             }
+            break;
+            
+        case(RaidType.RAID5):
+            int failureIndex = -1;
+            byte[] buffer = new byte[nServers*bSize];
+            for(int i=0; i<nServers-1; i++) {
+                try {
+                    bInfo  = bList.get(i);
+    
+                    ClientServerSocket css   = new ClientServerSocket(bInfo);
+    
+                    byte[] fileBlock = css.open(new Block(bInfo.getID(), null)); 
+                    blockConcat(buffer, fileBlock, i*bSize, bSize);
+    
+                } catch(ConnectException e) {
+                    failureCount++;
+                    failureIndex = i;
+                    failure(bInfo);
+                    if(failureCount>1) {
+                        file.delete();
+                        result = ResultType.FAILURE;
+                        break;
+                    }
+                }
+            }
+            
+            if(failureCount > 0) {
+                try {
+                    bInfo = bList.get(nServers-1);
+                    
+                    ClientServerSocket css   = new ClientServerSocket(bInfo);
+                    
+                    byte[] fileBlock = css.open(new Block(bInfo.getID(), null));
+                    blockConcat(buffer, fileBlock, failureIndex*bSize, bSize);
+                    for(int i=0; i<nServers; i++) {
+                        if(i != failureIndex){
+                            for(int j=0; j<bSize; j++) {
+                                buffer[failureIndex*bSize+j] ^= buffer[i*bSize+j];                            }
+                        }
+                    }
+                } catch(ConnectException e) {
+                    failure(bInfo);
+                    if(failureCount>1) {
+                        file.delete();
+                        result = ResultType.FAILURE;
+                        break;
+                    }
+                }
+            }
+            bos.write(buffer, 0, (int) fileSize);
             break;
             
         default:
@@ -850,4 +887,8 @@ public class ClientDFS extends Thread{
         return this.proxy.invokeUnordered(request);
     }
     
+    private void blockConcat(byte[] tgt, byte[] src, int offset, int n) {
+        for(int i=0; i<n; i++)
+            tgt[offset+i] = src[i];
+    }
 }

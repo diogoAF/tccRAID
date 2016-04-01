@@ -1,7 +1,5 @@
 package client;
 
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -81,6 +79,7 @@ public class ClientTest {
         byte data;
         
         public Client() {
+            
         }
         
         public Client(long[] values, int index, int opsType, int numberOfOps, int interval) {

@@ -24,6 +24,8 @@ import bftsmart.tom.ServiceReplica;
 import bftsmart.tom.server.defaultservices.DefaultSingleRecoverable;
 
 public class ServerMeta extends DefaultSingleRecoverable {
+    private boolean verbose;
+    
     private int raidType;
     private int nServers;
     
@@ -36,7 +38,7 @@ public class ServerMeta extends DefaultSingleRecoverable {
          list = new ServerList(); 
     }
 
-    public ServerMeta(int id, int raid, int n){
+    public ServerMeta(int id, int raid, int n, boolean verbose){
         switch(raid) {
         case(RaidType.RAID0):
             // Mesma operacao para RAID1
@@ -46,6 +48,12 @@ public class ServerMeta extends DefaultSingleRecoverable {
                 System.exit(-1);
             }
             break;
+        case(RaidType.RAID5):
+            if(n<4) {
+                System.out.println("Number of servers should be at least 4");
+                System.exit(-1);
+            }
+            break;    
         default:
             System.out.println("Unknown RAID type "+raid);
             System.exit(-1);
@@ -487,17 +495,20 @@ public class ServerMeta extends DefaultSingleRecoverable {
 		System.out.println(currPath+"/"+tgtName);
 
         Directory currDir = dt.openDirectory(currPath, accTime);
-		int       result  = -1;
-		long      bSize   = 0;
+		int       result      = -1;
+		long      blockSize   = 0;
 		
 		BlockInfoList bList = null;
 		
 		switch(raidType) {
         case(RaidType.RAID0):
-            bSize = (long) Math.ceil((double)metadata.size()/(double)(nServers));
+            blockSize = (long) Math.ceil((double)metadata.size()/(double)(nServers));
             break;
         case(RaidType.RAID1):
-            bSize = metadata.size();
+            blockSize = metadata.size();
+            break;
+        case(RaidType.RAID5):
+            blockSize = (long) Math.ceil((double)metadata.size()/3.0D);
             break;
         default:
             System.out.println("Unknown RAID type");
@@ -514,11 +525,11 @@ public class ServerMeta extends DefaultSingleRecoverable {
 			} else {
 			    list.nexts(nServers);
 			    
-	            bList = new BlockInfoList(bSize, raidType, nServers);
+	            bList = new BlockInfoList(blockSize, raidType, nServers);
 	            for(int i=0; i<nServers; i++) {
 	                ServerInfo info = list.get(i);
 	                
-	                info.addSize(bSize);
+	                info.addSize(blockSize);
 	                bList.add(new BlockInfo(info.getHostName(), info.getPort(), info.getID()));
 	            }
 			    
@@ -663,10 +674,11 @@ public class ServerMeta extends DefaultSingleRecoverable {
         System.out.println("Request for open(read) file: ");
         System.out.println(currPath+"/"+tgtName);
         
-        Directory currDir = dt.openDirectory(currPath, accTime);
-        int       result  = -1;
-        FileDFS   target  = null;
-        BlockInfoList bList   = null;
+        Directory currDir   = dt.openDirectory(currPath, accTime);
+        int       result    = -1;
+        long      fileSize  = 0;
+        FileDFS   target    = null;
+        BlockInfoList bList = null;
 		
         if(currDir == null) {
             currDir = dt.getRoot();
@@ -682,8 +694,8 @@ public class ServerMeta extends DefaultSingleRecoverable {
             } else {
                 target.lockR();
                 bList  = target.getBlockList();
+                fileSize = target.getMetadata().size();
                 result = ResultType.SUCCESS;
-                
             }
         }
 
@@ -693,6 +705,7 @@ public class ServerMeta extends DefaultSingleRecoverable {
         oos.writeInt(result);
         oos.writeObject(currDir.getDirEntries());
         oos.writeObject(bList);
+        oos.writeLong(fileSize);
         oos.flush();
         
         return out.toByteArray();

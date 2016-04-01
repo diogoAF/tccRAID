@@ -22,6 +22,9 @@ import request.RequestType;
 
 
 public class ClientServerSocket extends Thread {
+    private static final int TRIES = 2;
+    private static final int SLEEP = 5;
+    
     public static final int BUFFER_SIZE = 1024*1024;
     
     Socket    clientSocket;
@@ -163,14 +166,14 @@ public class ClientServerSocket extends Thread {
                 return;
             } catch(ConnectException | UnknownHostException e) {
                 try {
-                    Thread.sleep(10*1000);
+                    Thread.sleep(SLEEP*1000);
                 } catch (InterruptedException e1) {
                     e1.printStackTrace();
                     System.exit(-1);
                 }
                 
                 triedCount++;
-                if(triedCount>3) {
+                if(triedCount>TRIES) {
                     System.out.println("O cliente nao conseguiu conectar no servidor");
                     throw new ConnectException();
                 }

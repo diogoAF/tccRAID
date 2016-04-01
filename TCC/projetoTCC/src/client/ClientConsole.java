@@ -40,8 +40,8 @@ public class ClientConsole {
 			System.out.println(c.getCurrPath());
 			System.out.println();
 			c.getCurrDir().list();
-		    System.out.println(String.format("%1$3d", c.getCurrDir().dirCount()) +" diretorios");
-		    System.out.println(String.format("%1$3d", c.getCurrDir().fileCount())+" arquivos");
+		    System.out.println(String.format("%1$3d", c.getCurrDir().dirCount()) +" diretorio(s)");
+		    System.out.println(String.format("%1$3d", c.getCurrDir().fileCount())+" arquivo(s)");
             System.out.println();
 		    System.out.println(String.format("%1$2d", Option.CREATEDIR) +": Criar diretorio");
 		    System.out.println(String.format("%1$2d", Option.DELETEDIR) +": Deletar diretorio");
@@ -223,12 +223,12 @@ public class ClientConsole {
 	private void create(Console con) throws ClassNotFoundException, IOException  {
 		System.out.println();
 		System.out.println("Criar arquivo");
-		String name  = con.readLine("Nome ou local do arquivo:\n>");
+		String srcName  = con.readLine("Nome ou local do arquivo:\n>");
 		
-		if(name.isEmpty())
+		if(srcName.isEmpty())
 			return;
 		
-		int result = c.create(name);
+		int result = c.create(srcName, null);
 		
 		if(result == ResultType.SUCCESS)
 			System.out.println("Arquivo criado");

@@ -6,6 +6,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class ServerData extends Thread{
+    private boolean verbose;
+    
     private String hostName;
     private int    port;
     private long   capacity;
@@ -13,10 +15,11 @@ public class ServerData extends Thread{
     @SuppressWarnings("unused")
     private MetadataModule metaModule;
 
-    public ServerData(int id, String host, int port, long cap) {
+    public ServerData(int id, String host, int port, long cap, boolean ver) {
         this.hostName = host;
         this.port     = port;
         this.capacity = cap;
+        this.verbose  = ver;
         
         this.metaModule = new MetadataModule(id, this.hostName, this.port, this.capacity);
         
@@ -31,7 +34,7 @@ public class ServerData extends Thread{
             serverSocket = new ServerSocket(this.port);
             
             while(true) {
-                System.out.println("Aguardando cliente...");
+                //System.out.println("Aguardando cliente...");
                 Socket clientSocket = serverSocket.accept();
                 
                 Operation op = new Operation(clientSocket, dirName);
