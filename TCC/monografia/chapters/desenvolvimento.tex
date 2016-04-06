@@ -1,29 +1,6 @@
-	\section{Metadados} 
-	
-	Os sistemas de arquivos, como ambientes propícios para a recuperação de informações, têm na utilização de metadados a padronização das formas de representação e a possibilidade de garantia de interoperabilidade entre sistemas, favorecendo a integridade e a acessibilidade dos recursos informacionais de forma eficiente pelo usuário final. Os metadados são "dodos de dodos", ou seja, as informações essenciais sobre os arquivos armazenados, indispensáveis para fazer o gerenciamento de arquivos, indicando as características inerentes deles. A Tabela~\ref{tab:metadado} mostra os atributos encontrados em um metadado.
-	
-	\capstartfalse
-	\begin{table} [htb]
-		\caption{Elementos de metadadso}
-		\centering
-		\begin{tabular}{|l|l|} \hline
-			\textbf{Informação} & \textbf{Descrição} \\ \hline
-			
-			Nome do arquivo		& O nome do arquivo, incluindo o caminho do diretório.\\ \hline
-			Proprietário		& O identificador de usuário que é o dono do arquivo.\\ \hline
-			Data de criação     & Data que o arquivo foi criado.\\ \hline
-			Data de acesso		& Data de último acesso do arquivo. \\ \hline
-			Data de atualização	& Data de última atualização feito sobre o arquivo. \\ \hline
-			Tamanho				& Espaço ocupado pelo arquivo ao longo do disco. \\ \hline
-			Tipo de arquivo		& indica se ele é uma pasta ou um arquivo normal.  \\ \hline
-			Modo de acesso		& indica a permissão para acessar o arquivo. \\ \hline
-			Bloqueio			& indica se o arquivo está bloqueado para acesso. \\ \hline
-			Lista de servidores	& lista de todos os servidores que armazena partes do arquivo. \\ \hline
-			
-		\end{tabular}
-		\label{tab:metadado}
-	\end{table}
-	\capstarttrue
+\section{Resumo}
+Este capítulo é onde começamos a abordar nosso modelo proposto de um sistema de arquivos distribuídos tolerante a falhas. Iniciamos com um visão geral da arquitetura do sistema apresentando detalhes do serviço de metadados, serviço de armazenamento,, servidor e do cliente. Em seguida é abordado as operações realizadas pelo sistema de arquivos distribuído proposto, tais operações estão divididas entre operações do tipo Cliente-Servidor e Servidor-Servidor. Seguindo com o capítulo, é explanado como foi realizada a implementação do sistema de arquivos distribuído utilizando conceitos de RAID proposto, focando especialmente nos serviços de metadados e de armazenamento, além dos clientes. Enfim, o capítulo finaliza apresentado o planejamento e execução dos experimentos seguido da análise dos dados obtidos.
+
 
 	\section{Arquitetura do sistema}
 	
@@ -44,7 +21,9 @@
 		\end{center}
 	\end{figure}
 	
+	\subsection{Serviço de Metadados}
 	
+	\subsection{Serviço de Armazenamento}
 	
 	\subsection{Servidor}
 	
@@ -100,7 +79,7 @@
 		\end{center}
 	\end{figure}
 	
-	\section{Operações}
+	\section{Operações no Sistema de Arquivos Distribuídos}
 	
 	Nesta seção serão apresentadas as operações básicas que o SAD executa. Estas operações podem ser divididos em dois grupos dependendo dos entidades envolvidos na operação executada. Um deles é entre cliente e servidor, onde consiste das operações que podem ser encontradas em sistemas de arquivos em geral, focalizadas em fornecer um serviço de armazenamento de dados. Outro tipo é as operações que ocorrem entre servidores, voltadas para gerenciamento do serviço. Este tipo de operação não pode ser percebido por usuário, mantendo algumas transparências.
 	
@@ -150,6 +129,19 @@
 	
 	Transferência de arquivos entre \textit{data nodes}.
 	
+	
+	\section{Implementação}
+	
+	\subsection{Serviço de Metadados}
+	
+	\subsection{Serviço de Armazenamento}
+	
+	\subsection{Cliente}
+	
+	
+	\section{Experimentos}
+	
+	\section{Conclusões do Capítulo}
 	
 	
 	

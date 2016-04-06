@@ -44,13 +44,15 @@ public class ServerMeta extends DefaultSingleRecoverable {
             // Mesma operacao para RAID1
         case(RaidType.RAID1):
             if(n<2) {
-                System.out.println("Number of servers should be at least 2");
+                if(verbose)
+                    System.out.println("Number of servers should be at least 2");
                 System.exit(-1);
             }
             break;
         case(RaidType.RAID5):
             if(n<4) {
-                System.out.println("Number of servers should be at least 4");
+                if(verbose)
+                    System.out.println("Number of servers should be at least 4");
                 System.exit(-1);
             }
             break;    
@@ -64,15 +66,18 @@ public class ServerMeta extends DefaultSingleRecoverable {
         this.nServers = n;
          
         this.dt   = new DirectoryTree();
-        this.list = new ServerList(); 
+        this.list = new ServerList();
+        this.verbose = verbose;
         
         new ServiceReplica(id, this, this);
     }
         
     @Override
     public byte[] appExecuteOrdered(byte[] command, MessageContext msgCtx) {
-        System.out.println();
-        System.out.println("executeOrdered");
+        if(verbose){
+            System.out.println();
+            System.out.println("executeOrdered");
+        }
 
         byte[] resultBytes = null;
 
@@ -128,7 +133,8 @@ public class ServerMeta extends DefaultSingleRecoverable {
                     break;
 
 				default:
-					System.out.println("Unknown request number " + reqType);
+                                        if(verbose)
+                                            System.out.println("Unknown request number " + reqType);
 					break;
 			}
 			
@@ -142,8 +148,10 @@ public class ServerMeta extends DefaultSingleRecoverable {
 
     @Override
     public byte[] executeUnordered(byte[] command, MessageContext msgCtx) {
-        System.out.println();
-        System.out.println("executeUnordered");
+        if(verbose){
+            System.out.println();
+            System.out.println("executeUnordered");
+        }
 
         byte[] resultBytes = null;
 
@@ -175,7 +183,8 @@ public class ServerMeta extends DefaultSingleRecoverable {
                     break;
 
                 default:
-                    System.out.println("Unknown request number " + reqType);
+                    if(verbose)
+                        System.out.println("Unknown request number " + reqType);
                     break;
             }
             
@@ -188,7 +197,8 @@ public class ServerMeta extends DefaultSingleRecoverable {
     }
 
     private byte[] openRoot() throws IOException {
-        System.out.println("Request for open root directory");
+        if(verbose)
+            System.out.println("Request for open root directory");
         
         Directory  currDir = dt.getRoot();
         int        result  = -1;
@@ -201,11 +211,12 @@ public class ServerMeta extends DefaultSingleRecoverable {
             entries = currDir.getDirEntries();
             result  = ResultType.SUCCESS;
         }
-        
-        if(result == ResultType.SUCCESS) {
-            System.out.println("open root done");
-        } else {
-            System.out.println("open root failed");
+        if(verbose){
+            if(result == ResultType.SUCCESS) {
+                    System.out.println("open root done");
+            } else {
+                    System.out.println("open root failed");
+            }
         }
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -224,8 +235,10 @@ public class ServerMeta extends DefaultSingleRecoverable {
         Metadata metadata = (Metadata)ois.readObject();
         long     accTime  = ois.readLong();
 
-        System.out.println("Request for create directory: ");
-        System.out.println(currPath+"/"+tgtName);
+        if(verbose){
+            System.out.println("Request for create directory: ");
+            System.out.println(currPath+"/"+tgtName);
+        }
         
         Directory currDir = dt.openDirectory(currPath, accTime);
         int       result  = -1;
@@ -239,12 +252,13 @@ public class ServerMeta extends DefaultSingleRecoverable {
             currDir.setDirectory(new Directory(tgtName, currDir, metadata), accTime);
             result = ResultType.SUCCESS;
         }
-      
+            if(verbose){
 		if(result == ResultType.SUCCESS) {
-			dt.print();
+                        dt.print();
 		} else {
-			System.out.println("create directory failed");
+                        System.out.println("create directory failed");
 		}
+            }
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ObjectOutputStream    oos = new ObjectOutputStream(out);
@@ -261,8 +275,10 @@ public class ServerMeta extends DefaultSingleRecoverable {
         String   tgtName  = (String)ois.readObject();
         long     accTime  = ois.readLong();
 
-        System.out.println("Request for delete directory: ");
-        System.out.println(currPath+"/"+tgtName);
+        if(verbose){
+            System.out.println("Request for delete directory: ");
+            System.out.println(currPath+"/"+tgtName);
+        }
         
         Directory currDir = dt.openDirectory(currPath, accTime);
         int       result  = -1;
@@ -284,12 +300,13 @@ public class ServerMeta extends DefaultSingleRecoverable {
                 result = ResultType.SUCCESS;
             }
         }
-      
+            if(verbose){
 		if(result == ResultType.SUCCESS) {
-			dt.print();
+                        dt.print();
 		} else {
 			System.out.println("delete directory failed");
 		}
+            }
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ObjectOutputStream    oos = new ObjectOutputStream(out);
@@ -307,8 +324,10 @@ public class ServerMeta extends DefaultSingleRecoverable {
         String   newName  = (String)ois.readObject();
         long     accTime  = ois.readLong();
 
-        System.out.println("Request for rename directory: ");
-        System.out.println(currPath+"/"+tgtName+" to "+newName);
+        if(verbose){
+            System.out.println("Request for rename directory: ");
+            System.out.println(currPath+"/"+tgtName+" to "+newName);
+        }
         
         Directory currDir = dt.openDirectory(currPath, accTime);
         int       result  = -1;
@@ -331,12 +350,13 @@ public class ServerMeta extends DefaultSingleRecoverable {
             currDir.renameDirectory(tgtName, newName, accTime);
             result = ResultType.SUCCESS;
         }
-
+            if(verbose){
 		if(result == ResultType.SUCCESS) {
-			dt.print();
+                        dt.print();
 		} else {
 			System.out.println("rename directory failed");
 		}
+            }
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ObjectOutputStream    oos = new ObjectOutputStream(out);
@@ -353,8 +373,10 @@ public class ServerMeta extends DefaultSingleRecoverable {
         String   tgtName  = (String)ois.readObject();
         long     accTime  = ois.readLong();
 
-		System.out.println("Request for open directory: ");
-        System.out.println(currPath+"/"+tgtName);
+        if(verbose){
+            System.out.println("Request for open directory: ");
+            System.out.println(currPath+"/"+tgtName);
+        }
 
         Directory currDir = dt.openDirectory(currPath, accTime);
         int       result  = -1;
@@ -369,12 +391,13 @@ public class ServerMeta extends DefaultSingleRecoverable {
             currDir.lockR();
             result  = ResultType.SUCCESS;
         }
-        
+            if(verbose){
 		if(result == ResultType.SUCCESS) {
-            System.out.println("open directory done");
+                    System.out.println("open directory done");
 		} else {
 			System.out.println("open directory failed");
 		}
+            }
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ObjectOutputStream    oos = new ObjectOutputStream(out);
@@ -389,8 +412,10 @@ public class ServerMeta extends DefaultSingleRecoverable {
     private byte[] closeDir(ObjectInputStream ois) throws ClassNotFoundException, IOException {
         String currPath = (String)ois.readObject();
     	
-		System.out.println("Request for close directory: ");
-		System.out.println(currPath);
+        if(verbose){
+            System.out.println("Request for close directory: ");
+            System.out.println(currPath);
+        }
 		
 		Directory currDir = dt.getDirectory(currPath);
         int       result  = -1;
@@ -404,11 +429,13 @@ public class ServerMeta extends DefaultSingleRecoverable {
             result  = ResultType.SUCCESS;
         }
         
+        if(verbose){
 		if(result == ResultType.SUCCESS) {
-            System.out.println("close directory done");
+                    System.out.println("close directory done");
 		} else {
 			System.out.println("close directory failed");
 		}
+        }
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ObjectOutputStream    oos = new ObjectOutputStream(out);
@@ -424,8 +451,10 @@ public class ServerMeta extends DefaultSingleRecoverable {
     	String currPath = (String)ois.readObject();
         long   accTime  = ois.readLong();
     	
+        if(verbose){
 		System.out.println("Request for update directory: ");
 		System.out.println(currPath);
+        }
 
 		Directory currDir = dt.openDirectory(currPath, accTime);
 		int       result  = -1;
@@ -436,12 +465,13 @@ public class ServerMeta extends DefaultSingleRecoverable {
 		} else {
 		    result = ResultType.SUCCESS;
 		}
-		
-		if(result == ResultType.SUCCESS) {
-            System.out.println("update directory done");
-		} else {
-			System.out.println("update directory failed");
-		}
+		if(verbose){
+                    if(result == ResultType.SUCCESS) {
+                        System.out.println("update directory done");
+                    } else {
+                            System.out.println("update directory failed");
+                    }
+                }
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ObjectOutputStream    oos = new ObjectOutputStream(out);
@@ -457,15 +487,17 @@ public class ServerMeta extends DefaultSingleRecoverable {
         int       opType = ois.readInt();
         BlockInfo info   = (BlockInfo)ois.readObject();
         
-        System.out.println("Reporting data server error");
+        if(verbose)
+            System.out.println("Reporting data server error");
         
             
         String hostName = info.getHostName();
         int    port     = info.getPort();
         
         list.remove(hostName, port);
-    
-        list.print();
+        
+        if(verbose)
+            list.print();
         
         if(opType == RequestType.CREATE) {
             String currPath = (String)ois.readObject();
@@ -491,8 +523,10 @@ public class ServerMeta extends DefaultSingleRecoverable {
     	Metadata metadata = (Metadata)ois.readObject();
     	long     accTime  = ois.readLong();
     	
+        if(verbose){
 		System.out.println("Request for create file: ");
 		System.out.println(currPath+"/"+tgtName);
+        }
 
         Directory currDir = dt.openDirectory(currPath, accTime);
 		int       result      = -1;
@@ -537,16 +571,19 @@ public class ServerMeta extends DefaultSingleRecoverable {
                 result = ResultType.SUCCESS;
 			}
 		} catch(IndexOutOfBoundsException e) {
-			System.out.println("number of data servers is not enough: "+nServers+" servers");
+                        if(verbose)
+                            System.out.println("number of data servers is not enough: "+nServers+" servers");
 			result = ResultType.SERVERFAULT;
 		}
 		
-		if(result == ResultType.SUCCESS) {
-			dt.print();
-			list.print();
-		} else {
-			System.out.println("create file failed");
-		}
+                if(verbose){
+                    if(result == ResultType.SUCCESS) {
+                            dt.print();
+                            list.print();
+                    } else {
+                            System.out.println("create file failed");
+                    }
+                }
 		
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ObjectOutputStream    oos = new ObjectOutputStream(out);
@@ -564,8 +601,10 @@ public class ServerMeta extends DefaultSingleRecoverable {
         String   tgtName  = (String)ois.readObject();
         long     accTime  = ois.readLong();
     	
-		System.out.println("Request for delete file: ");
-        System.out.println(currPath+"/"+tgtName);
+        if(verbose){
+            System.out.println("Request for delete file: ");
+            System.out.println(currPath+"/"+tgtName);
+        }
 
 		Directory currDir = dt.openDirectory(currPath, accTime);
 		int       result  = -1;
@@ -599,13 +638,14 @@ public class ServerMeta extends DefaultSingleRecoverable {
                 result = ResultType.SUCCESS;
             }
         }
-		
+	    if(verbose){
 		if(result == ResultType.SUCCESS) {
-			dt.print();
-            list.print();
+                    dt.print();
+                    list.print();
 		} else {
 			System.out.println("delete file failed");
 		}
+            }
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ObjectOutputStream    oos = new ObjectOutputStream(out);
@@ -624,8 +664,10 @@ public class ServerMeta extends DefaultSingleRecoverable {
         String   newName  = (String)ois.readObject();
         long     accTime  = ois.readLong();
         
-		System.out.println("Request for rename file: ");
-        System.out.println(currPath+"/"+tgtName+" to " + newName);
+        if(verbose){
+            System.out.println("Request for rename file: ");
+            System.out.println(currPath+"/"+tgtName+" to " + newName);
+        }
 
         Directory currDir = dt.openDirectory(currPath, accTime);
         int       result  = -1;
@@ -649,12 +691,13 @@ public class ServerMeta extends DefaultSingleRecoverable {
                 result = ResultType.SUCCESS;
             }
         }
-		
-		if(result == ResultType.SUCCESS) {
-			dt.print();
-		} else {
-			System.out.println("rename file failed");
-		}
+		if(verbose){
+                    if(result == ResultType.SUCCESS) {
+                            dt.print();
+                    } else {
+                            System.out.println("rename file failed");
+                    }
+                }
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ObjectOutputStream    oos = new ObjectOutputStream(out);
@@ -671,8 +714,10 @@ public class ServerMeta extends DefaultSingleRecoverable {
         String   tgtName  = (String)ois.readObject();
         long     accTime  = ois.readLong();
         
-        System.out.println("Request for open(read) file: ");
-        System.out.println(currPath+"/"+tgtName);
+        if(verbose){
+            System.out.println("Request for open(read) file: ");
+            System.out.println(currPath+"/"+tgtName);
+        }
         
         Directory currDir   = dt.openDirectory(currPath, accTime);
         int       result    = -1;
@@ -716,8 +761,10 @@ public class ServerMeta extends DefaultSingleRecoverable {
         String   tgtName  = (String)ois.readObject();
         long     accTime  = ois.readLong();
         
-        System.out.println("Request for open(write) file: ");
-        System.out.println(currPath+"/"+tgtName);
+        if(verbose){
+            System.out.println("Request for open(write) file: ");
+            System.out.println(currPath+"/"+tgtName);
+        }
         
         Directory currDir = dt.openDirectory(currPath, accTime);
         int       result  = -1;
@@ -759,8 +806,10 @@ public class ServerMeta extends DefaultSingleRecoverable {
         String tgtName = (String)ois.readObject();
         long   accTime = ois.readLong();
         
-        System.out.println("Request for close file: ");
-        System.out.println(tgtPath+"/"+tgtName);
+        if(verbose){
+            System.out.println("Request for close file: ");
+            System.out.println(tgtPath+"/"+tgtName);
+        }
         
         Directory currDir = dt.getDirectory(tgtPath);
         int       result  = -1;
@@ -791,9 +840,11 @@ public class ServerMeta extends DefaultSingleRecoverable {
         LockList lockList = (LockList)ois.readObject();
         long     accTime  = ois.readLong();
 
-        System.out.println("Request for update access");
-        System.out.println(currPath.toString());
-        lockList.print();
+        if(verbose){
+            System.out.println("Request for update access");
+            System.out.println(currPath.toString());
+            lockList.print();
+        }
 
         int       result  = -1;
         Directory currDir = dt.getDirectory(currPath);
@@ -832,12 +883,14 @@ public class ServerMeta extends DefaultSingleRecoverable {
     	long   capacity = ois.readLong();
         long   accTime  = ois.readLong();
     	
-		System.out.println("Request for join: ");
+        if(verbose)
+            System.out.println("Request for join: ");
 
         int result = ResultType.SUCCESS;
         
 		list.add(new ServerInfo(hostName, port, capacity, accTime));
-		list.print();
+                if(verbose)
+                    list.print();
 
         
 		ByteArrayOutputStream out = new ByteArrayOutputStream();

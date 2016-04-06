@@ -1,3 +1,5 @@
+\section{Resumo}
+Neste capítulo é apresentado os conceitos do que é RAID e quais são as peculiaridades de suas principais categorias. O capítulo está dividido em duas seções, na primeira é apresentado os conceitos de RAID separado em subseções para os tipos RAID 0, RAID 1, RAID 2, RAID 3, RAID 4, RAID 5, RAID 6 e RAID 50. Finalmente, o capítulo termina com a seção de conclusões do capítulo.
 
 %	\section{RAID}
 		\section{Conceitos}
@@ -7,7 +9,7 @@
 		
 		O RAID é separado em diferentes níveis, sendo que cada nível possuiu seus objetivos distintos e características intrínsecas. Os principais níveis de RAID serão apresentados e explicados nas próximas subseções deste trabalho. Cada subseção subsequente será dedicada a um nível de RAID.\\
 		
-		\subsubsection{RAID 0}
+		\subsection{RAID 0}
 		
 		Também conhecido como \textit{Strinping} ou fracionamento, pois os dados são fracionados igualmente entre dois ou mais discos, sem a preocupação com informação de paridade, tolerância a falhas ou redundância. Devido ao fato da completa falta de tolerância a falhas no RAID 0, a perda de um disco acarreta na perda (sem qualquer chance de recuperação) de todos os dados contidos no disco e da inutilização de todas as outras frações dos dados que estavam armazenadas nos outros discos do vetor, visto que estes arquivos jamais serão completamente recuperados. Por esta razão que o RAID 0 é usado apenas nos casos em que se deseja aumentar a performance do sistema ou como forma de criar uma grande unidade lógica de armazenamento utilizando-se dois ou vários discos físicos. Inclusive, é possível modelar um sistema em RAID 0 utilizando-se discos de diferentes capacidades, entretanto, é importante frisar que os discos com maior quantidade de armazenamento disponível serão limitados ao espaço máximo do menor disco do vetor, por exemplo, em um vetor montado com dois discos, um com 500GB e um segundo de 280GB possuirá o total de 560GB de armazenamento, ou seja, 280 X 2, nitidamente o disco de 500GB está sendo subutilizado neste vetor. \\
 		
@@ -26,7 +28,7 @@
 		
 		RAID 0 pode ser usado em áreas onde a performance é crucial enquanto que a integridade dos dados é de pouca relevância, como ocorre no caso dos sistemas de jogos de video game online.\\
 		
-		\subsubsection{RAID 1}
+		\subsection{RAID 1}
 		
 		RAID 1 é também conhecido como \textit{mirror} ou espelhamento, visto que este nível consiste de uma copia exata de um conjunto de dados espalhado por dois ou mais discos. A configuração do RAID 1 não proporciona paridade ou fracionamento de dados, visto que os dados são apenas espelhados dentro de todos os discos pertencentes do vetor de discos, sendo que o espaço de armazenamento do vetor não pode ser maior do que o disco membro com o menor espaço de armazenamento. O vetor continuará funcional enquanto ao menos um membro do vetor esteja disponível. Esta configuração é útil para sistemas onde a confiança e performance de leitura é mais importante do que performasse de escrita ou um armazenamento eficiente. \\
 		
@@ -45,7 +47,7 @@
 		
 		Qualquer solicitação pode ser atendida por qualquer \textit{drive} no vetor. Sendo que no caso de solicitações de escrita o desempenho é comprometido pois é necessário que ela ocorra em todos os discos membros do vetor. \\
 		
-		\subsubsection{RAID 2}
+		\subsection{RAID 2}
 		
 		A configuração RAID 2 fraciona o dado ao nível do \textit{bit} ao invés de blocos, além de utilizar a técnica do Código de Hamming para a correção de erros. O eixo de rotação de todos os discos são sincronizados e o dado é fracionado de forma que cada sequência de \textit{bits} são armazenadas em discos diferentes. A paridade do código de hamming é calculada sobre os \textit{bits} correspondentes e armazenadas em ao menos um disco de paridade.\\
 		
@@ -64,7 +66,7 @@
 		Por utilizar o código de Hamming, possui forte tolerância a falhas. Entretanto, como os discos rígidos atualmente possuem correção interna de erros, o RAID 2 acabou perdendo seu propósito. 
 	
 	
-		\subsubsection{RAID 3}
+		\subsection{RAID 3}
 		
 		Diferente do RAID 2, o RAID 3 fraciona os dados ao nível do \textit{byte}, tendo um disco dedicado de paridade. O eixo de rotação de todos os discos são sincronizados e o dado é fracionado de forma que cada sequência de \textit{bytes} são armazenadas em discos diferentes. A paridade é calculada sobre os \textit{bytes} correspondentes e armazenadas no disco de paridade. Apesar de existir casos de implementação, o RAID 3 dificilmente é utilizado na prática.\\
 		
@@ -82,7 +84,7 @@
 		\subsubsection{Performance}
 		Esta configuração se encaixa para aplicações que necessitam de altas taxas de transferência de grandes sequências de dados sequenciais, como por exemplo, edição de vídeos não compressados. Todavia, aplicações que fazem uso de leituras e escritas em localizações aleatórias do disco tendem a ter uma performance sofrível, visto que as frações de um mesmo dado estão espalhadas nas mesmas seções dos vários discos do vetor.\\
 		
-		\subsubsection{RAID 4}
+		\subsection{RAID 4}
 		Diferente dos RAID 2 e 3, o RAID 4 fraciona os dados ao nível do bloco de dados, tendo um disco dedicado de paridade. \\
 		
 		A figura ~\ref{fig:raid4} representa o diagrama de um vetor modelado com o RAID 4 utilizando-se quatro discos, sendo um deles utilizados como disco de paridade.\\
@@ -99,7 +101,7 @@
 		\subsubsection{Performance}
 		Sempre que os dados são escritos no vetor, o novo dado sobre paridade deve ser recalculado e escrito para o respectivo disco de paridade antes que qualquer requisição de escrita seja realizada. Por causa dessas operações de leitura e escrita, o disco de paridade é o fator limitante do desempenho total do vetor.\\
 		
-		\subsubsection{RAID 5}
+		\subsection{RAID 5}
 		Similar ao RAID 4, o RAID 5 fraciona os dados ao nível do bloco de dados, porém tendo as informações de paridade espalhadas entre os discos do vetor. Isto exige que todos, exceto um, discos tenham os dados. No caso da falha de apenas um disco, leituras subsequentes podem ser calculadas utilizando-se os dados restantes e (caso o disco defeituoso não seja o que continha os dados de paridade do arquivo) das informações de paridade para recuperar o bloco faltoso de dados. Entretanto, caso o disco que está indisponível é o portador dos dados de paridade, não acarreta na necessidade de nenhum calculo a mais. É importante frisar que por suas características, o RAID 5 necessita de ao menos três discos.  \\
 		
 		A figura ~\ref{fig:raid5} representa o diagrama de um vetor modelado com o RAID 5 utilizando-se quatro discos.\\
@@ -116,7 +118,7 @@
 		\subsubsection{Performance}
 		O RAID 5 sofre pelo tempo demasiadamente grande necessário para reconstruir um arquivo a partir dos blocos restantes e do bloco de paridade, além da chance de mais um disco ficar indisponível durante a a fase de recuperação. Visto que a recuperação de um bloco de dados requer a leitura de todos os blocos de dados, abrindo a chance de perder todos os dados do vetor caso ocorra a perda de um segundo disco.\\
 		
-		\subsubsection{RAID 6}
+		\subsection{RAID 6}
 		Similar ao RAID 5, o RAID 6 fraciona os dados ao nível do bloco de dados, porém tendo as informações de paridade espalhadas entre os discos do vetor e duplicadas. A novidade da paridade dupla garante tolerância a falhas até o caso da perda de dois discos. RAID 6 exige a utilização de no mínimo quatro discos. \\ 
 		
 		Semelhante ao caso do RAID 5, a queda de um disco acarreta na redução da performance de todo o vetor até que o disco defeituoso tenha sido substituído.\\
@@ -137,7 +139,7 @@
 		RAID 6 não possui penalidade de performance sobre operações de leitura, contudo, possui penalidade de performance nas operações de escrita devido ao \textit{overhead} associado aos cálculos de paridade.\\
 		
 		
-		\subsubsection{RAID 50}
+		\subsection{RAID 50}
 		Existe o termo originalmente conhecido como RAID hibrido, o qual é definido pela aplicação de um nível de RAID sobre outro vetor formado por nível de RAID. O ultimo vetor gerado é conhecido como o 
 		vetor do topo. Logo, no caso do RAID 50 (ou RAID 5+0) é uma combinação híbrida que usa as técnicas de RAID 5 com paridade em conjunção com a segmentação de dados do RAID 0. Em outras palaras, o RAID 50 não passa da aplicação do RAID 0 sobre um vetor de RAID 5. \\
 		
@@ -156,6 +158,9 @@
 		Possui alta taxa de transferência, porém com alto custo de manutenção e expansão.
 		
 	%texto.... referência~\citep{patterson88}
+	
+	\section{Conclusões do Capítulo}
+	Neste capítulo foi apresentado os conceitos de básicos do que é RAID, suas características positivas e negativas, além de abordar sobre as topologias mais importantes do RAID, ou seja, RAID 0, RAID 1, RAID 2, RAID 3, RAID 4, RAID 5, RAID 6 e RAID 50.
 		
 
 

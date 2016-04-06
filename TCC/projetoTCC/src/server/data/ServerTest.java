@@ -25,7 +25,7 @@ public class ServerTest {
             }
             br.close();
             
-            System.out.println(str);
+            //System.out.println(str);
             if(str.isEmpty()) {
                 System.out.println("Server information not found");
                 System.exit(-1);

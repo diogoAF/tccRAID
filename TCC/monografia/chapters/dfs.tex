@@ -1,3 +1,6 @@
+\section{Resumo}
+Este capítulo introduz o que é um sistema de arquivos distribuído. De modo didático, primeiro é explanado o que é um sistema distribuído, o que são metadados, e então, é apresentado a definição e características de um sistema de arquivos distribuído.
+
 
 	%\section{Sistema de arquivos distribuído}
 	
@@ -17,6 +20,33 @@
 	\\
 	
 	Assim, quando um sistema distribuído aumenta o seu tamanho, torna-se cada vez mais difícil de prever ou mesmo entender o seu comportamento. A parte da razão para isso é simples falta de ferramentas que gerenciam a complexidade e outra parte é que um sistema distribuído de grande porte traz consigo a quantidade enorme de não-determinismo inerente, os eventos imprevisíveis, como atrasos nas chegadas de mensagem, súbito falhas de componentes, ou em caso extremo, as ações nefastas de defeitos ou máquinas maliciosos que agem opostamente para os objetivos do sistema como um todo.
+	
+		\section{Metadados} 
+		
+		Os sistemas de arquivos, como ambientes propícios para a recuperação de informações, têm na utilização de metadados a padronização das formas de representação e a possibilidade de garantia de interoperabilidade entre sistemas, favorecendo a integridade e a acessibilidade dos recursos informacionais de forma eficiente pelo usuário final. Os metadados são "dodos de dodos", ou seja, as informações essenciais sobre os arquivos armazenados, indispensáveis para fazer o gerenciamento de arquivos, indicando as características inerentes deles. A Tabela~\ref{tab:metadado} mostra os atributos encontrados em um metadado.
+		
+		\capstartfalse
+		\begin{table} [htb]
+			\caption{Elementos de metadadso}
+			\centering
+			\begin{tabular}{|l|l|} \hline
+				\textbf{Informação} & \textbf{Descrição} \\ \hline
+				
+				Nome do arquivo		& O nome do arquivo, incluindo o caminho do diretório.\\ \hline
+				Proprietário		& O identificador de usuário que é o dono do arquivo.\\ \hline
+				Data de criação     & Data que o arquivo foi criado.\\ \hline
+				Data de acesso		& Data de último acesso do arquivo. \\ \hline
+				Data de atualização	& Data de última atualização feito sobre o arquivo. \\ \hline
+				Tamanho				& Espaço ocupado pelo arquivo ao longo do disco. \\ \hline
+				Tipo de arquivo		& indica se ele é uma pasta ou um arquivo normal.  \\ \hline
+				Modo de acesso		& indica a permissão para acessar o arquivo. \\ \hline
+				Bloqueio			& indica se o arquivo está bloqueado para acesso. \\ \hline
+				Lista de servidores	& lista de todos os servidores que armazena partes do arquivo. \\ \hline
+				
+			\end{tabular}
+			\label{tab:metadado}
+		\end{table}
+		\capstarttrue
 	
 	\section{Sistema de arquivos distribuído}
 	
@@ -44,6 +74,8 @@
 	
 	A transparência é altamente desejável em sistemas distribuídos, mas nem sempre é possível alcançá-la ou, em determinadas situações, não convém ocultá-la. Pode-se destacar uma situação que seja mais conveniente o usuário tomar uma decisão sobre
 	alguma falha do que o sistema distribuído tentar resolver por si só. Isso pode ser observado quando um serviço, por repetidas vezes tenta, estabelecer uma comunicação com o servidor na internet, neste caso o melhor é informar ao usuário sobre a falha e que ele tente mais tarde
+	
+	
 	
 	\subsection{Características}
 	
@@ -195,8 +227,8 @@
 	%texto.... referência \cite{borsley96}
 		
 
-
-
+	\section{Conclusões do Capítulo}
+Neste capítulo foi introduzido o que é um sistema de arquivos distribuído. De modo didático, primeiro foi explanado o que é um sistema distribuído, o que são metadados, e então, foi apresentado a definição e características de um sistema de arquivos distribuído.
  
 
 	

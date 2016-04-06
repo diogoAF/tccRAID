@@ -34,10 +34,11 @@ public class ServerData extends Thread{
             serverSocket = new ServerSocket(this.port);
             
             while(true) {
-                //System.out.println("Aguardando cliente...");
+                if(verbose)
+                    System.out.println("Aguardando cliente...");
                 Socket clientSocket = serverSocket.accept();
                 
-                Operation op = new Operation(clientSocket, dirName);
+                Operation op = new Operation(clientSocket, dirName, verbose);
                 op.start();
             }
         } catch (IOException e) {

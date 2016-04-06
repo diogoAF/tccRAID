@@ -15,17 +15,20 @@ import request.RequestType;
 
 public class Operation extends Thread {
     public static final int BUFFER_SIZE = 1024*1024;
-    
+
+    private boolean verbose;
     private Socket clientSocket;
     private String dir;
     
-    public Operation(Socket socket, String dir) {
+    public Operation(Socket socket, String dir, boolean verbose) {
         this.clientSocket = socket;
         this.dir = dir;
+        this.verbose = verbose;
     }
     
     public void run() {
-        System.out.println("Cliente conectado do IP "
+        if(verbose)
+            System.out.println("Cliente conectado do IP "
                 +clientSocket.getInetAddress().getHostAddress());
         
         try {
@@ -49,7 +52,8 @@ public class Operation extends Thread {
                 break;
                 
             default:
-                System.out.println("Numero de requisicao desconhecido: "+reqType);
+                if(verbose)
+                    System.out.println("Numero de requisicao desconhecido: "+reqType);
                 break;
             }
 
@@ -73,7 +77,8 @@ public class Operation extends Thread {
         bos.flush();
         bos.close();
         
-        System.out.println("Arquivo "+fileName+" criado");
+        if(verbose)
+            System.out.println("Arquivo "+fileName+" criado");
     }
 
     private void delete(Block block) throws IOException {
@@ -82,8 +87,8 @@ public class Operation extends Thread {
         
         if(file.exists()) {
             file.delete();
-            
-            System.out.println("Arquivo "+fileName+" deletado");
+            if(verbose)
+                System.out.println("Arquivo "+fileName+" deletado");
         } else {
             throw new IOException();
         }
@@ -100,7 +105,8 @@ public class Operation extends Thread {
         do {
             buffer = new byte[BUFFER_SIZE];
             length = bis.read(buffer);
-            System.out.println(length);
+            if(verbose)
+                System.out.println(length);
         } while(length < 0);
         bis.close();
         
