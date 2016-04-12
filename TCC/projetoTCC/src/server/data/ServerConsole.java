@@ -9,10 +9,13 @@ public class ServerConsole {
     
     public static void main(String[] args) {
         if(args.length < 1) {
-            System.out.println("Use: java DataServerTeste <processId>");
+            System.out.println("Use: java DataServerTeste <processId> <verbose>");
             System.exit(-1);
         }
-
+        boolean verbose = false;
+        if(args.length > 1)
+            verbose = true;
+        
         try {
             File config       = new File("config/hosts.config");
             BufferedReader br = new BufferedReader(new FileReader(config));
@@ -25,14 +28,13 @@ public class ServerConsole {
             }
             br.close();
             
-            System.out.println(str);
             if(str.isEmpty()) {
                 System.out.println("Server information not found");
                 System.exit(-1);
             }
             String[] strs = str.split(" ");
             
-            new ServerData( Integer.parseInt(args[0]), strs[1], Integer.parseInt(strs[2]), 1000L, true );
+            new ServerData( Integer.parseInt(args[0]), strs[1], Integer.parseInt(strs[2]), 1000L, verbose );
         
         } catch (IOException e) {
             System.out.println("Erro");

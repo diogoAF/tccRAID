@@ -110,15 +110,6 @@ public class Operation extends Thread {
         } while(length < 0);
         bis.close();
         
-        //TESTE
-        FileOutputStream     fos = new FileOutputStream(new File(fileName+".png"));
-        BufferedOutputStream bos = new BufferedOutputStream(fos);
-        bos.write(buffer);
-        bos.flush();
-        bos.close();
-        //TESTE
-        
-        //OutputStream out = clientSocket.getOutputStream();
         BufferedOutputStream out = new BufferedOutputStream(clientSocket.getOutputStream());
         
         out.write(buffer, 0 , length);
