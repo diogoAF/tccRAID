@@ -1,33 +1,41 @@
 package client;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 import bftsmart.tom.util.Storage;
 
 public class ClientTest {
 
-    public static final int READ  = 0;
-    public static final int WRITE = 1;
+    private static final char READ  = 'r';
+    private static final char WRITE = 'w';
     
+    @SuppressWarnings("unused")
     private static int VALUE_SIZE = 1024;
-    public static int initId = 0;
+    public  static int initId = 0;
     
     public static void main(String[] args) {
         if (args.length < 5) {
-            System.out.println("Usage: ... ClientTest <process id> <num. threads> <type of operations> <number of operations> <interval>");
+            System.out.println("Use: java ClientTest <processId> <r|w> <1|100|1000> <n threads> <n ops>");
             System.exit(-1);
         }
 
         initId = Integer.parseInt(args[0]);
-        int numThreads = Integer.parseInt(args[1]);
-
-        int opsType   = Integer.parseInt(args[2]);
-        int numberOfOps = Integer.parseInt(args[3]);
         
-        int interval = Integer.parseInt(args[4]);
+        char opsType = args[1].charAt(0);
+        if(opsType != 'r' && opsType != 'w') {
+            System.out.println("Tipo de operacao desconhecido "+opsType);
+            System.exit(-1);
+        }
         
-        long[] values = new long[numThreads];
+        String fileSize    = args[2];
+        if(!fileSize.equals("1") && !fileSize.equals("100") && !fileSize.equals("1000")) {
+            System.out.println("Tamanho de arquivo deve ser 1, 100 ou 1000");
+            System.exit(-1);
+        }
+        
+        int numThreads  = Integer.parseInt(args[3]);
+        int numOperations = Integer.parseInt(args[4]);
+        
         Client[] c = new Client[numThreads];
         
         for (int i = 0; i < numThreads; i++) {
@@ -38,7 +46,7 @@ public class ClientTest {
             }
 
             System.out.println("Launching client " + (initId + i));
-            c[i] = new ClientTest.Client(values, i, opsType, numberOfOps, interval);
+            c[i] = new ClientTest.Client(initId+i, fileSize, opsType, numOperations);
         }
 
         for (int i = 0; i < numThreads; i++) {
@@ -55,72 +63,71 @@ public class ClientTest {
             }
         }
 
-        Arrays.sort(values);
-        double maxTime = values[values.length-1]* 0.000000001; //segundos
-        
-        int numOperacoes = numThreads * numberOfOps;
-        
-        int throughput = (int) (numOperacoes/maxTime);
-        
-        System.out.println("Throughput: "+throughput);;
         System.exit(0);
     }
     
     static class Client extends Thread {
         ClientDFS cdfs;
         long[] values;
-        int id;
-        int index;
-        int opsType;
-        int numberOfOps;
-
-        int interval;
+        char opsType;
+        int  id;
         
-        byte data;
+        int  numOperations;
         
-        public Client() {
-            
-        }
+        String fileName;
         
-        public Client(long[] values, int index, int opsType, int numberOfOps, int interval) {
-            this.values = values;
-            
-            this.index = index;
-            this.id = initId + index;
+        public Client(int id, String fileSize, char opsType, int nOps) {
+            this.id = id;
             this.opsType = opsType;
-            this.numberOfOps = numberOfOps;
-
-            this.interval = interval;
             
-            this.cdfs = new ClientDFS(id, true);
+            this.numOperations = nOps;
             
+            fileName = new String("test"+fileSize);
             
+            this.cdfs = new ClientDFS(id, false);
         }
         
         public void run() {
             
             //faz umas 20 operacoes para esquentar o sistema
             
-            Storage st = new Storage(numberOfOps);
-            int req = 0;
-            long last_send_instant;
-            long start_time = System.nanoTime();
-            for (int i = 0; i < numberOfOps; i++, req++) {
-                System.out.print("Sending req " + req + "...");
-                
-               
-
+            for (int i = 0; i < 20; i++) {
                 try {
                     switch(opsType) {
                     case(READ):
+                        cdfs.openDir("dir"+i);
+                        break;
+                        
+                    case(WRITE):
+                        cdfs.criateDir("dir"+i);
+                        break;
+                        
+                    default:
+                        System.out.println("Unknown operation type "+opsType);
+                        System.exit(-1);
+                        break;
+                    }
+                } catch (ClassNotFoundException | IOException e) {
+                    e.printStackTrace();
+                    System.exit(-1);
+                }
+            }
+            
+            Storage st = new Storage(numOperations);
+            long last_send_instant;
+            for (int i = 0; i < numOperations; i++) {
+                try {
+
+                    switch(opsType) {
+                    case(READ):
                         last_send_instant = System.nanoTime();
-                        cdfs.open("test_"+id+"_"+i);
+                    cdfs.open(fileName+"_"+id+"_"+i);
                         st.store(System.nanoTime() - last_send_instant);
                         break;
                         
                     case(WRITE):
                         last_send_instant = System.nanoTime();
-                        cdfs.create("test", "test_"+id+"_"+i);
+                    cdfs.create(fileName, fileName+"_"+id+"_"+i);
                         st.store(System.nanoTime() - last_send_instant);
                         break;
                         
@@ -135,17 +142,14 @@ public class ClientTest {
                     System.exit(-1);
                 }
             }
-            values[index] = System.nanoTime() - start_time;
-            
             
             if (id == initId) {
-                System.out.println(this.id + " // Average time for " + numberOfOps + " executions (-10%) = " + st.getAverage(true) / 1000 + " us ");
-                System.out.println(this.id + " // Standard desviation for " + numberOfOps + " executions (-10%) = " + st.getDP(true) / 1000 + " us ");
-                System.out.println(this.id + " // Average time for " + numberOfOps + " executions (all samples) = " + st.getAverage(false) / 1000 + " us ");
-                System.out.println(this.id + " // Standard desviation for " + numberOfOps + " executions (all samples) = " + st.getDP(false) / 1000 + " us ");
-                System.out.println(this.id + " // Maximum time for " + numberOfOps + " executions (all samples) = " + st.getMax(false) / 1000 + " us ");
+                System.out.println(this.id + " // Average time for " + numOperations + " executions (-10%) = " + st.getAverage(true) + " ns ");
+                System.out.println(this.id + " // Standard desviation for " + numOperations + " executions (-10%) = " + st.getDP(true) + " ns ");
+                System.out.println(this.id + " // Average time for " + numOperations + " executions (all samples) = " + st.getAverage(false) + " ns ");
+                System.out.println(this.id + " // Standard desviation for " + numOperations + " executions (all samples) = " + st.getDP(false) + " ns ");
+                System.out.println(this.id + " // Maximum time for " + numOperations + " executions (all samples) = " + st.getMax(false) + " ns ");
             }
-            
         }
     }
 }

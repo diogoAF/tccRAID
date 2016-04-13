@@ -13,8 +13,10 @@ public class ServerConsole {
             System.exit(-1);
         }
         boolean verbose = false;
-        if(args.length > 1)
+        if(args.length > 1) {
             verbose = true;
+            System.out.println("verbose");
+        }
         
         try {
             File config       = new File("config/hosts.config");
@@ -34,7 +36,7 @@ public class ServerConsole {
             }
             String[] strs = str.split(" ");
             
-            new ServerData( Integer.parseInt(args[0]), strs[1], Integer.parseInt(strs[2]), 1000L, verbose );
+            new ServerData( Integer.parseInt(args[0]), strs[1], Integer.parseInt(strs[2]), 1000000000L, verbose );
         
         } catch (IOException e) {
             System.out.println("Erro");

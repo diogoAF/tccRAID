@@ -12,7 +12,7 @@ public class LockManager extends Thread {
 		this.currPath = path;
 		this.files    = list;
 	}
-	
+
 	public void run() {
 		
 	}

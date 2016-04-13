@@ -4,11 +4,7 @@ import dt.file.Block;
 import dt.file.BlockInfo;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectOutputStream;
@@ -26,16 +22,19 @@ public class ClientServerSocket extends Thread {
     private static final int SLEEP = 5;
     
     public static final int BUFFER_SIZE = 1024*1024;
+
+    private boolean verbose;
     
     Socket    clientSocket;
     BlockInfo blockInfo;
 	
+    /*
 	@SuppressWarnings("unused")
     public static void main(String[] args)  {
         try {
             //sendFile();
             BlockInfo blockInfo = new BlockInfo("127.0.0.1",20010,666L);
-            ClientServerSocket css = new ClientServerSocket(blockInfo);
+            ClientServerSocket css = new ClientServerSocket(blockInfo, true);
            
             File file = new File("test.png");
             //File file = new File("testfile");
@@ -53,7 +52,6 @@ public class ClientServerSocket extends Thread {
             
             byte [] bytes = css.open(block);
             
-            //css.open(block, bytes);
             
             file = new File("teste2.png");
             FileOutputStream     fos = new FileOutputStream(file);
@@ -71,9 +69,11 @@ public class ClientServerSocket extends Thread {
         }
         
     }
-
-    public ClientServerSocket(BlockInfo blockInfo) {
+    */
+    
+    public ClientServerSocket(BlockInfo blockInfo, boolean ver) {
         this.blockInfo = blockInfo;
+        this.verbose = ver;
     }
 
     public void create(Block block) throws ConnectException  {
@@ -90,7 +90,8 @@ public class ClientServerSocket extends Thread {
         while(true) {
             try {
                 clientSocket = new Socket(blockInfo.getHostName(), blockInfo.getPort());
-                System.out.println("O cliente se conectou ao servidor na porta " 
+                if(verbose)
+                    System.out.println("O cliente se conectou ao servidor na porta " 
                                                             + blockInfo.getPort());
 
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -103,8 +104,6 @@ public class ClientServerSocket extends Thread {
                 OutputStream out = clientSocket.getOutputStream();
                 
                 out.write(bos.toByteArray());
-                //bos.close();
-                
                 
                 InputStream         is = clientSocket.getInputStream();
                 BufferedInputStream in = new BufferedInputStream(is);
@@ -112,13 +111,9 @@ public class ClientServerSocket extends Thread {
                 while(is.available() == 0);
 
                 byte[] buffer = new byte[BUFFER_SIZE];
-                //System.out.println(in.available());
                 int length = in.read(buffer);
                 System.out.println(length);
 
-                //byte[] bytes= new byte[length];
-                //bytes = 
-                //clientSocket.close();
                 
                 return Arrays.copyOfRange(buffer, 0, length);
             } catch(ConnectException | UnknownHostException e) {
@@ -131,7 +126,8 @@ public class ClientServerSocket extends Thread {
                 
                 triedCount++;
                 if(triedCount>3) {
-                    System.out.println("O cliente nao conseguiu conectar no servidor");
+                    if(verbose)
+                        System.out.println("O cliente nao conseguiu conectar no servidor");
                     throw new ConnectException();
                 }
             } catch (IOException e) {
@@ -147,7 +143,8 @@ public class ClientServerSocket extends Thread {
         while(true) {
             try {
                 clientSocket = new Socket(blockInfo.getHostName(), blockInfo.getPort());
-                System.out.println("O cliente se conectou ao servidor na porta " 
+                if(verbose)
+                    System.out.println("O cliente se conectou ao servidor na porta " 
                                                             + blockInfo.getPort());
 
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -174,7 +171,8 @@ public class ClientServerSocket extends Thread {
                 
                 triedCount++;
                 if(triedCount>TRIES) {
-                    System.out.println("O cliente nao conseguiu conectar no servidor");
+                    if(verbose)
+                        System.out.println("O cliente nao conseguiu conectar no servidor");
                     throw new ConnectException();
                 }
             } catch (IOException e) {

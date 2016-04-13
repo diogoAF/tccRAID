@@ -16,7 +16,7 @@ public class ClientConsole {
             System.out.println("Use: java ClientConsole <processId>");
             System.exit(-1);
     	}
-    	ClientDFS     c  = new ClientDFS(Integer.parseInt(args[0]));
+    	ClientDFS     c  = new ClientDFS(Integer.parseInt(args[0]), true);
     	ClientConsole cc = new ClientConsole(c);
         
     	cc.run();

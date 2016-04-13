@@ -28,25 +28,22 @@ import server.meta.RaidType;
 import bftsmart.tom.ServiceProxy;
 
 public class ClientDFS extends Thread{
+    private boolean verbose;
+    
     private ServiceProxy proxy;
 	private String       currPath;
 	private DirEntries   currDir;
 	private LockList     lockList;
 	
-    public ClientDFS(int id) {
-        proxy    = new ServiceProxy(id);
-        lockList = new LockList();
-        
-        this.openRoot();
-        this.start();
-	        
-    }
-    
-    public ClientDFS(int id, boolean test) {
+    public ClientDFS(int id, boolean ver) {
         proxy = new ServiceProxy(id);
         lockList = new LockList();
         
+        verbose = ver;
+        
         this.openRoot();
+        if(verbose)
+            this.start(); 
     }
     
     private void openRoot() {
@@ -303,8 +300,9 @@ public class ClientDFS extends Thread{
             }
             
             BlockInfoList bList = (BlockInfoList)ois.readObject();
-            
-            bList.print();
+
+            if(verbose)
+                bList.print();
             
             int raidType  = bList.getRaidType();
             int nServers  = bList.getNServers();
@@ -323,12 +321,11 @@ public class ClientDFS extends Thread{
                     try {
                         bInfo = bList.get(i);
                         
-                        int length = bis.read(buffer, 0, blockSize);
-                        //System.out.println("read "+length+" bytes");
+                        bis.read(buffer, 0, blockSize);
                         
                         Block block = new Block(bInfo.getID(),buffer);
 
-                        ClientServerSocket css = new ClientServerSocket(bInfo);
+                        ClientServerSocket css = new ClientServerSocket(bInfo, verbose);
                         css.create(block);   
                     } catch(ConnectException e) {
                         failure(bInfo);
@@ -346,12 +343,11 @@ public class ClientDFS extends Thread{
                     try {
                         bInfo = bList.get(i);
                         
-                        int length = bis.read(buffer);
-                        //System.out.println("read "+length+" bytes");
+                        bis.read(buffer);
                         
                         Block block = new Block(bInfo.getID(),buffer);
 
-                        ClientServerSocket css = new ClientServerSocket(bInfo);
+                        ClientServerSocket css = new ClientServerSocket(bInfo, verbose);
                         css.create(block);   
                     } catch(ConnectException e) {
                         failure(bInfo);
@@ -372,12 +368,11 @@ public class ClientDFS extends Thread{
                     try {
                         bInfo = bList.get(i);
                         
-                        int length = bis.read(buffer, 0, blockSize);
-                        //System.out.println("read "+length+" bytes");
+                        bis.read(buffer, 0, blockSize);
                         
                         Block block = new Block(bInfo.getID(),buffer);
 
-                        ClientServerSocket css = new ClientServerSocket(bInfo);
+                        ClientServerSocket css = new ClientServerSocket(bInfo, verbose);
                         css.create(block);  
                         
                         for (int j = 0; j<blockSize; j++)
@@ -392,7 +387,7 @@ public class ClientDFS extends Thread{
                     bInfo = bList.get(nServers-1);
                     Block block = new Block(bInfo.getID(),parityBlock);
                     
-                    ClientServerSocket css = new ClientServerSocket(bInfo);
+                    ClientServerSocket css = new ClientServerSocket(bInfo, verbose);
                     css.create(block); 
                 } catch(ConnectException e) {
                     failure(bInfo);
@@ -441,8 +436,9 @@ public class ClientDFS extends Thread{
         }
         
         BlockInfoList bList = (BlockInfoList)ois.readObject();
-
-        bList.print();
+        
+        if(verbose)
+            bList.print();
 
         int nServers = bList.getNServers();
         
@@ -454,7 +450,7 @@ public class ClientDFS extends Thread{
 
                 Block block = new Block(bInfo.getID(), null);
                 
-                ClientServerSocket css = new ClientServerSocket(bInfo);
+                ClientServerSocket css = new ClientServerSocket(bInfo, verbose);
                 css.delete(block);   
             }
             
@@ -520,7 +516,8 @@ public class ClientDFS extends Thread{
         BlockInfoList bList = (BlockInfoList)ois.readObject();
         long fileSize       = ois.readLong();
         
-        bList.print();
+        if(verbose)
+            bList.print();
 
         int raidType  = bList.getRaidType();
         int nServers  = bList.getNServers();
@@ -544,7 +541,7 @@ public class ClientDFS extends Thread{
                 try {
                     bInfo = bList.get(i);
 
-                    ClientServerSocket css   = new ClientServerSocket(bInfo);
+                    ClientServerSocket css   = new ClientServerSocket(bInfo, verbose);
 
                     byte[] fileBlock = css.open(new Block(bInfo.getID(), null)); 
                     if(fileSize < bSize)
@@ -567,7 +564,7 @@ public class ClientDFS extends Thread{
                 try {
                     bInfo = bList.get(i);
 
-                    ClientServerSocket css = new ClientServerSocket(bInfo);
+                    ClientServerSocket css = new ClientServerSocket(bInfo, verbose);
 
                     byte[] fileBlock = css.open(new Block(bInfo.getID(), null)); 
                     bos.write(fileBlock);
@@ -591,7 +588,7 @@ public class ClientDFS extends Thread{
                 try {
                     bInfo  = bList.get(i);
     
-                    ClientServerSocket css   = new ClientServerSocket(bInfo);
+                    ClientServerSocket css   = new ClientServerSocket(bInfo, verbose);
     
                     byte[] fileBlock = css.open(new Block(bInfo.getID(), null)); 
                     blockConcat(buffer, fileBlock, i*bSize, bSize);
@@ -612,7 +609,7 @@ public class ClientDFS extends Thread{
                 try {
                     bInfo = bList.get(nServers-1);
                     
-                    ClientServerSocket css   = new ClientServerSocket(bInfo);
+                    ClientServerSocket css   = new ClientServerSocket(bInfo, verbose);
                     
                     byte[] fileBlock = css.open(new Block(bInfo.getID(), null));
                     blockConcat(buffer, fileBlock, failureIndex*bSize, bSize);
@@ -642,7 +639,8 @@ public class ClientDFS extends Thread{
 
         bos.flush();
         bos.close();
-        file.deleteOnExit();
+        if(verbose)
+            file.deleteOnExit();
         
         lockList.add(getCurrPath()+"/"+tgtName);
         
@@ -677,7 +675,8 @@ public class ClientDFS extends Thread{
         BlockInfoList bList = (BlockInfoList)ois.readObject();
         long fileSize       = ois.readLong();
         
-        bList.print();
+        if(verbose)
+            bList.print();
 
         int raidType  = bList.getRaidType();
         int nServers  = bList.getNServers();
@@ -701,7 +700,7 @@ public class ClientDFS extends Thread{
                 try {
                     bInfo = bList.get(i);
 
-                    ClientServerSocket css   = new ClientServerSocket(bInfo);
+                    ClientServerSocket css   = new ClientServerSocket(bInfo, verbose);
 
                     byte[] fileBlock = css.open(new Block(bInfo.getID(), null)); 
                     if(fileSize < bSize)
@@ -724,7 +723,7 @@ public class ClientDFS extends Thread{
                 try {
                     bInfo = bList.get(i);
 
-                    ClientServerSocket css = new ClientServerSocket(bInfo);
+                    ClientServerSocket css = new ClientServerSocket(bInfo, verbose);
 
                     byte[] fileBlock = css.open(new Block(bInfo.getID(), null)); 
                     bos.write(fileBlock);
@@ -748,7 +747,7 @@ public class ClientDFS extends Thread{
                 try {
                     bInfo  = bList.get(i);
     
-                    ClientServerSocket css   = new ClientServerSocket(bInfo);
+                    ClientServerSocket css   = new ClientServerSocket(bInfo, verbose);
     
                     byte[] fileBlock = css.open(new Block(bInfo.getID(), null)); 
                     blockConcat(buffer, fileBlock, i*bSize, bSize);
@@ -769,7 +768,7 @@ public class ClientDFS extends Thread{
                 try {
                     bInfo = bList.get(nServers-1);
                     
-                    ClientServerSocket css   = new ClientServerSocket(bInfo);
+                    ClientServerSocket css   = new ClientServerSocket(bInfo, verbose);
                     
                     byte[] fileBlock = css.open(new Block(bInfo.getID(), null));
                     blockConcat(buffer, fileBlock, failureIndex*bSize, bSize);
@@ -799,7 +798,8 @@ public class ClientDFS extends Thread{
 
         bos.flush();
         bos.close();
-        file.deleteOnExit();
+        if(verbose)
+            file.deleteOnExit();
         
         lockList.add(getCurrPath()+"/"+tgtName);
         
