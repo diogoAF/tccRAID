@@ -7,63 +7,58 @@
 \BOOKMARK [1][-]{section.1.2}{Objetivo}{chapter.1}% 7
 \BOOKMARK [1][-]{section.1.3}{Organiza\347\343o de cap\355tulos}{chapter.1}% 8
 \BOOKMARK [0][-]{chapter.2}{Sistema de arquivos distribu\355do}{}% 9
-\BOOKMARK [1][-]{section.2.1}{Resumo}{chapter.2}% 10
-\BOOKMARK [1][-]{section.2.2}{Sistema distribu\355do}{chapter.2}% 11
-\BOOKMARK [1][-]{section.2.3}{Metadados}{chapter.2}% 12
-\BOOKMARK [1][-]{section.2.4}{Sistema de arquivos distribu\355do}{chapter.2}% 13
-\BOOKMARK [2][-]{subsection.2.4.1}{Transpar\352ncia}{section.2.4}% 14
-\BOOKMARK [2][-]{subsection.2.4.2}{Caracter\355sticas}{section.2.4}% 15
-\BOOKMARK [2][-]{subsection.2.4.3}{Nomes e localiza\347\343o}{section.2.4}% 16
-\BOOKMARK [2][-]{subsection.2.4.4}{Servi\347o de Nomes}{section.2.4}% 17
-\BOOKMARK [1][-]{section.2.5}{Conclus\365es do Cap\355tulo}{chapter.2}% 18
-\BOOKMARK [0][-]{chapter.3}{BFT-SMaRt}{}% 19
-\BOOKMARK [1][-]{section.3.1}{Resumo}{chapter.3}% 20
-\BOOKMARK [1][-]{section.3.2}{Conceitos}{chapter.3}% 21
-\BOOKMARK [1][-]{section.3.3}{Princ\355pios do Design}{chapter.3}% 22
-\BOOKMARK [2][-]{subsection.3.3.1}{Modelo Harmonioso de Falhas}{section.3.3}% 23
-\BOOKMARK [2][-]{subsection.3.3.2}{Simplicidade}{section.3.3}% 24
-\BOOKMARK [2][-]{subsection.3.3.3}{Modularidade}{section.3.3}% 25
-\BOOKMARK [2][-]{subsection.3.3.4}{Interface de Programa\347\343o de Aplica\347\343o Simples e Extens\355vel}{section.3.3}% 26
-\BOOKMARK [2][-]{subsection.3.3.5}{Consci\352ncia de ambiente Multi-Core}{section.3.3}% 27
-\BOOKMARK [2][-]{subsection.3.3.6}{Modelo do Sistema}{section.3.3}% 28
-\BOOKMARK [1][-]{section.3.4}{Protocolos Centrais}{chapter.3}% 29
-\BOOKMARK [2][-]{subsection.3.4.1}{Total Order Multicast}{section.3.4}% 30
-\BOOKMARK [2][-]{subsection.3.4.2}{Transfer\352ncia de Estado}{section.3.4}% 31
-\BOOKMARK [1][-]{section.3.5}{Reconfigura\347\343o}{chapter.3}% 32
-\BOOKMARK [1][-]{section.3.6}{Implementa\347\343o}{chapter.3}% 33
-\BOOKMARK [1][-]{section.3.7}{Configura\347\365es Alternativas}{chapter.3}% 34
-\BOOKMARK [2][-]{subsection.3.7.1}{Crash Fault Tolerance}{section.3.7}% 35
-\BOOKMARK [2][-]{subsection.3.7.2}{Falhas Bizantinas Maliciosas}{section.3.7}% 36
-\BOOKMARK [1][-]{section.3.8}{Conclus\365es do Cap\355tulo}{chapter.3}% 37
-\BOOKMARK [0][-]{chapter.4}{RAID}{}% 38
-\BOOKMARK [1][-]{section.4.1}{Resumo}{chapter.4}% 39
-\BOOKMARK [1][-]{section.4.2}{Conceitos}{chapter.4}% 40
-\BOOKMARK [2][-]{subsection.4.2.1}{RAID 0}{section.4.2}% 41
-\BOOKMARK [2][-]{subsection.4.2.2}{RAID 1}{section.4.2}% 42
-\BOOKMARK [2][-]{subsection.4.2.3}{RAID 2}{section.4.2}% 43
-\BOOKMARK [2][-]{subsection.4.2.4}{RAID 3}{section.4.2}% 44
-\BOOKMARK [2][-]{subsection.4.2.5}{RAID 4}{section.4.2}% 45
-\BOOKMARK [2][-]{subsection.4.2.6}{RAID 5}{section.4.2}% 46
-\BOOKMARK [2][-]{subsection.4.2.7}{RAID 6}{section.4.2}% 47
-\BOOKMARK [2][-]{subsection.4.2.8}{RAID 50}{section.4.2}% 48
-\BOOKMARK [1][-]{section.4.3}{Conclus\365es do Cap\355tulo}{chapter.4}% 49
-\BOOKMARK [0][-]{chapter.5}{Proposta de Sistema de Arquivos Distribu\355do}{}% 50
-\BOOKMARK [1][-]{section.5.1}{Resumo}{chapter.5}% 51
-\BOOKMARK [1][-]{section.5.2}{Arquitetura do sistema}{chapter.5}% 52
-\BOOKMARK [2][-]{subsection.5.2.1}{Servi\347o de Metadados}{section.5.2}% 53
-\BOOKMARK [2][-]{subsection.5.2.2}{Servi\347o de Armazenamento}{section.5.2}% 54
-\BOOKMARK [2][-]{subsection.5.2.3}{Servidor}{section.5.2}% 55
-\BOOKMARK [2][-]{subsection.5.2.4}{Cliente}{section.5.2}% 56
-\BOOKMARK [1][-]{section.5.3}{Opera\347\365es no Sistema de Arquivos Distribu\355dos}{chapter.5}% 57
-\BOOKMARK [2][-]{subsection.5.3.1}{Cliente-Servidor}{section.5.3}% 58
-\BOOKMARK [2][-]{subsection.5.3.2}{Servidor-Servidor}{section.5.3}% 59
-\BOOKMARK [1][-]{section.5.4}{Implementa\347\343o}{chapter.5}% 60
-\BOOKMARK [2][-]{subsection.5.4.1}{Servi\347o de Metadados}{section.5.4}% 61
-\BOOKMARK [2][-]{subsection.5.4.2}{Servi\347o de Armazenamento}{section.5.4}% 62
-\BOOKMARK [2][-]{subsection.5.4.3}{Cliente}{section.5.4}% 63
-\BOOKMARK [1][-]{section.5.5}{Experimentos}{chapter.5}% 64
-\BOOKMARK [1][-]{section.5.6}{Conclus\365es do Cap\355tulo}{chapter.5}% 65
-\BOOKMARK [0][-]{chapter.6}{Conclus\365es e Trabalhos Futuros}{}% 66
-\BOOKMARK [1][-]{section.6.1}{Conclus\365es}{chapter.6}% 67
-\BOOKMARK [1][-]{section.6.2}{Trabalhos Futuros}{chapter.6}% 68
-\BOOKMARK [0][-]{section*.44}{Refer\352ncias}{}% 69
+\BOOKMARK [1][-]{section.2.1}{Sistema distribu\355do}{chapter.2}% 10
+\BOOKMARK [1][-]{section.2.2}{Metadados}{chapter.2}% 11
+\BOOKMARK [1][-]{section.2.3}{Sistema de arquivos distribu\355do}{chapter.2}% 12
+\BOOKMARK [2][-]{subsection.2.3.1}{Transpar\352ncia}{section.2.3}% 13
+\BOOKMARK [2][-]{subsection.2.3.2}{Caracter\355sticas}{section.2.3}% 14
+\BOOKMARK [2][-]{subsection.2.3.3}{Nomes e localiza\347\343o}{section.2.3}% 15
+\BOOKMARK [2][-]{subsection.2.3.4}{Servi\347o de Nomes}{section.2.3}% 16
+\BOOKMARK [1][-]{section.2.4}{Conclus\365es do Cap\355tulo}{chapter.2}% 17
+\BOOKMARK [0][-]{chapter.3}{BFT-SMaRt}{}% 18
+\BOOKMARK [1][-]{section.3.1}{Conceitos}{chapter.3}% 19
+\BOOKMARK [1][-]{section.3.2}{Princ\355pios do Design}{chapter.3}% 20
+\BOOKMARK [2][-]{subsection.3.2.1}{Modelo Harmonioso de Falhas}{section.3.2}% 21
+\BOOKMARK [2][-]{subsection.3.2.2}{Simplicidade}{section.3.2}% 22
+\BOOKMARK [2][-]{subsection.3.2.3}{Modularidade}{section.3.2}% 23
+\BOOKMARK [2][-]{subsection.3.2.4}{Interface de Programa\347\343o de Aplica\347\343o Simples e Extens\355vel}{section.3.2}% 24
+\BOOKMARK [2][-]{subsection.3.2.5}{Consci\352ncia de ambiente Multi-Core}{section.3.2}% 25
+\BOOKMARK [2][-]{subsection.3.2.6}{Modelo do Sistema}{section.3.2}% 26
+\BOOKMARK [1][-]{section.3.3}{Protocolos Centrais}{chapter.3}% 27
+\BOOKMARK [2][-]{subsection.3.3.1}{Total Order Multicast}{section.3.3}% 28
+\BOOKMARK [2][-]{subsection.3.3.2}{Transfer\352ncia de Estado}{section.3.3}% 29
+\BOOKMARK [1][-]{section.3.4}{Reconfigura\347\343o}{chapter.3}% 30
+\BOOKMARK [1][-]{section.3.5}{Implementa\347\343o}{chapter.3}% 31
+\BOOKMARK [1][-]{section.3.6}{Configura\347\365es Alternativas}{chapter.3}% 32
+\BOOKMARK [2][-]{subsection.3.6.1}{Crash Fault Tolerance}{section.3.6}% 33
+\BOOKMARK [2][-]{subsection.3.6.2}{Falhas Bizantinas Maliciosas}{section.3.6}% 34
+\BOOKMARK [1][-]{section.3.7}{Conclus\365es do Cap\355tulo}{chapter.3}% 35
+\BOOKMARK [0][-]{chapter.4}{RAID}{}% 36
+\BOOKMARK [1][-]{section.4.1}{Conceitos}{chapter.4}% 37
+\BOOKMARK [2][-]{subsection.4.1.1}{RAID 0}{section.4.1}% 38
+\BOOKMARK [2][-]{subsection.4.1.2}{RAID 1}{section.4.1}% 39
+\BOOKMARK [2][-]{subsection.4.1.3}{RAID 2}{section.4.1}% 40
+\BOOKMARK [2][-]{subsection.4.1.4}{RAID 3}{section.4.1}% 41
+\BOOKMARK [2][-]{subsection.4.1.5}{RAID 4}{section.4.1}% 42
+\BOOKMARK [2][-]{subsection.4.1.6}{RAID 5}{section.4.1}% 43
+\BOOKMARK [2][-]{subsection.4.1.7}{RAID 6}{section.4.1}% 44
+\BOOKMARK [2][-]{subsection.4.1.8}{RAID 50}{section.4.1}% 45
+\BOOKMARK [1][-]{section.4.2}{Conclus\365es do Cap\355tulo}{chapter.4}% 46
+\BOOKMARK [0][-]{chapter.5}{Proposta de Sistema de Arquivos Distribu\355do}{}% 47
+\BOOKMARK [1][-]{section.5.1}{Arquitetura do sistema}{chapter.5}% 48
+\BOOKMARK [2][-]{subsection.5.1.1}{Servi\347o de Metadados}{section.5.1}% 49
+\BOOKMARK [2][-]{subsection.5.1.2}{Servi\347o de Armazenamento}{section.5.1}% 50
+\BOOKMARK [2][-]{subsection.5.1.3}{Cliente}{section.5.1}% 51
+\BOOKMARK [1][-]{section.5.2}{Opera\347\365es no Sistema de Arquivos Distribu\355dos}{chapter.5}% 52
+\BOOKMARK [2][-]{subsection.5.2.1}{Cliente-Servidor}{section.5.2}% 53
+\BOOKMARK [2][-]{subsection.5.2.2}{Servidor-Servidor}{section.5.2}% 54
+\BOOKMARK [1][-]{section.5.3}{Implementa\347\343o}{chapter.5}% 55
+\BOOKMARK [2][-]{subsection.5.3.1}{Servi\347o de Metadados}{section.5.3}% 56
+\BOOKMARK [2][-]{subsection.5.3.2}{Servi\347o de Armazenamento}{section.5.3}% 57
+\BOOKMARK [2][-]{subsection.5.3.3}{Cliente}{section.5.3}% 58
+\BOOKMARK [1][-]{section.5.4}{Experimentos}{chapter.5}% 59
+\BOOKMARK [1][-]{section.5.5}{Conclus\365es do Cap\355tulo}{chapter.5}% 60
+\BOOKMARK [0][-]{chapter.6}{Conclus\365es e Trabalhos Futuros}{}% 61
+\BOOKMARK [1][-]{section.6.1}{Conclus\365es}{chapter.6}% 62
+\BOOKMARK [1][-]{section.6.2}{Trabalhos Futuros}{chapter.6}% 63
+\BOOKMARK [0][-]{section*.42}{Refer\352ncias}{}% 64

@@ -1,10 +1,9 @@
-\section{Resumo}
 Este capítulo é onde começamos a abordar nosso modelo proposto de um sistema de arquivos distribuídos tolerante a falhas. Iniciamos com um visão geral da arquitetura do sistema apresentando detalhes do serviço de metadados, serviço de armazenamento,, servidor e do cliente. Em seguida é abordado as operações realizadas pelo sistema de arquivos distribuído proposto, tais operações estão divididas entre operações do tipo Cliente-Servidor e Servidor-Servidor. Seguindo com o capítulo, é explanado como foi realizada a implementação do sistema de arquivos distribuído utilizando conceitos de RAID proposto, focando especialmente nos serviços de metadados e de armazenamento, além dos clientes. Enfim, o capítulo finaliza apresentado o planejamento e execução dos experimentos seguido da análise dos dados obtidos.
 
 
 	\section{Arquitetura do sistema}
 	
-	A arquitetura do SAD proposto neste artigo é composto por vários clientes e servidores distribuídos, onde cada um deles está conectado através de internet, como a Figura~\ref{fig:vis_sis} mostra resumidamente. Neste sistema, cada servidor se comporta como um disco rígido em sistema de RAID, armazenando distribuidamente as partes dos arquivos e paridades associadas.
+	A arquitetura do Sistema de Arquivos Distribuídos proposto neste trabalho é composto por um ou vários clientes comunicando-se com ao menos três servidores de metadados e quatro servidores de armazenamento, onde cada um deles está conectado através de Internet ou outra rede, como a Figura~\ref{fig:vis_sis}  sintetiza. Neste sistema, cada servidor de armazenamento se comporta como um disco rígido em sistema de RAID, armazenando distribuidamente as partes dos arquivos e/ou paridades associadas. \\
 	
 	
 	%O nosso objeivo neste artigo é a construção de um SAD baseado na computação em nuvem que possui menor \textit{overhead} de espaço, comparado a 200\% de método de replicação, sem degradar muito o performance e segurança de dados. 
@@ -21,15 +20,8 @@ Este capítulo é onde começamos a abordar nosso modelo proposto de um sistema 
 		\end{center}
 	\end{figure}
 	
-	\subsection{Serviço de Metadados}
+	Em um sistema de arquivos local, normalmente o metadado e o conteúdo de um arquivo são armazenados na mesma unidade de armazenamento. No caso de um SAD, como um arquivo pode ser armazenados distribuidamente entre servidores diferentes, os metadados são espalhados por vários servidores, tendo assim, a necessidade de fazer a busca para acessar em um determinado metadado. Obviamente essa busca consome recursos operacionais, relativamente alta por tratar de uma transmissão na rede.   \\
 	
-	\subsection{Serviço de Armazenamento}
-	
-	\subsection{Servidor}
-	
-	Grupo de servidores que fazem armazenamento e gerenciamento de dados. \\
-	
-	Em um sistema de arquivos local, normalmente o metadado e o conteúdo de um arquivo são armazenados na mesma unidade de armazenamento. No caso de um SAD, como um arquivo pode ser armazenados distribuidamente entre servidores diferentes, os metadados são espalhados por vários servidores, tendo assim, a necessidade de fazer a busca para acessar em um determinado metadado. Obviamente essa busca consome recursos operacionais, relativamente alta por tratar de uma transmissão na rede.   
 	\begin{figure}[htb]
 		\begin{center}
 			
@@ -39,20 +31,43 @@ Este capítulo é onde começamos a abordar nosso modelo proposto de um sistema 
 		\end{center}
 	\end{figure}
 	
-	\subsubsection{\textit{Name node}}
+	\subsection{Serviço de Metadados}
+		Grupo de servidores que fazem o gerenciamento dos dados.\\
+		
+		Em nosso sistema utilizamos o conceito de blocos, onde um bloco é um conjunto de dados de um dado arquivo ou os dados de paridade de um determinado arquivo. O tamanho do bloco é determinado levando em consideração a quantidade de servidores de armazenamento ativos, ou seja, se houverem quatro servidores ativo, então o arquivo (independente de seu tamanho) será dividido em quatro blocos de tamanhos idênticos, caso seja necessário, o ultimo bloco será preenchido com bits '0' até que o bloco alcance o tamanho previamente fixado.
+		\\ 
+		
+		O Serviço de metadados, também conhecido por \textit{name node}, é o conjunto de servidores que gerencia as informações dos arquivos armazenados, utilizando-se dos metadados. Em nosso sistema a data de criação, data da ultima modificação, data do ultimo acesso, tamanho, identificador do bloco de dados e nome do servidor são considerados metadados. 
+		\\
+		
+		É da responsabilidade do sistema de metadados gerenciar a comunicação entre cliente e servidores de armazenamento (ou  \textit{data nodes}), utilizando-se das informações que indicam  estado atual do sistema e qual o tipo de RAID está sendo utilizado (apenas um tipo de RAID pode ser utilizado por operação) o \textit{name node} deve decidir em quantos blocos de tamanho idêntico o arquivo deve ser dividido e em quais servidores de armazenamento cada bloco deve ser armazenado.
+		\\ 
+		
+		Nosso sistema está preparado para tratar os seguintes tipos de RAID, os quais foram explorados com maior profundidade no capítulo 4.
+		\\
+		
+		\begin{itemize}
+			\item RAID 0 - fracionamento simples;
+			\item RAID 1 - espelhamento;
+			\item RAID 5 - fracionamento com paridade espalhada entre os discos do vetor.
+		\end{itemize}
+		
+		O Serviço de metadados mantém na sua memória local a árvore de diretórios, o que indica localização lógica dos arquivos. Quando recebe uma solicitação de cliente por um arquivo, pesquisa a sua árvore de diretórios para identificar qual diretório que este arquivo se encontra. Como resultado da pesquisa obtém o metadado do arquivo referente, conseguindo descobrir a sua localização física, a lista dos todos os \textit{data nodes} que possuem as partes do arquivo.
+		\\
+		
+		Por sua propriedade como um interface entre clientes e \textit{data nodes}, a ocorrência de alguma falha na operação ou indisponibilidade causada pela queda do servidor tem  enorme influencia na execução do sistema, podendo até resultar em parada total do sistema. Assim, é muito importante elaborar uma esquema para manter o \textit{name node} protegidos contra falhas ou queda total. Em nosso sistema usaremos a biblioteca BFT-SMaRt, que fornece tolerância a falha no serviço através de replicação por máquina de estado. \\
 	
-	O \textit{name node} é o conjunto de servidores que gerencia as informações dos arquivos armazenados, em forma de metadado.
-	Mantém na sua memória local a árvore de diretórios, o que indica localização lógica dos arquivos. Quando recebe uma solicitação de cliente por um arquivo, pesquisa a sua árvore de diretórios para identificar qual diretório que este arquivo se encontra. Como resultado da pesquisa obtém o metadado do arquivo referente, conseguindo descobrir a sua localização física, a lista dos todos os \textit{data nodes} que possuem as partes do arquivo. Assim, também gerencia as comunicações entre clientes e \textit{data nodes}, informando os clientes quais são os servidores que devem estabelecer a conexão para enviar ou receber um arquivo. 
-	\\
-	
-	Por sua propriedade como um interface entre clientes e \textit{data nodes}, a ocorrência de alguma falha na operação ou indisponibilidade causada pela queda do servidor tem  enorme influencia na execução do sistema, podendo até resultar em parada total do sistema. Assim, é muito importante elaborar uma esquema para manter o \textit{name node} protegidos contra falhas ou queda total. Em nosso sistema usaremos a biblioteca BFT-SMaRt, que fornece tolerância a falha no serviço através de replicação por máquina de estado. 
-	
-	\subsubsection{\textit{Data node}}
-	
-	Parte que realiza o armazenamento de arquivos em si.
+	\subsection{Serviço de Armazenamento}
+		Grupo de servidores que fazem armazenamento físico dos dados gerenciados pelo sistema de metadados. Também conhecidos como \textit{data nodes}.\\
+		
+		Em nosso sistema, o serviço de armazenamento não possui a necessidade de saber qual tipo de RAID está sendo executado, a responsabilidade de manter o RAID consistente é toda do serviço de metadados. Desta forma, o sistema de armazenamento apenas se conecta a uma porta e fica aguardando algum cliente se conectar a sua respectiva porta. Quando algum cliente conecta-se na porta do servidor, é realizado um \textit{handshake} preliminar, logo em seguida o cliente inicia a transferência dos dados que devem ser guardados pelo sistema de armazenamento. Ao fim da transferência o cliente fecha a conexão, enquanto o sistema de armazenamento indexa o arquivo recebido utilizando as informações adicionais que o serviço de metadados anexou ao arquivo. Com tais informações é possível saber o identificador tanto do arquivo quanto do cliente que o enviou. Tais dados adicionais são necessários para garantir que apenas o usuário dono dos dados enviados tenha acesso a eles, além de possibilitar identificar quais dados o cliente deseja receber de forma simples e eficiente.  
+		\\
 	
 	\subsection{Cliente}
-	Programa cliente que é executado no computador de um usuário. 
+	O programa cliente executado no computador de um usuário do sistema. 
+	\\
+	
+	Para cada operação que deseje realizar, o programa cliente (doravante Cliente) deve primeiramente comunicar-se com o serviço de metadados o qual ou irá realizar a operação (no caso de operações envolvendo diretórios) ou informar com quais servidores de armazenamento o cliente deve se comunicar e quais blocos devem ser enviados para cada servidor. Entretanto, é função do Cliente informar qual tipo de RAID ele deseja utilizar.
 	\\
 	
 	O programa cliente é capaz de dividir um arquivo em vários pedaços e gerar paridades. Por consequência, também é capaz de reconstruir um arquivo a partir de partes divididos. A Figura~\ref{fig:img6} mostra o procedimento.
