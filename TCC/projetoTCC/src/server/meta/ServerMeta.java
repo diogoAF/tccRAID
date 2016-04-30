@@ -26,6 +26,11 @@ import bftsmart.tom.server.defaultservices.DefaultSingleRecoverable;
 public class ServerMeta extends DefaultSingleRecoverable {
     private boolean verbose;
     
+    private int interval   = 1000;
+    private int iterations = 0;
+    private float maxTp = -1;
+    private long throughputMeasurementStartTime = System.currentTimeMillis();
+    
     private int raidType;
     private int nServers;
     
@@ -44,15 +49,13 @@ public class ServerMeta extends DefaultSingleRecoverable {
             // Mesma operacao para RAID1
         case(RaidType.RAID1):
             if(n<2) {
-                if(verbose)
-                    System.out.println("Number of servers should be at least 2");
+                System.out.println("Number of servers should be at least 2");
                 System.exit(-1);
             }
             break;
         case(RaidType.RAID5):
             if(n<4) {
-                if(verbose)
-                    System.out.println("Number of servers should be at least 4");
+                System.out.println("Number of servers should be at least 4");
                 System.exit(-1);
             }
             break;    
@@ -64,10 +67,10 @@ public class ServerMeta extends DefaultSingleRecoverable {
         
         this.raidType = raid; 
         this.nServers = n;
-         
         this.dt   = new DirectoryTree();
         this.list = new ServerList();
         this.verbose = verbose;
+        
         
         new ServiceReplica(id, this, this);
     }
@@ -78,6 +81,8 @@ public class ServerMeta extends DefaultSingleRecoverable {
             System.out.println();
             System.out.println("executeOrdered");
         }
+        
+        iterations++;
 
         byte[] resultBytes = null;
 
@@ -133,14 +138,30 @@ public class ServerMeta extends DefaultSingleRecoverable {
                     break;
 
 				default:
-                                        if(verbose)
-                                            System.out.println("Unknown request number " + reqType);
+                    if(verbose)
+                        System.out.println("Unknown request number " + reqType);
 					break;
 			}
 			
 		} catch (ClassNotFoundException | IOException e) {
 			e.printStackTrace();
 			System.exit(-1);
+		}
+		
+		if(!verbose) {
+	        float tp = -1;
+	        
+		    if(iterations%interval == 0) {
+		        tp = (float) (interval * 1000 / (float) (System.currentTimeMillis() - throughputMeasurementStartTime));
+
+	            if (tp > maxTp) {
+	                maxTp = tp;
+	            }
+		        
+		        System.out.println("Throughput = " + tp + " operations/sec (Maximum observed: " + maxTp + " ops/sec)");
+
+	            throughputMeasurementStartTime = System.currentTimeMillis();
+		    }
 		}
 		
         return resultBytes;

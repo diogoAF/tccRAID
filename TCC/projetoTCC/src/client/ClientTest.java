@@ -15,7 +15,7 @@ public class ClientTest {
     
     public static void main(String[] args) {
         if (args.length < 5) {
-            System.out.println("Use: java ClientTest <processId> <r|w> <1|100|1000> <n threads> <n ops>");
+            System.out.println("Use: java ClientTest <processId> <r|w> <1|100|1000|10000> <n threads> <n ops>");
             System.exit(-1);
         }
 
@@ -28,8 +28,8 @@ public class ClientTest {
         }
         
         String fileSize    = args[2];
-        if(!fileSize.equals("1") && !fileSize.equals("100") && !fileSize.equals("1000")) {
-            System.out.println("Tamanho de arquivo deve ser 1, 100 ou 1000");
+        if(!fileSize.equals("1") && !fileSize.equals("100") && !fileSize.equals("1000") && !fileSize.equals("10000")) {
+            System.out.println("Tamanho de arquivo deve ser 1, 100, 1000 ou 10000");
             System.exit(-1);
         }
         
