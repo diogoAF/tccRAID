@@ -529,6 +529,9 @@ public class ClientDFS extends Thread{
         }
         file = new File("temp/"+tgtName);
         
+        if(!verbose)
+            file = new File("temp/file");
+        
         FileOutputStream     fos = new FileOutputStream(file);
         BufferedOutputStream bos = new BufferedOutputStream(fos);
         

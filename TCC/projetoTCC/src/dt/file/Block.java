@@ -58,13 +58,13 @@ public class Block implements Serializable {
         ObjectOutputStream    oos =  null;
         byte[] bytes;
         try{
-                    oos = new ObjectOutputStream(bos);
-            
-                    oos.writeObject(block);
-                    bytes = bos.toByteArray(); 
-                    oos.close();
-                    bos.close();
-                    return bytes;
+            oos = new ObjectOutputStream(bos);
+    
+            oos.writeObject(block);
+            bytes = bos.toByteArray(); 
+            oos.close();
+            bos.close();
+            return bytes;
         } catch(IOException e) {
                     throw new IOException("Erro ao converter a classe Block em bytes");
         }
@@ -78,9 +78,6 @@ public class Block implements Serializable {
             Block block = (Block)ois.readObject();
             return block;
         } catch (ClassNotFoundException | IOException e) {
-                    //System.out.println("Errou!");
-                    //return null;
-                    //throw new IOException("Nao foi possível converter os bytes informados na classe Block ");
                     e.printStackTrace();
                     System.exit(0);
                     

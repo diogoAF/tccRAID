@@ -112,9 +112,7 @@ public class ClientServerSocket extends Thread {
 
                 byte[] buffer = new byte[BUFFER_SIZE];
                 int length = in.read(buffer);
-                System.out.println(length);
 
-                
                 return Arrays.copyOfRange(buffer, 0, length);
             } catch(ConnectException | UnknownHostException e) {
                 try {

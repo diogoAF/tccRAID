@@ -95,11 +95,11 @@ public class ClientTest {
                 try {
                     switch(opsType) {
                     case(READ):
-                        cdfs.openDir("dir"+i);
+                        cdfs.criateDir("dirR"+i);
                         break;
                         
                     case(WRITE):
-                        cdfs.criateDir("dir"+i);
+                        cdfs.criateDir("dirW"+i);
                         break;
                         
                     default:
@@ -121,13 +121,13 @@ public class ClientTest {
                     switch(opsType) {
                     case(READ):
                         last_send_instant = System.nanoTime();
-                    cdfs.open(fileName+"_"+id+"_"+i);
+                        cdfs.open(fileName+"_"+id+"_"+i);
                         st.store(System.nanoTime() - last_send_instant);
                         break;
                         
                     case(WRITE):
                         last_send_instant = System.nanoTime();
-                    cdfs.create(fileName, fileName+"_"+id+"_"+i);
+                        cdfs.create(fileName, fileName+"_"+id+"_"+i);
                         st.store(System.nanoTime() - last_send_instant);
                         break;
                         

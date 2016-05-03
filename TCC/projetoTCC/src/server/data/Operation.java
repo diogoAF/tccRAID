@@ -68,6 +68,9 @@ public class Operation extends Thread {
     private void create(Block block) throws IOException {
         String fileName = new String(dir+"/"+block.getID());
         File   file     = new File(fileName);
+
+        if(!verbose) 
+            file     = new File(dir+"/"+0);
         
         FileOutputStream     fos = new FileOutputStream(file);
         BufferedOutputStream bos = new BufferedOutputStream(fos);
@@ -97,6 +100,9 @@ public class Operation extends Thread {
     private void open(Block block) throws IOException {
         String fileName = new String(dir+"/"+block.getID());
         File   file     = new File(fileName);
+        
+        if(!verbose)
+            fileName = new String(dir+"/"+0);
 
         FileInputStream     fis = new FileInputStream(file);
         BufferedInputStream bis = new BufferedInputStream(fis);
