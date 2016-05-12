@@ -9,6 +9,8 @@ public class ClientTest {
     private static final char READ  = 'r';
     private static final char WRITE = 'w';
     
+    private static boolean verbose = false;
+
     @SuppressWarnings("unused")
     private static int VALUE_SIZE = 1024;
     public  static int initId = 0;
@@ -18,7 +20,9 @@ public class ClientTest {
             System.out.println("Use: java ClientTest <processId> <r|w> <1|100|1000|10000> <n threads> <n ops>");
             System.exit(-1);
         }
-
+        if (args.length == 6) {
+            verbose = true;
+        }
         initId = Integer.parseInt(args[0]);
         
         char opsType = args[1].charAt(0);
@@ -84,7 +88,7 @@ public class ClientTest {
             
             fileName = new String("test"+fileSize);
             
-            this.cdfs = new ClientDFS(id, false);
+            this.cdfs = new ClientDFS(id, verbose);
         }
         
         public void run() {

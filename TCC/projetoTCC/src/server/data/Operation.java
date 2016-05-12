@@ -14,7 +14,7 @@ import dt.file.Block;
 import request.RequestType;
 
 public class Operation extends Thread {
-    public static final int BUFFER_SIZE = 1024*1024;
+    public static final int BUFFER_SIZE = 1024*1024*100;
 
     private boolean verbose;
     private Socket clientSocket;
@@ -57,7 +57,7 @@ public class Operation extends Thread {
                 break;
             }
 
-            clientSocket.close();
+            //clientSocket.close();
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
             System.exit(0);
@@ -70,7 +70,7 @@ public class Operation extends Thread {
         File   file     = new File(fileName);
 
         if(!verbose) 
-            file     = new File(dir+"/"+0);
+            file = new File(dir+"/"+0);
         
         FileOutputStream     fos = new FileOutputStream(file);
         BufferedOutputStream bos = new BufferedOutputStream(fos);
@@ -102,7 +102,7 @@ public class Operation extends Thread {
         File   file     = new File(fileName);
         
         if(!verbose)
-            fileName = new String(dir+"/"+0);
+            file = new File(dir+"/"+0);
 
         FileInputStream     fis = new FileInputStream(file);
         BufferedInputStream bis = new BufferedInputStream(fis);

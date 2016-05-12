@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class ServerData extends Thread{
+public class ServerData {
     private boolean verbose;
     
     private String hostName;

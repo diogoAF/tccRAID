@@ -21,7 +21,7 @@ public class ClientServerSocket extends Thread {
     private static final int TRIES = 2;
     private static final int SLEEP = 5;
     
-    public static final int BUFFER_SIZE = 1024*1024;
+    public static final int BUFFER_SIZE = 1024*1024*100;
 
     private boolean verbose;
     

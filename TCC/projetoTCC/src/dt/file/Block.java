@@ -9,19 +9,12 @@ import java.io.Serializable;
 
 @SuppressWarnings("serial")
 public class Block implements Serializable {
-    public byte[] bytes;
+    private byte[] bytes;
     private long ID;
-    private String fileName;
     
     public Block(long ID, byte[] bytes){
         this.ID    = ID;
         this.bytes = bytes;
-    }
-    
-    public Block(long bytesLength, long ID, String fileName){
-        this.bytes = new byte[(int)bytesLength];
-        this.ID = ID;
-        this.fileName = fileName;
     }
     
     public Block(long bytesLength, long ID){
@@ -49,10 +42,6 @@ public class Block implements Serializable {
         return ID;
     }
 
-    public String getFileName() {
-        return fileName;
-    }
-    
     public static byte[] toBytes(Block block) throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         ObjectOutputStream    oos =  null;
