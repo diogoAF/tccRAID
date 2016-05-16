@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.15 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2015.4.2)  27 APR 2016 22:57
+This is pdfTeX, Version 3.14159265-2.6-1.40.15 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2015.4.2)  16 MAY 2016 11:22
 entering extended mode
 **monografia.tex
 (monografia.tex
@@ -597,7 +597,7 @@ File: t1ua1.fd 2006/03/21 Fontinst v1.928 font definitions for T1/ua1.
 LaTeX Font Info:    Font shape `T1/ua1/bx/n' in size <20> not available
 (Font)              Font shape `T1/ua1/b/n' tried instead on input line 37.
 
-<positivo_cor.pdf, id=259, 119.44624pt x 60.225pt>
+<positivo_cor.pdf, id=263, 119.44624pt x 60.225pt>
 File: positivo_cor.pdf Graphic file (type pdf)
  <use positivo_cor.pdf>
 Package pdftex.def Info: positivo_cor.pdf used on input line 37.
@@ -787,7 +787,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 177--180
 
  []
 
-[11] [12] <images/image3.png, id=529, 467.7475pt x 333.245pt>
+[11] [12] <images/image3.png, id=534, 467.7475pt x 333.245pt>
 File: images/image3.png Graphic file (type png)
 
 <use images/image3.png>
@@ -837,7 +837,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 25--26
 
  []
 
-<images/image4.png, id=547, 658.46pt x 380.42125pt>
+<images/image4.png, id=552, 658.46pt x 380.42125pt>
 File: images/image4.png Graphic file (type png)
  <use images/image4.png>
 Package pdftex.def Info: images/image4.png used on input line 30.
@@ -897,7 +897,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 74--75
 
  []
 
-<images/image5.png, id=562, 794.97pt x 598.235pt>
+<images/image5.png, id=567, 794.97pt x 598.235pt>
 File: images/image5.png Graphic file (type png)
  <use images/image5.png>
 Package pdftex.def Info: images/image5.png used on input line 79.
@@ -981,7 +981,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 15--16
 
  []
 
-<images/RAID_0.png, id=594, 244.66406pt x 376.40625pt>
+<images/RAID_0.png, id=599, 244.66406pt x 376.40625pt>
 File: images/RAID_0.png Graphic file (type png)
  <use images/RAID_0.png>
 Package pdftex.def Info: images/RAID_0.png used on input line 20.
@@ -1001,7 +1001,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 34--35
 
  []
 
-<images/RAID_1.png, id=603, 244.66406pt x 376.40625pt>
+<images/RAID_1.png, id=608, 244.66406pt x 376.40625pt>
 File: images/RAID_1.png Graphic file (type png)
  <use images/RAID_1.png>
 Package pdftex.def Info: images/RAID_1.png used on input line 39.
@@ -1021,7 +1021,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 53--54
 
  []
 
-<images/RAID_2.png, id=614, 1284.8pt x 642.4pt>
+<images/RAID_2.png, id=619, 1284.8pt x 642.4pt>
 File: images/RAID_2.png Graphic file (type png)
  <use images/RAID_2.png>
 Package pdftex.def Info: images/RAID_2.png used on input line 58.
@@ -1036,7 +1036,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 72--73
 
  []
 
-<images/RAID_3.png, id=625, 1284.8pt x 951.555pt>
+<images/RAID_3.png, id=630, 1284.8pt x 951.555pt>
 File: images/RAID_3.png Graphic file (type png)
  <use images/RAID_3.png>
 Package pdftex.def Info: images/RAID_3.png used on input line 77.
@@ -1056,7 +1056,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 89--90
 
  []
 
-<images/RAID_4.png, id=638, 1284.8pt x 951.555pt>
+<images/RAID_4.png, id=643, 1284.8pt x 951.555pt>
 File: images/RAID_4.png Graphic file (type png)
  <use images/RAID_4.png>
 Package pdftex.def Info: images/RAID_4.png used on input line 94.
@@ -1076,7 +1076,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 106--107
 
  []
 
-<images/RAID_5.png, id=650, 602.25pt x 491.8375pt>
+<images/RAID_5.png, id=655, 602.25pt x 491.8375pt>
 File: images/RAID_5.png Graphic file (type png)
  <use images/RAID_5.png>
 Package pdftex.def Info: images/RAID_5.png used on input line 111.
@@ -1101,7 +1101,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 126--127
 
  []
 
-<images/RAID_6.png, id=661, 1284.8pt x 755.82375pt>
+<images/RAID_6.png, id=666, 1284.8pt x 755.82375pt>
 File: images/RAID_6.png Graphic file (type png)
  <use images/RAID_6.png>
 Package pdftex.def Info: images/RAID_6.png used on input line 131.
@@ -1121,7 +1121,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 145--146
 
  []
 
-[29 <./images/RAID_6.png>] <images/RAID_50.png, id=672, 385.44pt x 131.0496pt>
+[29 <./images/RAID_6.png>] <images/RAID_50.png, id=677, 385.44pt x 131.0496pt>
 File: images/RAID_50.png Graphic file (type png)
 
 <use images/RAID_50.png>
@@ -1134,7 +1134,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 6--7
 
  []
 
-<images/image1.png, id=683, 510.90875pt x 423.5825pt>
+<images/image1.png, id=688, 510.90875pt x 423.5825pt>
 File: images/image1.png Graphic file (type png)
  <use images/image1.png>
 Package pdftex.def Info: images/image1.png used on input line 17.
@@ -1144,7 +1144,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 23--24
 
  []
 
-<images/image7.png, id=685, 528.97626pt x 548.0475pt>
+<images/image7.png, id=690, 528.97626pt x 548.0475pt>
 File: images/image7.png Graphic file (type png)
  <use images/image7.png>
 Package pdftex.def Info: images/image7.png used on input line 28.
@@ -1206,56 +1206,110 @@ Underfull \hbox (badness 10000) in paragraph at lines 70--72
 
  []
 
-<images/image6.png, id=703, 953.5625pt x 385.44pt>
-File: images/image6.png Graphic file (type png)
- <use images/image6.png>
-Package pdftex.def Info: images/image6.png used on input line 77.
-(pdftex.def)             Requested size: 426.79134pt x 172.51714pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 83--84
+Underfull \hbox (badness 10000) in paragraph at lines 73--75
 
  []
 
-<images/image2.png, id=706, 510.90875pt x 456.70625pt>
+<images/image6.png, id=708, 953.5625pt x 385.44pt>
+File: images/image6.png Graphic file (type png)
+ <use images/image6.png>
+Package pdftex.def Info: images/image6.png used on input line 79.
+(pdftex.def)             Requested size: 426.79134pt x 172.51714pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 85--87
+
+ []
+
+[34] <images/image2.png, id=715, 510.90875pt x 456.70625pt>
 File: images/image2.png Graphic file (type png)
- <use images/image2.png>
+
+<use images/image2.png>
 Package pdftex.def Info: images/image2.png used on input line 91.
 (pdftex.def)             Requested size: 284.52756pt x 254.33908pt.
 
-[34] [35 <./images/image6.png (PNG copy)>] [36 <./images/image2.png (PNG copy)>
-]) (chapters/capitulo6.tex [37]
+Underfull \hbox (badness 10000) in paragraph at lines 99--101
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 108--110
+
+ []
+
+[35 <./images/image6.png (PNG copy)>]
+Underfull \hbox (badness 10000) in paragraph at lines 111--113
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 116--118
+
+ []
+
+[36 <./images/image2.png (PNG copy)>]
+Underfull \hbox (badness 10000) in paragraph at lines 121--123
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 124--126
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 127--129
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 132--135
+
+ []
+
+[37]) (chapters/capitulo6.tex [38] [39]
 Cap\'{\i }tulo 6.
-) (chapters/conclusao.tex) [38
+) (chapters/experimentos.tex) (chapters/capitulo7.tex [40
+
+]
+Cap\'{\i }tulo 7.
+) (chapters/conclusao.tex) [41
 
 ] (monografia.bbl (monografia.brf)
 \tf@brf=\write7
- [39
+ [42
 
 
 ])
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 88.
- [40]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 88.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 90.
+ [43]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 90.
 
 (monografia.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 88.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 88.
-Package rerunfilecheck Info: File `monografia.out' has not changed.
-(rerunfilecheck)             Checksum: FC529E74CD4F48BD8A8D9EE0293064BC;4420.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 90.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 90.
+
+
+Package rerunfilecheck Warning: File `monografia.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+Package rerunfilecheck Info: Checksums for `monografia.out':
+(rerunfilecheck)             Before: 58735C141F3592E163A5454EA46AB966;4469
+(rerunfilecheck)             After:  F26AB20E169773C0D100EE29C3C86379;4469.
 Package rerunfilecheck Info: File `monografia.brf' has not changed.
 (rerunfilecheck)             Checksum: 8DFDDF43BC379B042F1A9DDC970C2939;2028.
 
-
 LaTeX Warning: There were multiply-defined labels.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 88.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 90.
  )
 (\end occurred when \iffalse on line 462 was incomplete) 
 Here is how much of TeX's memory you used:
- 8381 strings out of 493698
- 117500 string characters out of 3144413
- 224569 words of memory out of 3000000
- 11329 multiletter control sequences out of 15000+200000
+ 8394 strings out of 493698
+ 117678 string characters out of 3144413
+ 224573 words of memory out of 3000000
+ 11330 multiletter control sequences out of 15000+200000
  26119 words of font info for 37 fonts, out of 3000000 for 9000
  1025 hyphenation exceptions out of 8191
  43i,8n,69p,2555b,502s stack positions out of 5000i,500n,10000p,200000b,50000s
@@ -1271,9 +1325,9 @@ es/MiKTeX 2.9/fonts/type1/public/cm-super/sfbx2488.pfb><C:/Program Files/MiKTeX
 s/type1/public/cm-super/sfrm1440.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/p
 ublic/cm-super/sfti1200.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/urw/arial/
 ua1b8a.pfb>
-Output written on monografia.pdf (51 pages, 1154338 bytes).
+Output written on monografia.pdf (54 pages, 1154781 bytes).
 PDF statistics:
- 858 PDF objects out of 1000 (max. 8388607)
- 191 named destinations out of 1000 (max. 500000)
- 683 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 878 PDF objects out of 1000 (max. 8388607)
+ 197 named destinations out of 1000 (max. 500000)
+ 691 words of extra memory for PDF output out of 10000 (max. 10000000)
 
