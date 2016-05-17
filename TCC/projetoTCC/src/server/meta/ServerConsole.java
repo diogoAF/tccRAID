@@ -9,7 +9,10 @@ public class ServerConsole {
         }
     	boolean verbose = false;
     	if(args.length > 3) {
-    	    verbose = true;
+    	    if(args[3].equalsIgnoreCase("true")){
+                verbose = true;
+                System.out.println("verbose");
+            }
     	}
     	       
     	new ServerMeta(Integer.parseInt(args[0]), Integer.parseInt(args[1]), Integer.parseInt(args[2]), verbose);

@@ -14,8 +14,10 @@ public class ServerConsole {
         }
         boolean verbose = false;
         if(args.length > 1) {
-            verbose = true;
-            System.out.println("verbose");
+            if(args[1].equalsIgnoreCase("true")){
+                verbose = true;
+                System.out.println("verbose");
+            }
         }
         
         try {

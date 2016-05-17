@@ -131,24 +131,48 @@ Este capítulo é onde começamos a abordar nosso modelo proposto de um sistema 
 	 
 	 Operação realizada exclusivamente entre o cliente e o servidor \textit{name node}. Nessa operação o cliente informa ao \textit{name node} que deseja abrir um diretório, passando como metadados apenas o nome do novo diretório almejado e do diretório atual. A primeira ação do servidor de metadados é verificar a existência do diretório solicitado, em caso positivo, o servidor também checa se o cliente possui permissão de acesso e se o diretório está livre. Caso todas as validações sejam positivas, o servidor muda o diretório atual do cliente para o diretório solicitado. Caso algum problema seja detectado, uma mensagem de erro é disparada para o cliente e o seu diretório atual não é alterado.
 	 \\
-	 %PAREI AQUI!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!%
+	 
 	 
 	\subsubsection{Deletar arquivos}
-	Deletar um arquivo vai seguir procedimentos semelhantes a operação de abrir arquivo. Em primeiro lugar recebe o nome e diretório do arquivo a ser apagado. Faz a busca pela árvore de diretórios para achar o diretório requisitado, e chegando em diretório correto, procura o arquivo por nome. Quando encontra o arquivo desejado, verifica se está satisfazendo as condições para efetuar a operação, checando a permissão de acesso e estado de bloqueio do arquivo.  
+	
+	Operação realizada entre o cliente e o servidor \textit{name node}. Nessa operação o cliente informa ao \textit{name node} que deseja deletar um arquivo, em seguida deve informar o nome do diretório onde o arquivo está armazenado e o nome do arquivo. Com tais informações, o servidor de metadados percorre a árvore de diretórios em busca do diretório requisitado, caso seja encontrado, inicia uma pesquisa pelo arquivo informado, se o arquivo for encontrado, o \textit{name node} verifica se o cliente possui permissão de acesso ao arquivo e se ele não está em estado de bloqueio, em caso positivo o arquivo é deletado e a árvore de diretório do cliente atualizada.
+	\\
+	
+	\subsubsection{Deletar diretório}
+	
+	Operação realizada exclusivamente entre o cliente e o servidor \textit{name node}. Nessa operação o cliente informa ao \textit{name node} que deseja deletar um diretório, passando apenas o nome do diretório almejado. A primeira ação do servidor de metadados é verificar a existência do diretório solicitado, em caso positivo, o servidor também checa se o cliente possui permissão de acesso e se o diretório está livre. Caso todas as validações sejam positivas, o servidor deleta o diretório, além de todos os arquivos contidos nele. Em seguida o servidor de metadados atualiza a árvore de diretórios do cliente.
+	\\
 	
 	\subsubsection{Fechar um arquivo aberto}
 	
-	Fechar o arquivo aberto por um cliente.
+	Operação realizada exclusivamente entre o cliente e o servidor \textit{name node}. Nessa operação o cliente informa ao \textit{name node} que deseja fechar um arquivo. Primeiramente o servidor de metadados verifica se existe algum arquivo aberto pelo cliente, caso exista, é apresentado ao cliente a lista de arquivos abertos para que ele selecione qual ele deseja fechar. Sabendo qual arquivo deve ser fechado, o \textit{name node} libera o acesso ao \textit{lock} do arquivo, desta forma fechando o arquivo. Para o caso de o cliente não ter nenhum arquivo aberto é soltado uma mensagem de erro explicativa para o usuário.
+	\\
+	
+	\subsubsection{Fechar diretório}
+	
+	Operação realizada exclusivamente entre o cliente e o servidor \textit{name node}. Nessa operação o cliente informa ao \textit{name node} que deseja fechar o diretório. Primeiramente o servidor de metadados verifica se o diretório atual é o diretório raiz, caso seja, o cliente é informado que não pode fechar o diretório raiz. Caso não seja o raiz, o diretório atual é atualizado para o diretório pai do antigo diretório atual.
+	\\
 	
 	\subsubsection{Editar um arquivo}
 	
-	Fazer alteração no arquivo armazenado.
+	Operação realizada inicialmente entre o cliente e o servidor do tipo \textit{name node}. Nesse primeiro momento o cliente informa ao \textit{name node} que deseja editar um arquivo, para tal, o cliente deve fornecer o nome do arquivo. Em posse do nome do arquivo, o servidor de metadado verifica sua existência no diretório corrente, em caso positivo ainda é preciso confirmar se o arquivo já está aberto. Verificado que o arquivo não encontra-se aberto, as informações sobre o arquivo são passados para o cliente. Com tais informações, a operação que o cliente realiza é a exclusão do antigo arquivo seguida da criação do novo (ou seja, a atualização do antigo arquivo). Tais operações são realizadas como descrito previamente, entretanto, com a diferença que o usuário não precisa informar o nome do arquivo pois ele é criado com o mesmo nome do antigo.
+	\\
 	
-	\subsubsection{Modificar metadado}
+	\subsubsection{Renomear um arquivo}
+	Operação realizada entre o cliente e o servidor \textit{name node}. Nessa operação o cliente informa ao \textit{name node} que deseja renomear um arquivo, além de fornecer o nome do arquivo que deve ser renomeado ele também deve informar o novo nome. Primeiramente o servidor de metadados procura pelo arquivo informado no diretório corrente, caso o arquivo seja encontrado ainda é necessário que o \textit{name node} verifique se o cliente possui permissão de acesso ao arquivo e se o mesmo não está aberto, caso o arquivo esteja fechado e o cliente tenha permissão de acesso, o arquivo é, enfim, renomeado com o novo nome.
+	\\
 	
-	Permite fazer alterações sobre as informações do arquivo, editando diretamente o metadado associado.
+	\subsubsection{Renomear Diretório}
+	
+	Operação realizada exclusivamente entre o cliente e o servidor \textit{name node}. Nessa operação o cliente informa ao \textit{name node} que deseja renomear o diretório, além de fornecer o nome do diretório que deve ser renomeado e o seu novo nome. Primeiramente o servidor de metadados percorre a árvore de diretórios em busca do nome fornecido, caso seja encontrado o diretório é renomeado com o novo nome fornecido pelo cliente e seu metadado referente a sua ultima modificação é atualizado.
+	\\
 	
 	
+
+	
+	
+	
+	%PAREI AQUI!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!%
 	\subsection{Servidor-Servidor}
 	São operações ocorridos entre \textit{name node} e \textit{data node}, com função de gerenciamento de SAD.
 	
