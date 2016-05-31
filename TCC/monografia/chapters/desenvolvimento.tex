@@ -191,20 +191,25 @@ Este capítulo é onde começamos a abordar nosso modelo proposto de um sistema 
 	
 	\section{Implementação}
 	
-	Nesta seção descreve a implementação do sistema criado.
+	Nesta seção descreve a implementação do sistema proposto.
+	
+	Para realizar a replicação do serviço, utiliza-se a biblioteca de BFT-SMaRt, que é fornecido em linguagem Java.
 	
 	
 	\subsection{Serviço de Metadados}
-	Todas as funcionalidades estão presentes na classe principal ServerMeta.  
-	A classe ServerMeta extende a DefaultSingleRecoverable, a classe que pertence no pacote de BTR-SMaRt, para realizar a replicação de serviço.
+	Maioria das funcionalidades estão presentes na classe principal ServerMeta.
+	A classe ServerMeta herda a DefaultSingleRecoverable, uma classe que está contida na biblioteca de BTR-SMaRt.
 	
 	
 	\subsection{Serviço de Armazenamento}
 	
+	A classe MetaDataModule faz comunicação com os servidores de metadados. Nesta comunicação os servidors de armazenamento se comportam como se fosse um cliente em sistema BRT-SMaRt.
 	
 	\subsection{Cliente}
-	Parte que faz ligação entre usuário e o sistema de armazenamento.
-	Os usuários podem enviar ou receber os arquivos. 
+	Está dividido em partes principais de interface e de execução. 
+	A classe ClientConsole fornece interface de usuário baseado em linha de comando, e é responsável para fazer ligação entre programa e o usuário, imprimindo na tela as mensagens e opções e .
+	
+	A classe ClientDFS, a classe que estão concentrados os métodos para realizar as tarefas exigidas.
 	
 	
 	
