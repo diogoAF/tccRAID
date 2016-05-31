@@ -3,7 +3,7 @@ Este capítulo é onde começamos a abordar nosso modelo proposto de um sistema 
 
 	\section{Arquitetura do sistema}
 	
-	A arquitetura do Sistema de Arquivos Distribuídos proposto neste trabalho é composto por um ou vários clientes comunicando-se com ao menos três servidores de metadados e quatro servidores de armazenamento, onde cada um deles está conectado através de Internet ou outra rede, como a Figura~\ref{fig:vis_sis}  sintetiza. Neste sistema, cada servidor de armazenamento se comporta como um disco rígido em sistema de RAID, armazenando distribuidamente as partes dos arquivos e/ou paridades associadas. \\
+	A arquitetura do Sistema de Arquivos Distribuídos proposto neste trabalho é composto por um ou vários clientes comunicando-se com servidores de metadados e servidores de armazenamento, onde cada um deles está conectado através de Internet ou outra rede, como a Figura~\ref{fig:vis_sis}  sintetiza. Neste sistema, cada servidor de armazenamento se comporta como um disco rígido em sistema de RAID, armazenando distribuidamente as partes dos arquivos e/ou paridades associadas. \\
 	
 	
 	%O nosso objeivo neste artigo é a construção de um SAD baseado na computação em nuvem que possui menor \textit{overhead} de espaço, comparado a 200\% de método de replicação, sem degradar muito o performance e segurança de dados. 
@@ -191,12 +191,20 @@ Este capítulo é onde começamos a abordar nosso modelo proposto de um sistema 
 	
 	\section{Implementação}
 	
+	Nesta seção descreve a implementação do sistema criado.
+	
+	
 	\subsection{Serviço de Metadados}
+	Todas as funcionalidades estão presentes na classe principal ServerMeta.  
+	A classe ServerMeta extende a DefaultSingleRecoverable, a classe que pertence no pacote de BTR-SMaRt, para realizar a replicação de serviço.
+	
 	
 	\subsection{Serviço de Armazenamento}
 	
-	\subsection{Cliente}
 	
+	\subsection{Cliente}
+	Parte que faz ligação entre usuário e o sistema de armazenamento.
+	Os usuários podem enviar ou receber os arquivos. 
 	
 	
 	
