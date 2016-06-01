@@ -6,52 +6,52 @@ import java.util.Iterator;
 
 @SuppressWarnings("serial")
 public class BlockInfoList implements Serializable {
-	private ArrayList<BlockInfo> blocks;
-	private long blockSize;
+    private ArrayList<BlockInfo> blocks;
+    private long blockSize;
     private int  raidType;
-	private int  nServers;
-	
-	public BlockInfoList(long bSize, int raid, int n) {
+    private int  nServers;
+
+    public BlockInfoList(long bSize, int raid, int n) {
         this.blockSize = bSize;
         this.raidType  = raid;
         this.nServers  = n;
         this.blocks    = new ArrayList<BlockInfo>(nServers);
     }
 	
-	public void add(BlockInfo blockInfo) {
-		blocks.add(blockInfo);
-	}
+    public void add(BlockInfo blockInfo) {
+        blocks.add(blockInfo);
+    }
 	
     public BlockInfo get(int i) {
         return blocks.get(i);
     }
 
-	public int getBlockSize() {
-		return (int)blockSize;
-	}
+    public int getBlockSize() {
+            return (int)blockSize;
+    }
 	
-	public int size() {
+    public int size() {
         return blocks.size();
     }
     
-	public int getRaidType() {
-	    return raidType;
-	}
+    public int getRaidType() {
+        return raidType;
+    }
 
     public int getNServers() {
         return nServers;
     }
     
-	public void print() {
+    public void print() {
         System.out.println("Block size: "+blockSize);
         System.out.println("RAID type:  "+raidType);
         System.out.println("Number of servers:  "+nServers);
 
         Iterator<BlockInfo> ite = blocks.iterator();
-		while(ite.hasNext()) {
-			BlockInfo info = ite.next();
-			info.print();
-		}
-	}
+            while(ite.hasNext()) {
+                    BlockInfo info = ite.next();
+                    info.print();
+            }
+    }
 	
 }

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.15 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2015.4.2)  16 MAY 2016 11:22
+This is pdfTeX, Version 3.14159265-2.6-1.40.15 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2015.4.2)  23 MAY 2016 09:50
 entering extended mode
 **monografia.tex
 (monografia.tex
@@ -1263,26 +1263,66 @@ Underfull \hbox (badness 10000) in paragraph at lines 127--129
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 132--135
+Underfull \hbox (badness 10000) in paragraph at lines 132--134
 
  []
 
-[37]) (chapters/capitulo6.tex [38] [39]
+[37]
+Underfull \hbox (badness 10000) in paragraph at lines 138--140
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 141--143
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 146--148
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 151--153
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 156--158
+
+ []
+
+[38]
+Underfull \hbox (badness 10000) in paragraph at lines 161--163
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 165--167
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 170--172
+
+ []
+
+) (chapters/capitulo6.tex [39] [40]
 Cap\'{\i }tulo 6.
-) (chapters/experimentos.tex) (chapters/capitulo7.tex [40
+) (chapters/experimentos.tex) (chapters/capitulo7.tex [41
 
 ]
 Cap\'{\i }tulo 7.
-) (chapters/conclusao.tex) [41
+) (chapters/conclusao.tex) [42
 
 ] (monografia.bbl (monografia.brf)
 \tf@brf=\write7
- [42
+ [43
 
 
 ])
 Package atveryend Info: Empty hook `BeforeClearDocument' on input line 90.
- [43]
+ [44]
 Package atveryend Info: Empty hook `AfterLastShipout' on input line 90.
 
 (monografia.aux)
@@ -1295,8 +1335,8 @@ Package rerunfilecheck Warning: File `monografia.out' has changed.
 (rerunfilecheck)                or use package `bookmark'.
 
 Package rerunfilecheck Info: Checksums for `monografia.out':
-(rerunfilecheck)             Before: 58735C141F3592E163A5454EA46AB966;4469
-(rerunfilecheck)             After:  F26AB20E169773C0D100EE29C3C86379;4469.
+(rerunfilecheck)             Before: F26AB20E169773C0D100EE29C3C86379;4469
+(rerunfilecheck)             After:  E4693BDA01212242969D011660EEE298;4397.
 Package rerunfilecheck Info: File `monografia.brf' has not changed.
 (rerunfilecheck)             Checksum: 8DFDDF43BC379B042F1A9DDC970C2939;2028.
 
@@ -1306,28 +1346,31 @@ Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 90.
  )
 (\end occurred when \iffalse on line 462 was incomplete) 
 Here is how much of TeX's memory you used:
- 8394 strings out of 493698
- 117678 string characters out of 3144413
+ 8395 strings out of 493698
+ 117685 string characters out of 3144413
  224573 words of memory out of 3000000
  11330 multiletter control sequences out of 15000+200000
  26119 words of font info for 37 fonts, out of 3000000 for 9000
  1025 hyphenation exceptions out of 8191
  43i,8n,69p,2555b,502s stack positions out of 5000i,500n,10000p,200000b,50000s
-{C:/Program Files/MiKTe
-X 2.9/fonts/enc/dvips/cm-super/cm-super-t1.enc}{C:/Program Files/MiKTeX 2.9/fon
-ts/enc/dvips/fontname/8r.enc}<C:/Program Files/MiKTeX 2.9/fonts/type1/public/am
-sfonts/cm/cmsy10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/cm-super/s
-fbi1440.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/cm-super/sfbx1200.p
-fb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/cm-super/sfbx1440.pfb><C:/Pr
-ogram Files/MiKTeX 2.9/fonts/type1/public/cm-super/sfbx1728.pfb><C:/Program Fil
-es/MiKTeX 2.9/fonts/type1/public/cm-super/sfbx2488.pfb><C:/Program Files/MiKTeX
- 2.9/fonts/type1/public/cm-super/sfrm1200.pfb><C:/Program Files/MiKTeX 2.9/font
-s/type1/public/cm-super/sfrm1440.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/p
-ublic/cm-super/sfti1200.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/urw/arial/
-ua1b8a.pfb>
-Output written on monografia.pdf (54 pages, 1154781 bytes).
+pdfTeX warning (dest): 
+name{subsection.5.2.2} has been referenced but does not exist, replaced by a fi
+xed one
+
+{C:/Program Files/MiKTeX 2.9/fonts/enc/dvips/cm-super/cm-super-t1.enc}{C:/Progr
+am Files/MiKTeX 2.9/fonts/enc/dvips/fontname/8r.enc}<C:/Program Files/MiKTeX 2.
+9/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Program Files/MiKTeX 2.9/fonts/
+type1/public/cm-super/sfbi1440.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/pub
+lic/cm-super/sfbx1200.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/cm-su
+per/sfbx1440.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/cm-super/sfbx1
+728.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/cm-super/sfbx2488.pfb><
+C:/Program Files/MiKTeX 2.9/fonts/type1/public/cm-super/sfrm1200.pfb><C:/Progra
+m Files/MiKTeX 2.9/fonts/type1/public/cm-super/sfrm1440.pfb><C:/Program Files/M
+iKTeX 2.9/fonts/type1/public/cm-super/sfti1200.pfb><C:/Program Files/MiKTeX 2.9
+/fonts/type1/urw/arial/ua1b8a.pfb>
+Output written on monografia.pdf (55 pages, 1164865 bytes).
 PDF statistics:
- 878 PDF objects out of 1000 (max. 8388607)
- 197 named destinations out of 1000 (max. 500000)
+ 883 PDF objects out of 1000 (max. 8388607)
+ 198 named destinations out of 1000 (max. 500000)
  691 words of extra memory for PDF output out of 10000 (max. 10000000)
 

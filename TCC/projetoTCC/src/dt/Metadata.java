@@ -47,7 +47,7 @@ public class Metadata implements Serializable {
 		setAttr(attr);
 	}
 	
-	public void lock(int lockType) {
+	public synchronized void lock(int lockType) {
 		lock = lockType;
 	}
 	

@@ -627,11 +627,11 @@ public class ServerMeta extends DefaultSingleRecoverable {
             System.out.println(currPath+"/"+tgtName);
         }
 
-		Directory currDir = dt.openDirectory(currPath, accTime);
-		int       result  = -1;
-		BlockInfoList bList   = null;
+        Directory currDir = dt.openDirectory(currPath, accTime);
+        int result  = -1;
+        BlockInfoList bList   = null;
 		
-		if(currDir == null) {
+        if(currDir == null) {
             currDir = dt.getRoot();
             result  = ResultType.FAILURE;
         } else if(!currDir.existFile(tgtName)) {

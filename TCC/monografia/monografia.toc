@@ -80,21 +80,20 @@
 \contentsline {subsubsection}{Abrir arquivos}{37}{section*.35}
 \contentsline {subsubsection}{Abrir diret\IeC {\'o}rio}{37}{section*.36}
 \contentsline {subsubsection}{Deletar arquivos}{38}{section*.37}
-\contentsline {subsubsection}{Fechar um arquivo aberto}{38}{section*.38}
-\contentsline {subsubsection}{Editar um arquivo}{38}{section*.39}
-\contentsline {subsubsection}{Modificar metadado}{38}{section*.40}
-\contentsline {subsection}{\numberline {5.2.2}Servidor-Servidor}{38}{subsection.5.2.2}
-\contentsline {subsubsection}{Receber arquivo criado}{38}{section*.41}
-\contentsline {subsubsection}{Apagar arquivo deletado}{38}{section*.42}
-\contentsline {subsubsection}{Transferir dados entre servidores}{38}{section*.43}
+\contentsline {subsubsection}{Deletar diret\IeC {\'o}rio}{38}{section*.38}
+\contentsline {subsubsection}{Fechar um arquivo aberto}{38}{section*.39}
+\contentsline {subsubsection}{Fechar diret\IeC {\'o}rio}{38}{section*.40}
+\contentsline {subsubsection}{Editar um arquivo}{39}{section*.41}
+\contentsline {subsubsection}{Renomear um arquivo}{39}{section*.42}
+\contentsline {subsubsection}{Renomear Diret\IeC {\'o}rio}{39}{section*.43}
 \contentsline {section}{\numberline {5.3}Implementa\IeC {\c c}\IeC {\~a}o}{39}{section.5.3}
-\contentsline {subsection}{\numberline {5.3.1}Servi\IeC {\c c}o de Metadados}{39}{subsection.5.3.1}
-\contentsline {subsection}{\numberline {5.3.2}Servi\IeC {\c c}o de Armazenamento}{39}{subsection.5.3.2}
-\contentsline {subsection}{\numberline {5.3.3}Cliente}{39}{subsection.5.3.3}
-\contentsline {chapter}{\numberline {6}Experimentos}{40}{chapter.6}
-\contentsline {section}{\numberline {6.1}Experimentos}{40}{section.6.1}
-\contentsline {section}{\numberline {6.2}Conclus\IeC {\~o}es do Cap\IeC {\'\i }tulo}{40}{section.6.2}
-\contentsline {chapter}{\numberline {7}Conclus\IeC {\~o}es e Trabalhos Futuros}{41}{chapter.7}
-\contentsline {section}{\numberline {7.1}Conclus\IeC {\~o}es}{41}{section.7.1}
-\contentsline {section}{\numberline {7.2}Trabalhos Futuros}{41}{section.7.2}
-\contentsline {chapter}{Refer\^encias}{42}{section*.44}
+\contentsline {subsection}{\numberline {5.3.1}Servi\IeC {\c c}o de Metadados}{40}{subsection.5.3.1}
+\contentsline {subsection}{\numberline {5.3.2}Servi\IeC {\c c}o de Armazenamento}{40}{subsection.5.3.2}
+\contentsline {subsection}{\numberline {5.3.3}Cliente}{40}{subsection.5.3.3}
+\contentsline {chapter}{\numberline {6}Experimentos}{41}{chapter.6}
+\contentsline {section}{\numberline {6.1}Experimentos}{41}{section.6.1}
+\contentsline {section}{\numberline {6.2}Conclus\IeC {\~o}es do Cap\IeC {\'\i }tulo}{41}{section.6.2}
+\contentsline {chapter}{\numberline {7}Conclus\IeC {\~o}es e Trabalhos Futuros}{42}{chapter.7}
+\contentsline {section}{\numberline {7.1}Conclus\IeC {\~o}es}{42}{section.7.1}
+\contentsline {section}{\numberline {7.2}Trabalhos Futuros}{42}{section.7.2}
+\contentsline {chapter}{Refer\^encias}{43}{section*.44}

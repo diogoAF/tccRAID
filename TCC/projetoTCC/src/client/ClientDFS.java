@@ -412,10 +412,10 @@ public class ClientDFS extends Thread{
     
     public int delete(String tgtName) throws ClassNotFoundException, IOException  {
     	ByteArrayOutputStream out = new ByteArrayOutputStream();
-		ObjectOutputStream    oos = new ObjectOutputStream(out);
-		
-		oos.writeInt(RequestType.DELETE);
-		oos.writeObject(currPath.toString());
+        ObjectOutputStream    oos = new ObjectOutputStream(out);
+
+        oos.writeInt(RequestType.DELETE);
+        oos.writeObject(currPath.toString());
         oos.writeObject(tgtName);
         oos.writeLong(System.currentTimeMillis());
 		oos.flush();
