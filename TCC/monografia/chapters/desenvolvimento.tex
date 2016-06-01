@@ -3,7 +3,7 @@ Este capítulo é onde começamos a abordar nosso modelo proposto de um sistema 
 
 	\section{Arquitetura do sistema}
 	
-	A arquitetura do Sistema de Arquivos Distribuídos proposto neste trabalho é composto por um ou vários clientes comunicando-se com ao menos três servidores de metadados e quatro servidores de armazenamento, onde cada um deles está conectado através de Internet ou outra rede, como a Figura~\ref{fig:vis_sis}  sintetiza. Neste sistema, cada servidor de armazenamento se comporta como um disco rígido em sistema de RAID, armazenando distribuidamente as partes dos arquivos e/ou paridades associadas. \\
+	A arquitetura do Sistema de Arquivos Distribuídos proposto neste trabalho é composto por um ou vários clientes comunicando-se com servidores de metadados e servidores de armazenamento, onde cada um deles está conectado através de Internet ou outra rede, como a Figura~\ref{fig:vis_sis}  sintetiza. Neste sistema, cada servidor de armazenamento se comporta como um disco rígido em sistema de RAID, armazenando distribuidamente as partes dos arquivos e/ou paridades associadas. \\
 	
 	
 	%O nosso objeivo neste artigo é a construção de um SAD baseado na computação em nuvem que possui menor \textit{overhead} de espaço, comparado a 200\% de método de replicação, sem degradar muito o performance e segurança de dados. 
@@ -101,7 +101,7 @@ Este capítulo é onde começamos a abordar nosso modelo proposto de um sistema 
 	
 	\subsection{Cliente-Servidor}
 	
-	É um conjunto de operações semelhantes as que são implementadas em um sistema de arquivos local, aquele que é integrado na maioria dos sistemas operacionais centralizados. Composto pelas operações sobre arquivo, pastas e suas execuções ocorrerem entre cliente e \textit{name node} ou \textit{data node}.
+	É um conjunto de operações semelhantes a que são implementadas em um sistema de arquivos local, aquele que é integrado na maioria dos sistemas operacionais comuns. Composto pelas operações sobre arquivos e pastas e suas execuções podem ocorrer entre cliente e \textit{name node} ou cliente e \textit{data node}.
 	
 	\subsubsection{Criar arquivo}
 	
@@ -135,10 +135,7 @@ Este capítulo é onde começamos a abordar nosso modelo proposto de um sistema 
 	 
 	\subsubsection{Deletar arquivos}
 	
-	Operação realizada primeiramente entre o cliente e o servidor \textit{name node}. Nessa operação o cliente informa ao \textit{name node} que deseja deletar um arquivo, em seguida deve informar o nome do diretório onde o arquivo está armazenado e o nome do arquivo. Com tais informações, o servidor de metadados percorre a árvore de diretórios em busca do diretório requisitado, caso seja encontrado, inicia uma pesquisa pelo arquivo informado, se o arquivo for encontrado, o \textit{name node} verifica se o cliente possui permissão de acesso ao arquivo e se ele não está em estado de bloqueio, em caso positivo o arquivo é deletado da lista do metadado e a árvore de diretório do cliente atualizada. Antes de finalizar a conexão, o serviço de metadados informa ao cliente os dados sobre os blocos que compõe o arquivo.
-	\\
-	
-	A segunda parte da operação é realizada entre o cliente e os \textit{data nodes}, onde o cliente inicia uma conexão com cada servidor de dados onde um bloco do seu arquivo está armazenado e os informam que o referido bloco deve ser deletado.
+	Operação realizada entre o cliente e o servidor \textit{name node}. Nessa operação o cliente informa ao \textit{name node} que deseja deletar um arquivo, em seguida deve informar o nome do diretório onde o arquivo está armazenado e o nome do arquivo. Com tais informações, o servidor de metadados percorre a árvore de diretórios em busca do diretório requisitado, caso seja encontrado, inicia uma pesquisa pelo arquivo informado, se o arquivo for encontrado, o \textit{name node} verifica se o cliente possui permissão de acesso ao arquivo e se ele não está em estado de bloqueio, em caso positivo o arquivo é deletado e a árvore de diretório do cliente atualizada.
 	\\
 	
 	\subsubsection{Deletar diretório}
@@ -169,39 +166,50 @@ Este capítulo é onde começamos a abordar nosso modelo proposto de um sistema 
 	
 	Operação realizada exclusivamente entre o cliente e o servidor \textit{name node}. Nessa operação o cliente informa ao \textit{name node} que deseja renomear o diretório, além de fornecer o nome do diretório que deve ser renomeado e o seu novo nome. Primeiramente o servidor de metadados percorre a árvore de diretórios em busca do nome fornecido, caso seja encontrado o diretório é renomeado com o novo nome fornecido pelo cliente e seu metadado referente a sua ultima modificação é atualizado.
 	\\
+	
+	
 
-%	\subsection{Servidor-Servidor}
-%	São operações realizadas entre os \textit{name nodes} e os \textit{data nodes}, com função de gerenciamento do Sistema de Arquivos Distribuídos.
 	
-%	\subsubsection{Receber arquivo criado}
 	
-%	Na operação de criar arquivo, o \textit{name node} define quais \textit{data nodes} vão ser utilizados para armazenar os fragmentos de arquivo a ser criado, calculando a melhor forma para distribuir igualmente a carga entre os \textit{data nodes}. Dessa forma, além de informar ao cliente quais são os servidores para os quais deve enviar os dados, também deve avisar aos \textit{data nodes} que um cliente irá iniciar uma transferência de dados.
 	
-%	\subsubsection{Apagar arquivo deletado}
+	%PAREI AQUI!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!%
+	\subsection{Servidor-Servidor}
+	São operações ocorridos entre \textit{name node} e \textit{data node}, com função de gerenciamento de SAD.
 	
-%	Além das ações entre o \textit{name node} e o cliente explanadas na subseção anterior, para efetivamente deletar um arquivo, o \textit{name node} também....
+	\subsubsection{Receber arquivo criado}
 	
-%	Deleta os dados pertencentes ao arquivo solicitado para exclusão.
+	Na operação de criar arquivo, o \textit{name node} define quais \textit{data nodes} vão ser utilizados para armazenar os fragmentos de arquivo a ser criado, calculando a melhor forma para distribuir igualmente a carga entre os \textit{data nodes}. Dessa forma, além de informar o cliente quais são os servidores que deve enviar os dados, deve avisar os \textit{data nodes} que vai chegar dados enviados pelo cliente.
 	
-%	\subsubsection{Transferir dados entre servidores}
+	\subsubsection{Apagar arquivo deletado}
 	
-%	Transferência de arquivos entre \textit{data nodes}.
+	Deleta os dados pertencentes ao arquivo solicitado para exclusão.
+	
+	\subsubsection{Transferir dados entre servidores}
+	
+	Transferência de arquivos entre \textit{data nodes}.
 	
 	
 	\section{Implementação}
-		
-		Nesta seção serão apresentados os detalhes sobre a implementação do nosso sistema, incluindo informações sobre a programação e algoritmos utilizados. Todo o \textit{software} foi desenvolvido na linguagem \textit{Java} com auxilio de várias bibliotecas padrões e do \textit{framework BFT-SMaRt}, o qual foi apresentado com mais detalhes no capítulo 3. 
-
+	
+	Nesta seção descreve a implementação do sistema proposto.
+	
+	Para realizar a replicação do serviço, utiliza-se a biblioteca de BFT-SMaRt, que é fornecido em linguagem Java.
+	
+	
 	\subsection{Serviço de Metadados}
-			
-			
-			
-			
-	%PAREI AQUI!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!%
+	Maioria das funcionalidades estão presentes na classe principal ServerMeta.
+	A classe ServerMeta herda a DefaultSingleRecoverable, uma classe que está contida na biblioteca de BTR-SMaRt.
+	
+	
 	\subsection{Serviço de Armazenamento}
 	
-	\subsection{Cliente}
+	A classe MetaDataModule faz comunicação com os servidores de metadados. Nesta comunicação os servidors de armazenamento se comportam como se fosse um cliente em sistema BRT-SMaRt.
 	
+	\subsection{Cliente}
+	Está dividido em partes principais de interface e de execução. 
+	A classe ClientConsole fornece interface de usuário baseado em linha de comando, e é responsável para fazer ligação entre programa e o usuário, imprimindo na tela as mensagens e opções e .
+	
+	A classe ClientDFS, a classe que estão concentrados os métodos para realizar as tarefas exigidas.
 	
 	
 	
