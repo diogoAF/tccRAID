@@ -9,207 +9,202 @@ Este capítulo é onde começamos a abordar nosso modelo proposto de um sistema 
 	%O nosso objeivo neste artigo é a construção de um SAD baseado na computação em nuvem que possui menor \textit{overhead} de espaço, comparado a 200\% de método de replicação, sem degradar muito o performance e segurança de dados. 
 	%Para isso, nós observamos em técnica de redundância usado na tecnologia RAID, onde consegue diminuir o espaço ocupado pela parte redundante com atribuição de paridade nos arquivos, ao invés de simples replicação. Na mesma tecnologia também foi 
 
-	
-	
-	\begin{figure}[htb]
-		\begin{center}
-			
-			\includegraphics[clip,width=10.0cm]{images/image1.png}
-			\caption{Visão geral do sistema}
-			\label{fig:vis_sis}
-		\end{center}
-	\end{figure}
-	
-	Em um sistema de arquivos local, normalmente o metadado e o conteúdo de um arquivo são armazenados na mesma unidade de armazenamento. No caso de um SAD, como um arquivo pode ser armazenados distribuidamente entre servidores diferentes, os metadados são espalhados por vários servidores, tendo assim, a necessidade de fazer a busca para acessar em um determinado metadado. Obviamente essa busca consome recursos operacionais, relativamente alta por tratar de uma transmissão na rede.   \\
-	
-	\begin{figure}[htb]
-		\begin{center}
-			
-			\includegraphics[clip,width=10.0cm]{images/image7.png}
-			\caption{\textit{Name node} e \textit{data node}}
-			\label{fig:namenode}
-		\end{center}
-	\end{figure}
-	
-	\subsection{Serviço de Metadados}
-		Grupo de servidores que fazem o gerenciamento dos dados.\\
-		
-		Em nosso sistema utilizamos o conceito de blocos, onde um bloco é um conjunto de dados de um dado arquivo ou os dados de paridade de um determinado arquivo. O tamanho do bloco é determinado levando em consideração a quantidade de servidores de armazenamento ativos, ou seja, se houverem quatro servidores ativo, então o arquivo (independente de seu tamanho) será dividido em quatro blocos de tamanhos idênticos, caso seja necessário, o ultimo bloco será preenchido com bits '0' até que o bloco alcance o tamanho previamente fixado.
-		\\ 
-		
-		O Serviço de metadados, também conhecido por \textit{name node}, é o conjunto de servidores que gerencia as informações dos arquivos armazenados, utilizando-se dos metadados. Em nosso sistema a data de criação, data da ultima modificação, data do ultimo acesso, tamanho, identificador do bloco de dados e nome do servidor são considerados metadados. 
-		\\
-		
-		É da responsabilidade do sistema de metadados gerenciar a comunicação entre cliente e servidores de armazenamento (ou  \textit{data nodes}), utilizando-se das informações que indicam  estado atual do sistema e qual o tipo de RAID está sendo utilizado (apenas um tipo de RAID pode ser utilizado por operação) o \textit{name node} deve decidir em quantos blocos de tamanho idêntico o arquivo deve ser dividido e em quais servidores de armazenamento cada bloco deve ser armazenado.
-		\\ 
-		
-		Nosso sistema está preparado para tratar os seguintes tipos de RAID, os quais foram explorados com maior profundidade no capítulo 4.
-		\\
-		
-		\begin{itemize}
-			\item RAID 0 - fracionamento simples;
-			\item RAID 1 - espelhamento;
-			\item RAID 5 - fracionamento com paridade espalhada entre os discos do vetor.
-		\end{itemize}
-		
-		O Serviço de metadados mantém na sua memória local a árvore de diretórios, o que indica localização lógica dos arquivos. Quando recebe uma solicitação de cliente por um arquivo, pesquisa a sua árvore de diretórios para identificar qual diretório que este arquivo se encontra. Como resultado da pesquisa obtém o metadado do arquivo referente, conseguindo descobrir a sua localização física, a lista dos todos os \textit{data nodes} que possuem as partes do arquivo.
-		\\
-		
-		Por sua propriedade como um interface entre clientes e \textit{data nodes}, a ocorrência de alguma falha na operação ou indisponibilidade causada pela queda do servidor tem  enorme influencia na execução do sistema, podendo até resultar em parada total do sistema. Assim, é muito importante elaborar uma esquema para manter o \textit{name node} protegidos contra falhas ou queda total. Em nosso sistema usaremos a biblioteca BFT-SMaRt, que fornece tolerância a falha no serviço através de replicação por máquina de estado. \\
-	
-	\subsection{Serviço de Armazenamento}
-		Grupo de servidores responsáveis pelo armazenamento físico dos dados gerenciados pelo sistema de metadados. Também conhecido como \textit{data nodes}.\\
-		
-		Em nosso sistema, o serviço de armazenamento não possui a necessidade de saber qual tipo de RAID está sendo executado, a responsabilidade de manter o RAID consistente é toda do serviço de metadados. Desta forma, o sistema de armazenamento apenas se conecta a uma porta e fica aguardando algum cliente se conectar a sua respectiva porta. Quando algum cliente conecta-se na porta do servidor, é realizado um \textit{handshake} preliminar, logo em seguida o cliente inicia a transferência dos dados que devem ser guardados pelo sistema de armazenamento. Ao fim da transferência o cliente fecha a conexão, enquanto o sistema de armazenamento indexa o arquivo recebido utilizando as informações adicionais que o serviço de metadados anexou ao arquivo. Com tais informações é possível saber o identificador tanto do arquivo quanto do cliente que o enviou. Tais dados adicionais são necessários para garantir que apenas o usuário dono dos dados enviados tenha acesso a eles, além de possibilitar identificar quais dados o cliente deseja receber de forma simples e eficiente.  
-		\\
-	
-	\subsection{Cliente}
-	O programa cliente executado no computador do usuário final de nosso sistema. 
-	\\
-	
-	Para cada operação que deseje realizar, o programa cliente (doravante Cliente) deve primeiramente comunicar-se com o serviço de metadados, o qual ou irá realizar a operação (no caso de operações envolvendo diretórios) ou informar com quais servidores de armazenamento o cliente deve se comunicar e quais blocos devem ser enviados para cada servidor (no caso de operações envolvendo arquivos). Entretanto, é função do Cliente informar qual tipo de RAID ele deseja utilizar.
-	\\
-	
-	Após a comunicação inicial com o serviço de metadados, caso o cliente solicite pelo \textit{upload} ele deve iniciar a comunicação com os servidores de dados informados pelo serviço de metadado. Caso o cliente tenha decidido utilizar o RAID 5, é ele quem fica responsável por calcular a paridade do arquivo, isto deve-se ao fato de que apenas o cliente conhece o arquivo. O procedimento para o calculo da paridade é exemplificado na figura~\ref{fig:img6}. Outra atribuição do cliente é a partição do arquivo em blocos de iguais tamanhos, cada bloco será enviado para um dos servidores de dados informado pelo metadado, ou seja, o arquivo deve ser fragmentado de tal forma que cada servidor receba um bloco de dados, frisando que no caso do RAID 5 um dos blocos deve conter apenas informações de paridade previamente calculado pelo cliente. 
-	\\
-	
-		\begin{figure}[htb]
-			\begin{center}
-				
-				\includegraphics[clip,width=15.0cm]{images/image6.png}
-				\caption{Geração de paridade}
-				\label{fig:img6}
-			\end{center}
-		\end{figure}
-	
-	Caso a operação desejada pelo usuário final seja a de \textit{download} de algum de seus arquivos, o cliente deve coletar as informações de quais servidores possuem os blocos do arquivo almejado e quais as informações de identificação de cada bloco através do servidor de metadado. Com posse de tais informações, o cliente deve iniciar a comunicação com cada um dos servidores de dados apresentando a identificação de qual bloco cada servidor de dados deve enviar. Quando todos os servidores acabarem seus envios, o cliente deve usar os dados em sua posse para unir todos os blocos e recriar o arquivo desejado pelo usuário. Obviamente, esta descrição genérica da operação vai sofrer leves alterações dependendo de qual opção de RAID o cliente esteja utilizando. Para a opção de RAID 5, é possível que um dos blocos recebidos pelo cliente seja um bloco de paridade, para esse caso, o cliente deve utilizar as informações dos outros blocos para determinar qual é o bloco de dados faltante e utilizar a paridade para recuperar tal bloco. A Figura~\ref{fig:img2} mostra um esquema simplificado da operação de recuperar um arquivo realizado pelo lado do cliente.
-	\\
-	
-	\begin{figure}[htb]
-		\begin{center}
-			
-			\includegraphics[clip,width=10.0cm]{images/image2.png}
-			\caption{Recuperando um arquivo de uma falha}
-			\label{fig:img2}
-		\end{center}
-	\end{figure}
-	
-	\section{Operações no Sistema de Arquivos Distribuídos}
-	
-	Nesta seção serão apresentadas as operações básicas que o nosso SAD executa. Tais operações podem ser divididas em dois grupos dependendo das entidades envolvidas. O primeiro deles é entre cliente e servidor, composta por operações envolvendo solicitações de ações do cliente para o servidor. O segundo tipo é as operações que ocorrem entre servidores, voltadas para o gerenciamento do serviço sendo que este tipo de operações deve ocorrer de forma transparente para o cliente.
-	\\
-	
-	\subsection{Cliente-Servidor}
-	
-	É um conjunto de operações semelhantes a que são implementadas em um sistema de arquivos local, aquele que é integrado na maioria dos sistemas operacionais comuns. Composto pelas operações sobre arquivos e pastas e suas execuções podem ocorrer entre cliente e \textit{name node} ou cliente e \textit{data node}.
-	
-	\subsubsection{Criar arquivo}
-	
-	Operação realizada inicialmente entre o cliente e o servidor do tipo \textit{name node}. Nesse primeiro momento o cliente informa ao \textit{name node} que deseja criar um novo arquivo e em qual diretório ele deve ser criado, além de enviar os metadados do arquivo que pretende enviar. Com posse dessas informações e de qual RAID o cliente está operando, o servidor de metadados processa e transmite para o cliente para quais \textit{data node} os blocos do arquivo devem ser enviados e qual a identificação de cada bloco. O processamento de tais informações é diretamente influenciado pelo estado atual do sistema, o \textit{name node} leva em consideração a disponibilidade de cada \textit{data node} e o quanto de espaço livre em disco cada um possui.
-	\\
-	
-	A segunda parte da operação é realizada entre o cliente e os servidores do tipo \textit{data node}. Após a comunicação com o servidor de metadados, o cliente sabe para quantos \textit{data nodes} o seu arquivo será enviado, desta forma, o cliente fragmenta o arquivo de forma que cada \textit{data nodes} irá receber um bloco de tamanho uniforme. Caso o sistema esteja usando o RAID 5, o cliente ainda deve calcular o bloco de paridade do arquivo e enviar para um dos \textit{data nodes}.
-	\\
-	
-	\subsubsection{Criar diretório}
-	
-	Operação realizada exclusivamente entre o cliente e o servidor \textit{name node}. Nessa operação o cliente informa ao \textit{name node} que deseja criar um diretório, passando como metadados apenas o nome do novo diretório e o nome de seu diretório pai. Com tais informações, o servidor de metadados primeiramente verifica se já existe um diretório com o mesmo nome no diretório pai, em caso negativo ele atualiza a arvore de diretório do cliente. No caso de já existir um diretório com mesmo nome, o cliente é informado e o novo diretório não é criado.
-	\\
-	
-	\subsubsection{Abrir arquivos}
-	
-	Operação realizada inicialmente entre o cliente e o servidor do tipo \textit{name node}. Nesse primeiro momento o cliente informa ao \textit{name node} que deseja abrir um arquivo, para tal, o cliente deve fornecer o nome do arquivo e o nome do diretório onde ele está. A primeira ação do servidor de metadados é verificar se o arquivo de fato existe no diretório informado, em caso positivo ele deve verificar se o cliente possui acesso ao arquivo. No caso do cliente possuir acesso, o \textit{name node} verifica em quantos blocos o arquivo foi dividido e em quais \textit{data nodes} cada bloco foi armazenado, após coletar tais informações, o servidor de metadados informa ao cliente quais servidores de dados ele, o cliente, deve se comunicar e o identificador de cada bloco. Para o caso de o arquivo não existir no diretório informado ou do cliente não possuir acesso para tal arquivo, o servidor de metadados deve envia ruma mensagem de erro informando a indisponibilidade do arquivo solicitado. 
-	\\
-	
-	A segunda parte da operação é realizada entre o cliente e os servidores do tipo \textit{data node}. Após a comunicação com o servidor de metadados, o cliente sabe em quais \textit{data nodes} os blocos de seu arquivo estão armazenados. Desta forma, o cliente inicia a comunicação com cada \textit{data node} informado. A comunicação procede da seguinte forma, o cliente informa o identificador do bloco que deseja receber, enquanto que o \textit{data node} apenas verifica a existência do bloco informado. Em caso positivo, o bloco é enviado para o solicitante e em caso negativo, uma mensagem de erro alertando sobre a inexistência do bloco informado. Repare que o \textit{data node} não realiza nenhuma operação de controle de acesso sobre o bloco.
-	\\
-	
-	A terceira parte da operação é realizada exclusivamente pelo cliente. Nesta ultima parte, o cliente é responsável por unir todos os blocos recebidos e recriar o arquivo almejado.  Vale ressaltar que essa operação sofre variações dependo do RAID sendo utilizado. Para o caso do RAID 5, um dos blocos recebido pelo cliente pode ser um bloco de paridade, nesse caso, antes de recriar o arquivo o cliente deve utilizar as informações de paridade contidas em tal bloco para recuperar o bloco faltante.
-	\\
-	
-	\subsubsection{Abrir diretório}
-	 
-	 Operação realizada exclusivamente entre o cliente e o servidor \textit{name node}. Nessa operação o cliente informa ao \textit{name node} que deseja abrir um diretório, passando como metadados apenas o nome do novo diretório almejado e do diretório atual. A primeira ação do servidor de metadados é verificar a existência do diretório solicitado, em caso positivo, o servidor também checa se o cliente possui permissão de acesso e se o diretório está livre. Caso todas as validações sejam positivas, o servidor muda o diretório atual do cliente para o diretório solicitado. Caso algum problema seja detectado, uma mensagem de erro é disparada para o cliente e o seu diretório atual não é alterado.
-	 \\
-	 
-	 
-	\subsubsection{Deletar arquivos}
-	
-	Operação realizada entre o cliente e o servidor \textit{name node}. Nessa operação o cliente informa ao \textit{name node} que deseja deletar um arquivo, em seguida deve informar o nome do diretório onde o arquivo está armazenado e o nome do arquivo. Com tais informações, o servidor de metadados percorre a árvore de diretórios em busca do diretório requisitado, caso seja encontrado, inicia uma pesquisa pelo arquivo informado, se o arquivo for encontrado, o \textit{name node} verifica se o cliente possui permissão de acesso ao arquivo e se ele não está em estado de bloqueio, em caso positivo o arquivo é deletado e a árvore de diretório do cliente atualizada.
-	\\
-	
-	\subsubsection{Deletar diretório}
-	
-	Operação realizada exclusivamente entre o cliente e o servidor \textit{name node}. Nessa operação o cliente informa ao \textit{name node} que deseja deletar um diretório, passando apenas o nome do diretório almejado. A primeira ação do servidor de metadados é verificar a existência do diretório solicitado, em caso positivo, o servidor também checa se o cliente possui permissão de acesso e se o diretório está livre. Caso todas as validações sejam positivas, o servidor deleta o diretório, além de todos os arquivos contidos nele. Em seguida o servidor de metadados atualiza a árvore de diretórios do cliente.
-	\\
-	
-	\subsubsection{Fechar um arquivo aberto}
-	
-	Operação realizada exclusivamente entre o cliente e o servidor \textit{name node}. Nessa operação o cliente informa ao \textit{name node} que deseja fechar um arquivo. Primeiramente o servidor de metadados verifica se existe algum arquivo aberto pelo cliente, caso exista, é apresentado ao cliente a lista de arquivos abertos para que ele selecione qual ele deseja fechar. Sabendo qual arquivo deve ser fechado, o \textit{name node} libera o acesso ao \textit{lock} do arquivo, desta forma fechando o arquivo. Para o caso de o cliente não ter nenhum arquivo aberto é soltado uma mensagem de erro explicativa para o usuário.
-	\\
-	
-	\subsubsection{Fechar diretório}
-	
-	Operação realizada exclusivamente entre o cliente e o servidor \textit{name node}. Nessa operação o cliente informa ao \textit{name node} que deseja fechar o diretório. Primeiramente o servidor de metadados verifica se o diretório atual é o diretório raiz, caso seja, o cliente é informado que não pode fechar o diretório raiz. Caso não seja o raiz, o diretório atual é atualizado para o diretório pai do antigo diretório atual.
-	\\
-	
-	\subsubsection{Editar um arquivo}
-	
-	Operação realizada inicialmente entre o cliente e o servidor do tipo \textit{name node}. Nesse primeiro momento o cliente informa ao \textit{name node} que deseja editar um arquivo, para tal, o cliente deve fornecer o nome do arquivo. Em posse do nome do arquivo, o servidor de metadado verifica sua existência no diretório corrente, em caso positivo ainda é preciso confirmar se o arquivo já está aberto. Verificado que o arquivo não encontra-se aberto, as informações sobre o arquivo são passados para o cliente. Com tais informações, a operação que o cliente realiza é a exclusão do antigo arquivo seguida da criação do novo (ou seja, a atualização do antigo arquivo). Tais operações são realizadas como descrito previamente, entretanto, com a diferença que o usuário não precisa informar o nome do arquivo pois ele é criado com o mesmo nome do antigo.
-	\\
-	
-	\subsubsection{Renomear um arquivo}
-	Operação realizada entre o cliente e o servidor \textit{name node}. Nessa operação o cliente informa ao \textit{name node} que deseja renomear um arquivo, além de fornecer o nome do arquivo que deve ser renomeado ele também deve informar o novo nome. Primeiramente o servidor de metadados procura pelo arquivo informado no diretório corrente, caso o arquivo seja encontrado ainda é necessário que o \textit{name node} verifique se o cliente possui permissão de acesso ao arquivo e se o mesmo não está aberto, caso o arquivo esteja fechado e o cliente tenha permissão de acesso, o arquivo é, enfim, renomeado com o novo nome.
-	\\
-	
-	\subsubsection{Renomear Diretório}
-	
-	Operação realizada exclusivamente entre o cliente e o servidor \textit{name node}. Nessa operação o cliente informa ao \textit{name node} que deseja renomear o diretório, além de fornecer o nome do diretório que deve ser renomeado e o seu novo nome. Primeiramente o servidor de metadados percorre a árvore de diretórios em busca do nome fornecido, caso seja encontrado o diretório é renomeado com o novo nome fornecido pelo cliente e seu metadado referente a sua ultima modificação é atualizado.
-	\\
-	
-	
 
+\begin{figure}[htb]
+	\begin{center}
+		
+		\includegraphics[clip,width=10.0cm]{images/image1.png}
+		\caption{Visão geral do sistema}
+		\label{fig:vis_sis}
+	\end{center}
+\end{figure}
+
+Em um sistema de arquivos local, normalmente o metadado e o conteúdo de um arquivo são armazenados na mesma unidade de armazenamento. No caso de um SAD, como um arquivo pode ser armazenados distribuidamente entre servidores diferentes, os metadados são espalhados por vários servidores, tendo assim, a necessidade de fazer a busca para acessar em um determinado metadado. Obviamente essa busca consome recursos operacionais, relativamente alta por tratar de uma transmissão na rede.   \\
+
+\begin{figure}[htb]
+	\begin{center}
+		
+		\includegraphics[clip,width=10.0cm]{images/image7.png}
+		\caption{\textit{Name node} e \textit{data node}}
+		\label{fig:namenode}
+	\end{center}
+\end{figure}
+
+\subsection{Serviço de Metadados}
+Grupo de servidores que fazem o gerenciamento dos dados.\\
+
+Em nosso sistema utilizamos o conceito de blocos, onde um bloco é um conjunto de dados de um dado arquivo ou os dados de paridade de um determinado arquivo. O tamanho do bloco é determinado levando em consideração a quantidade de servidores de armazenamento ativos, ou seja, se houverem quatro servidores ativo, então o arquivo (independente de seu tamanho) será dividido em quatro blocos de tamanhos idênticos, caso seja necessário, o ultimo bloco será preenchido com bits '0' até que o bloco alcance o tamanho previamente fixado.
+\\ 
+
+O Serviço de metadados, também conhecido por \textit{name node}, é o conjunto de servidores que gerencia as informações dos arquivos armazenados, utilizando-se dos metadados. Em nosso sistema a data de criação, data da ultima modificação, data do ultimo acesso, tamanho, identificador do bloco de dados e nome do servidor são considerados metadados. 
+\\
+
+É da responsabilidade do sistema de metadados gerenciar a comunicação entre cliente e servidores de armazenamento (ou  \textit{data nodes}), utilizando-se das informações que indicam  estado atual do sistema e qual o tipo de RAID está sendo utilizado (apenas um tipo de RAID pode ser utilizado por operação) o \textit{name node} deve decidir em quantos blocos de tamanho idêntico o arquivo deve ser dividido e em quais servidores de armazenamento cada bloco deve ser armazenado.
+\\ 
+
+Nosso sistema está preparado para tratar os seguintes tipos de RAID, os quais foram explorados com maior profundidade no capítulo 4.
+\\
+
+\begin{itemize}
+	\item RAID 0 - fracionamento simples;
+	\item RAID 1 - espelhamento;
+	\item RAID 5 - fracionamento com paridade espalhada entre os discos do vetor.
+\end{itemize}
+
+O Serviço de metadados mantém na sua memória local a árvore de diretórios, o que indica localização lógica dos arquivos. Quando recebe uma solicitação de cliente por um arquivo, pesquisa a sua árvore de diretórios para identificar qual diretório que este arquivo se encontra. Como resultado da pesquisa obtém o metadado do arquivo referente, conseguindo descobrir a sua localização física, a lista dos todos os \textit{data nodes} que possuem as partes do arquivo.
+\\
+
+Por sua propriedade como um interface entre clientes e \textit{data nodes}, a ocorrência de alguma falha na operação ou indisponibilidade causada pela queda do servidor tem  enorme influencia na execução do sistema, podendo até resultar em parada total do sistema. Assim, é muito importante elaborar uma esquema para manter o \textit{name node} protegidos contra falhas ou queda total. Em nosso sistema usaremos a biblioteca BFT-SMaRt, que fornece tolerância a falha no serviço através de replicação por máquina de estado. \\
+
+\subsection{Serviço de Armazenamento}
+Grupo de servidores responsáveis pelo armazenamento físico dos dados gerenciados pelo sistema de metadados. Também conhecido como \textit{data nodes}.\\
+
+Em nosso sistema, o serviço de armazenamento não possui a necessidade de saber qual tipo de RAID está sendo executado, a responsabilidade de manter o RAID consistente é toda do serviço de metadados. Desta forma, o sistema de armazenamento apenas se conecta a uma porta e fica aguardando algum cliente se conectar a sua respectiva porta. Quando algum cliente conecta-se na porta do servidor, é realizado um \textit{handshake} preliminar, logo em seguida o cliente inicia a transferência dos dados que devem ser guardados pelo sistema de armazenamento. Ao fim da transferência o cliente fecha a conexão, enquanto o sistema de armazenamento indexa o arquivo recebido utilizando as informações adicionais que o serviço de metadados anexou ao arquivo. Com tais informações é possível saber o identificador tanto do arquivo quanto do cliente que o enviou. Tais dados adicionais são necessários para garantir que apenas o usuário dono dos dados enviados tenha acesso a eles, além de possibilitar identificar quais dados o cliente deseja receber de forma simples e eficiente.  
+\\
+
+\subsection{Cliente}
+O programa cliente executado no computador do usuário final de nosso sistema. 
+\\
+
+Para cada operação que deseje realizar, o programa cliente (doravante Cliente) deve primeiramente comunicar-se com o serviço de metadados, o qual ou irá realizar a operação (no caso de operações envolvendo diretórios) ou informar com quais servidores de armazenamento o cliente deve se comunicar e quais blocos devem ser enviados para cada servidor (no caso de operações envolvendo arquivos). Entretanto, é função do Cliente informar qual tipo de RAID ele deseja utilizar.
+\\
+
+Após a comunicação inicial com o serviço de metadados, caso o cliente solicite pelo \textit{upload} ele deve iniciar a comunicação com os servidores de dados informados pelo serviço de metadado. Caso o cliente tenha decidido utilizar o RAID 5, é ele quem fica responsável por calcular a paridade do arquivo, isto deve-se ao fato de que apenas o cliente conhece o arquivo. O procedimento para o calculo da paridade é exemplificado na figura~\ref{fig:img6}. Outra atribuição do cliente é a partição do arquivo em blocos de iguais tamanhos, cada bloco será enviado para um dos servidores de dados informado pelo metadado, ou seja, o arquivo deve ser fragmentado de tal forma que cada servidor receba um bloco de dados, frisando que no caso do RAID 5 um dos blocos deve conter apenas informações de paridade previamente calculado pelo cliente. 
+\\
+
+\begin{figure}[htb]
+	\begin{center}
+		
+		\includegraphics[clip,width=15.0cm]{images/image6.png}
+		\caption{Geração de paridade}
+		\label{fig:img6}
+	\end{center}
+\end{figure}
+
+Caso a operação desejada pelo usuário final seja a de \textit{download} de algum de seus arquivos, o cliente deve coletar as informações de quais servidores possuem os blocos do arquivo almejado e quais as informações de identificação de cada bloco através do servidor de metadado. Com posse de tais informações, o cliente deve iniciar a comunicação com cada um dos servidores de dados apresentando a identificação de qual bloco cada servidor de dados deve enviar. Quando todos os servidores acabarem seus envios, o cliente deve usar os dados em sua posse para unir todos os blocos e recriar o arquivo desejado pelo usuário. Obviamente, esta descrição genérica da operação vai sofrer leves alterações dependendo de qual opção de RAID o cliente esteja utilizando. Para a opção de RAID 5, é possível que um dos blocos recebidos pelo cliente seja um bloco de paridade, para esse caso, o cliente deve utilizar as informações dos outros blocos para determinar qual é o bloco de dados faltante e utilizar a paridade para recuperar tal bloco. A Figura~\ref{fig:img2} mostra um esquema simplificado da operação de recuperar um arquivo realizado pelo lado do cliente.
+\\
+
+\begin{figure}[htb]
+	\begin{center}
+		
+		\includegraphics[clip,width=10.0cm]{images/image2.png}
+		\caption{Recuperando um arquivo de uma falha}
+		\label{fig:img2}
+	\end{center}
+\end{figure}
+
+\section{Operações no Sistema de Arquivos Distribuídos}
+
+Nesta seção serão apresentadas as operações básicas que o nosso SAD executa. Tais operações podem ser divididas em dois grupos dependendo das entidades envolvidas. O primeiro deles é entre cliente e servidor, composta por operações envolvendo solicitações de ações do cliente para o servidor. O segundo tipo é as operações que ocorrem entre servidores, voltadas para o gerenciamento do serviço sendo que este tipo de operações deve ocorrer de forma transparente para o cliente.
+\\
+
+\subsection{Cliente-Servidor}
+
+É um conjunto de operações semelhantes as que são implementadas em um sistema de arquivos local, aquele que é integrado na maioria dos sistemas operacionais centralizados. Composto pelas operações sobre arquivo, pastas e suas execuções ocorrerem entre cliente e \textit{name node} ou \textit{data node}.
+
+\subsubsection{Criar arquivo}
+
+Operação realizada inicialmente entre o cliente e o servidor do tipo \textit{name node}. Nesse primeiro momento o cliente informa ao \textit{name node} que deseja criar um novo arquivo e em qual diretório ele deve ser criado, além de enviar os metadados do arquivo que pretende enviar. Com posse dessas informações e de qual RAID o cliente está operando, o servidor de metadados processa e transmite para o cliente para quais \textit{data node} os blocos do arquivo devem ser enviados e qual a identificação de cada bloco. O processamento de tais informações é diretamente influenciado pelo estado atual do sistema, o \textit{name node} leva em consideração a disponibilidade de cada \textit{data node} e o quanto de espaço livre em disco cada um possui.
+\\
+
+A segunda parte da operação é realizada entre o cliente e os servidores do tipo \textit{data node}. Após a comunicação com o servidor de metadados, o cliente sabe para quantos \textit{data nodes} o seu arquivo será enviado, desta forma, o cliente fragmenta o arquivo de forma que cada \textit{data nodes} irá receber um bloco de tamanho uniforme. Caso o sistema esteja usando o RAID 5, o cliente ainda deve calcular o bloco de paridade do arquivo e enviar para um dos \textit{data nodes}.
+\\
+
+\subsubsection{Criar diretório}
+
+Operação realizada exclusivamente entre o cliente e o servidor \textit{name node}. Nessa operação o cliente informa ao \textit{name node} que deseja criar um diretório, passando como metadados apenas o nome do novo diretório e o nome de seu diretório pai. Com tais informações, o servidor de metadados primeiramente verifica se já existe um diretório com o mesmo nome no diretório pai, em caso negativo ele atualiza a arvore de diretório do cliente. No caso de já existir um diretório com mesmo nome, o cliente é informado e o novo diretório não é criado.
+\\
+
+\subsubsection{Abrir arquivos}
+
+Operação realizada inicialmente entre o cliente e o servidor do tipo \textit{name node}. Nesse primeiro momento o cliente informa ao \textit{name node} que deseja abrir um arquivo, para tal, o cliente deve fornecer o nome do arquivo e o nome do diretório onde ele está. A primeira ação do servidor de metadados é verificar se o arquivo de fato existe no diretório informado, em caso positivo ele deve verificar se o cliente possui acesso ao arquivo. No caso do cliente possuir acesso, o \textit{name node} verifica em quantos blocos o arquivo foi dividido e em quais \textit{data nodes} cada bloco foi armazenado, após coletar tais informações, o servidor de metadados informa ao cliente quais servidores de dados ele, o cliente, deve se comunicar e o identificador de cada bloco. Para o caso de o arquivo não existir no diretório informado ou do cliente não possuir acesso para tal arquivo, o servidor de metadados deve envia ruma mensagem de erro informando a indisponibilidade do arquivo solicitado. 
+\\
+
+A segunda parte da operação é realizada entre o cliente e os servidores do tipo \textit{data node}. Após a comunicação com o servidor de metadados, o cliente sabe em quais \textit{data nodes} os blocos de seu arquivo estão armazenados. Desta forma, o cliente inicia a comunicação com cada \textit{data node} informado. A comunicação procede da seguinte forma, o cliente informa o identificador do bloco que deseja receber, enquanto que o \textit{data node} apenas verifica a existência do bloco informado. Em caso positivo, o bloco é enviado para o solicitante e em caso negativo, uma mensagem de erro alertando sobre a inexistência do bloco informado. Repare que o \textit{data node} não realiza nenhuma operação de controle de acesso sobre o bloco.
+\\
+
+A terceira parte da operação é realizada exclusivamente pelo cliente. Nesta ultima parte, o cliente é responsável por unir todos os blocos recebidos e recriar o arquivo almejado.  Vale ressaltar que essa operação sofre variações dependo do RAID sendo utilizado. Para o caso do RAID 5, um dos blocos recebido pelo cliente pode ser um bloco de paridade, nesse caso, antes de recriar o arquivo o cliente deve utilizar as informações de paridade contidas em tal bloco para recuperar o bloco faltante.
+\\
+
+\subsubsection{Abrir diretório}
+
+Operação realizada exclusivamente entre o cliente e o servidor \textit{name node}. Nessa operação o cliente informa ao \textit{name node} que deseja abrir um diretório, passando como metadados apenas o nome do novo diretório almejado e do diretório atual. A primeira ação do servidor de metadados é verificar a existência do diretório solicitado, em caso positivo, o servidor também checa se o cliente possui permissão de acesso e se o diretório está livre. Caso todas as validações sejam positivas, o servidor muda o diretório atual do cliente para o diretório solicitado. Caso algum problema seja detectado, uma mensagem de erro é disparada para o cliente e o seu diretório atual não é alterado.
+\\
+
+
+\subsubsection{Deletar arquivos}
+
+Operação realizada primeiramente entre o cliente e o servidor \textit{name node}. Nessa operação o cliente informa ao \textit{name node} que deseja deletar um arquivo, em seguida deve informar o nome do diretório onde o arquivo está armazenado e o nome do arquivo. Com tais informações, o servidor de metadados percorre a árvore de diretórios em busca do diretório requisitado, caso seja encontrado, inicia uma pesquisa pelo arquivo informado, se o arquivo for encontrado, o \textit{name node} verifica se o cliente possui permissão de acesso ao arquivo e se ele não está em estado de bloqueio, em caso positivo o arquivo é deletado da lista do metadado e a árvore de diretório do cliente atualizada. Antes de finalizar a conexão, o serviço de metadados informa ao cliente os dados sobre os blocos que compõe o arquivo.
+\\
+
+A segunda parte da operação é realizada entre o cliente e os \textit{data nodes}, onde o cliente inicia uma conexão com cada servidor de dados onde um bloco do seu arquivo está armazenado e os informam que o referido bloco deve ser deletado.
+\\
+
+\subsubsection{Deletar diretório}
+
+Operação realizada exclusivamente entre o cliente e o servidor \textit{name node}. Nessa operação o cliente informa ao \textit{name node} que deseja deletar um diretório, passando apenas o nome do diretório almejado. A primeira ação do servidor de metadados é verificar a existência do diretório solicitado, em caso positivo, o servidor também checa se o cliente possui permissão de acesso e se o diretório está livre. Caso todas as validações sejam positivas, o servidor deleta o diretório, além de todos os arquivos contidos nele. Em seguida o servidor de metadados atualiza a árvore de diretórios do cliente.
+\\
+
+\subsubsection{Fechar um arquivo aberto}
+
+Operação realizada exclusivamente entre o cliente e o servidor \textit{name node}. Nessa operação o cliente informa ao \textit{name node} que deseja fechar um arquivo. Primeiramente o servidor de metadados verifica se existe algum arquivo aberto pelo cliente, caso exista, é apresentado ao cliente a lista de arquivos abertos para que ele selecione qual ele deseja fechar. Sabendo qual arquivo deve ser fechado, o \textit{name node} libera o acesso ao \textit{lock} do arquivo, desta forma fechando o arquivo. Para o caso de o cliente não ter nenhum arquivo aberto é soltado uma mensagem de erro explicativa para o usuário.
+\\
+
+\subsubsection{Fechar diretório}
+
+Operação realizada exclusivamente entre o cliente e o servidor \textit{name node}. Nessa operação o cliente informa ao \textit{name node} que deseja fechar o diretório. Primeiramente o servidor de metadados verifica se o diretório atual é o diretório raiz, caso seja, o cliente é informado que não pode fechar o diretório raiz. Caso não seja o raiz, o diretório atual é atualizado para o diretório pai do antigo diretório atual.
+\\
+
+\subsubsection{Editar um arquivo}
+
+Operação realizada inicialmente entre o cliente e o servidor do tipo \textit{name node}. Nesse primeiro momento o cliente informa ao \textit{name node} que deseja editar um arquivo, para tal, o cliente deve fornecer o nome do arquivo. Em posse do nome do arquivo, o servidor de metadado verifica sua existência no diretório corrente, em caso positivo ainda é preciso confirmar se o arquivo já está aberto. Verificado que o arquivo não encontra-se aberto, as informações sobre o arquivo são passados para o cliente. Com tais informações, a operação que o cliente realiza é a exclusão do antigo arquivo seguida da criação do novo (ou seja, a atualização do antigo arquivo). Tais operações são realizadas como descrito previamente, entretanto, com a diferença que o usuário não precisa informar o nome do arquivo pois ele é criado com o mesmo nome do antigo.
+\\
+
+\subsubsection{Renomear um arquivo}
+Operação realizada entre o cliente e o servidor \textit{name node}. Nessa operação o cliente informa ao \textit{name node} que deseja renomear um arquivo, além de fornecer o nome do arquivo que deve ser renomeado ele também deve informar o novo nome. Primeiramente o servidor de metadados procura pelo arquivo informado no diretório corrente, caso o arquivo seja encontrado ainda é necessário que o \textit{name node} verifique se o cliente possui permissão de acesso ao arquivo e se o mesmo não está aberto, caso o arquivo esteja fechado e o cliente tenha permissão de acesso, o arquivo é, enfim, renomeado com o novo nome.
+\\
+
+\subsubsection{Renomear Diretório}
+
+Operação realizada exclusivamente entre o cliente e o servidor \textit{name node}. Nessa operação o cliente informa ao \textit{name node} que deseja renomear o diretório, além de fornecer o nome do diretório que deve ser renomeado e o seu novo nome. Primeiramente o servidor de metadados percorre a árvore de diretórios em busca do nome fornecido, caso seja encontrado o diretório é renomeado com o novo nome fornecido pelo cliente e seu metadado referente a sua ultima modificação é atualizado.
+\\
+
+%	\subsection{Servidor-Servidor}
+%	São operações realizadas entre os \textit{name nodes} e os \textit{data nodes}, com função de gerenciamento do Sistema de Arquivos Distribuídos.
+
+%	\subsubsection{Receber arquivo criado}
+
+%	Na operação de criar arquivo, o \textit{name node} define quais \textit{data nodes} vão ser utilizados para armazenar os fragmentos de arquivo a ser criado, calculando a melhor forma para distribuir igualmente a carga entre os \textit{data nodes}. Dessa forma, além de informar ao cliente quais são os servidores para os quais deve enviar os dados, também deve avisar aos \textit{data nodes} que um cliente irá iniciar uma transferência de dados.
+
+%	\subsubsection{Apagar arquivo deletado}
+
+%	Além das ações entre o \textit{name node} e o cliente explanadas na subseção anterior, para efetivamente deletar um arquivo, o \textit{name node} também....
+
+%	Deleta os dados pertencentes ao arquivo solicitado para exclusão.
+
+%	\subsubsection{Transferir dados entre servidores}
+
+%	Transferência de arquivos entre \textit{data nodes}.
+
+
+\section{Implementação}
+Nesta seção serão apresentados os detalhes sobre a implementação do nosso sistema, incluindo informações sobre a programação e algoritmos utilizados. Todo o \textit{software} foi desenvolvido na linguagem \textit{Java} com auxilio de várias bibliotecas padrões e do \textit{BFT-SMaRt}, o qual foi apresentado com mais detalhes no capítulo 3. 
 	
 	
-	
-	%PAREI AQUI!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!%
-	\subsection{Servidor-Servidor}
-	São operações ocorridos entre \textit{name node} e \textit{data node}, com função de gerenciamento de SAD.
-	
-	\subsubsection{Receber arquivo criado}
-	
-	Na operação de criar arquivo, o \textit{name node} define quais \textit{data nodes} vão ser utilizados para armazenar os fragmentos de arquivo a ser criado, calculando a melhor forma para distribuir igualmente a carga entre os \textit{data nodes}. Dessa forma, além de informar o cliente quais são os servidores que deve enviar os dados, deve avisar os \textit{data nodes} que vai chegar dados enviados pelo cliente.
-	
-	\subsubsection{Apagar arquivo deletado}
-	
-	Deleta os dados pertencentes ao arquivo solicitado para exclusão.
-	
-	\subsubsection{Transferir dados entre servidores}
-	
-	Transferência de arquivos entre \textit{data nodes}.
-	
-	
-	\section{Implementação}
-	
-	Nesta seção descreve a implementação do sistema proposto.
-	
-	Para realizar a replicação do serviço, utiliza-se a biblioteca de BFT-SMaRt, que é fornecido em linguagem Java.
-	
-	
-	\subsection{Serviço de Metadados}
-	Maioria das funcionalidades estão presentes na classe principal ServerMeta.
-	A classe ServerMeta herda a DefaultSingleRecoverable, uma classe que está contida na biblioteca de BTR-SMaRt.
-	
-	
-	\subsection{Serviço de Armazenamento}
-	
-	A classe MetaDataModule faz comunicação com os servidores de metadados. Nesta comunicação os servidors de armazenamento se comportam como se fosse um cliente em sistema BRT-SMaRt.
-	
-	\subsection{Cliente}
-	Está dividido em partes principais de interface e de execução. 
-	A classe ClientConsole fornece interface de usuário baseado em linha de comando, e é responsável para fazer ligação entre programa e o usuário, imprimindo na tela as mensagens e opções e .
-	
-	A classe ClientDFS, a classe que estão concentrados os métodos para realizar as tarefas exigidas.
+\subsection{Serviço de Metadados}
+Maioria das funcionalidades estão presentes na classe principal ServerMeta.
+A classe ServerMeta herda a DefaultSingleRecoverable, uma classe que está contida na biblioteca de BTR-SMaRt.
+
+
+\subsection{Serviço de Armazenamento}
+
+A classe MetaDataModule faz comunicação com os servidores de metadados. Nesta comunicação os servidors de armazenamento se comportam como se fosse um cliente em sistema BRT-SMaRt.
+
+\subsection{Cliente}
+Está dividido em partes principais de interface e de execução. 
+A classe ClientConsole fornece interface de usuário baseado em linha de comando, e é responsável para fazer ligação entre programa e o usuário, imprimindo na tela as mensagens e opções e .
+
+A classe ClientDFS, a classe que estão concentrados os métodos para realizar as tarefas exigidas.
 	
 	
 	
