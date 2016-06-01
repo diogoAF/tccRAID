@@ -189,18 +189,110 @@ Operação realizada exclusivamente entre o cliente e o servidor \textit{name no
 
 \section{Implementação}
 Nesta seção serão apresentados os detalhes sobre a implementação do nosso sistema, incluindo informações sobre a programação e algoritmos utilizados. Todo o \textit{software} foi desenvolvido na linguagem \textit{Java} com auxilio de várias bibliotecas padrões e do \textit{BFT-SMaRt}, o qual foi apresentado com mais detalhes no capítulo 3. 
-	
+\\
+
+\subsection{Rodando o Sistema}
+O projeto pode ser encontrado no repositório do \textit{GitHub} no seguinte endereço \href{https://github.com/diogoAF/tccRAID}{https://github.com/diogoAF/tccRAID}. Vale ressaltar que todas as bibliotecas necessárias, incluindo o  \textit{BFT-SMaRt}, já estão incluídas no projeto. Para a execução do sistema é necessário ao menos oito máquinas remotas, sendo três máquinas para o serviço de metadado, quatro para o serviço de armazenamento (caso vá utilizar o RAID 0 ou 1, devido a sua natureza, é possível ser utilizado com apenas duas máquinas), e ao menos uma máquina rodando o Cliente.
+\\
+
+O primeiro passo é modificar o arquivo \textbf{host.config} localizado no diretório \textbf{bin}, pois este arquivo é utilizado pelo \textit{BFT-SMaRt} para determinar o IP e porta de cada réplica. Ao final do arquivo deve-se inserir uma nova linha contendo o ID do servidor, endereço IP e porta pela qual ele vai escutar. Por exemplo, 7001 10.1.1.9 11100.
+\\
+
+O segundo passo é inicializar o serviço de metadado, para tal deve-se chamar a classe \textit{server.meta.ServerConsole}, a qual deve receber quatro parâmetros os quais serão listado a seguir. 
+ 
+\begin{itemize}
+	\item O identificador único da replica;
+	\item O tipo do RAID que será utilizado;
+	\item O número de servidores de armazenamento;
+	\item "true" caso deseje rodar a versão \textit{verbose} do metadado.
+\end{itemize}
+
+Porém, antes de executar o comando de inicialização, recomenda-se criar um \textit{script} que inicialize o \textit{BFT-SMaRt} e as outras bibliotecas, para tal, basta criar um \textit{scriptBftSmart.sh} (por exemplo) no seguinte formato:
+
+\begin{lstlisting}
+java -cp .:lib/BFT-SMaRt.jar:lib/slf4j-api-1.5.8.jar:lib/slf4j-jdk14-1.5.8.jar:lib/netty-3.1.1.GA.jar:lib/commons-codec-1.5.jar $1 $2 $3 $4 $5 $6 $7 $8 $9
+\end{lstlisting}
+
+Com o \textit{script} criado, basta rodar o seguinte comando em cada máquina, repare que cada máquina irá receber um identificador único, entretanto, com o restante dos parâmetros inalterados. Neste exemplo o serviço está sendo iniciado para tratar o RAID 0 com quatro servidores de armazenamento e sem \textit{verbose.}
+
+\begin{lstlisting}
+sh scriptBftSmart.sh server.meta.ServerConsole 0 0 4 false
+sh scriptBftSmart.sh server.meta.ServerConsole 1 0 4 false
+sh scriptBftSmart.sh server.meta.ServerConsole 2 0 4 false
+\end{lstlisting}
 	
 \subsection{Serviço de Metadados}
+Nesta seção a implementação do Serviço de Metadados será detalhada. O serviço supracitado foi desenvolvido em quatro classes, as quais são listadas a seguir.
+\\
+
+\begin{itemize}
+	\item RaidType;
+	\item ServerConsole;
+	\item ServerList;
+	\item ServerMeta.
+\end{itemize}
+
+Além das classes supracitadas, o \textit{package} do serviço de metadados trabalha diretamente com os \textit{packages} responsáveis por gerenciar todas as estruturas de diretório do sistema, por isso tais classes serão apresentadas nesta subseção e explanadas em breve.
+\\
+
+\begin{itemize}
+	\item \textbf{dt}
+	\begin{itemize}
+		\item DirectoryNode;
+		\item DirectoryTree;
+		\item LockList;
+		\item LockType;
+		\item Metadata.
+	\end{itemize}
+	\item \textbf{dt.directory}
+	\begin{itemize}
+		\item DirEntries;
+		\item Directory.
+	\end{itemize}
+	\item \textbf{dt.file}
+	\begin{itemize}
+		\item Block;
+		\item BlockInfo;
+		\item BlockInfoList;
+		\item FileDFS.
+	\end{itemize}
+\end{itemize}
+
+
+
 Maioria das funcionalidades estão presentes na classe principal ServerMeta.
 A classe ServerMeta herda a DefaultSingleRecoverable, uma classe que está contida na biblioteca de BTR-SMaRt.
 
 
 \subsection{Serviço de Armazenamento}
+Nesta seção a implementação do Serviço de Armazenamento será detalhada. O serviço supracitado foi desenvolvido em quatro classes, as quais são listadas a seguir.
+\\
+
+\begin{itemize}
+	\item MetadataModule;
+	\item ServerConsole;
+	\item Operation;
+	\item ServerData.
+\end{itemize}
 
 A classe MetaDataModule faz comunicação com os servidores de metadados. Nesta comunicação os servidors de armazenamento se comportam como se fosse um cliente em sistema BRT-SMaRt.
 
 \subsection{Cliente}
+Nesta seção a implementação do Cliente será detalhada. O serviço supracitado foi desenvolvido em seis classes, as quais são listadas a seguir.
+\\
+
+\begin{itemize}
+	\item ClientConsole;
+	\item ClientDFS;
+	\item ClientServerSocket;
+	\item LockManager;
+	\item Option;
+	\item ClientTest.
+\end{itemize}
+
+Observe que a classe ClientTest é utilizada apenas no modo de teste, na execução normal ela é ignorada pelo sistema e não deve ser chamada.
+\\
+
 Está dividido em partes principais de interface e de execução. 
 A classe ClientConsole fornece interface de usuário baseado em linha de comando, e é responsável para fazer ligação entre programa e o usuário, imprimindo na tela as mensagens e opções e .
 
