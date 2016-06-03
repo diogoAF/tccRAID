@@ -87,19 +87,19 @@
 \contentsline {subsubsection}{Renomear um arquivo}{39}{section*.42}
 \contentsline {subsubsection}{Renomear Diret\IeC {\'o}rio}{39}{section*.43}
 \contentsline {section}{\numberline {5.3}Implementa\IeC {\c c}\IeC {\~a}o}{39}{section.5.3}
-\contentsline {subsection}{\numberline {5.3.1}Rodando o Sistema}{40}{subsection.5.3.1}
+\contentsline {subsection}{\numberline {5.3.1}Executando o Sistema}{40}{subsection.5.3.1}
 \contentsline {subsection}{\numberline {5.3.2}Servi\IeC {\c c}o de Metadados}{41}{subsection.5.3.2}
 \contentsline {subsection}{\numberline {5.3.3}Servi\IeC {\c c}o de Armazenamento}{42}{subsection.5.3.3}
-\contentsline {subsection}{\numberline {5.3.4}Cliente}{42}{subsection.5.3.4}
-\contentsline {chapter}{\numberline {6}Experimentos}{43}{chapter.6}
-\contentsline {section}{\numberline {6.1}Experimentos}{43}{section.6.1}
-\contentsline {subsubsection}{Teste de lat\IeC {\^e}ncia}{43}{section*.44}
-\contentsline {subsubsection}{Teste de vaz\IeC {\~a}o}{43}{section*.45}
-\contentsline {subsection}{\numberline {6.1.1}Resultaos}{43}{subsection.6.1.1}
-\contentsline {subsubsection}{Teste de lat\IeC {\^e}ncia}{43}{section*.46}
-\contentsline {subsubsection}{Teste de vaz\IeC {\~a}o}{44}{section*.47}
-\contentsline {section}{\numberline {6.2}Conclus\IeC {\~o}es do Cap\IeC {\'\i }tulo}{44}{section.6.2}
-\contentsline {chapter}{\numberline {7}Conclus\IeC {\~o}es e Trabalhos Futuros}{45}{chapter.7}
-\contentsline {section}{\numberline {7.1}Conclus\IeC {\~o}es}{45}{section.7.1}
-\contentsline {section}{\numberline {7.2}Trabalhos Futuros}{45}{section.7.2}
-\contentsline {chapter}{Refer\^encias}{46}{section*.48}
+\contentsline {subsection}{\numberline {5.3.4}Cliente}{43}{subsection.5.3.4}
+\contentsline {chapter}{\numberline {6}Experimentos}{44}{chapter.6}
+\contentsline {section}{\numberline {6.1}Experimentos}{44}{section.6.1}
+\contentsline {subsubsection}{Teste de lat\IeC {\^e}ncia}{44}{section*.44}
+\contentsline {subsubsection}{Teste de vaz\IeC {\~a}o}{44}{section*.45}
+\contentsline {subsection}{\numberline {6.1.1}Resultaos}{44}{subsection.6.1.1}
+\contentsline {subsubsection}{Teste de lat\IeC {\^e}ncia}{44}{section*.46}
+\contentsline {subsubsection}{Teste de vaz\IeC {\~a}o}{45}{section*.47}
+\contentsline {section}{\numberline {6.2}Conclus\IeC {\~o}es do Cap\IeC {\'\i }tulo}{45}{section.6.2}
+\contentsline {chapter}{\numberline {7}Conclus\IeC {\~o}es e Trabalhos Futuros}{46}{chapter.7}
+\contentsline {section}{\numberline {7.1}Conclus\IeC {\~o}es}{46}{section.7.1}
+\contentsline {section}{\numberline {7.2}Trabalhos Futuros}{46}{section.7.2}
+\contentsline {chapter}{Refer\^encias}{47}{section*.48}

@@ -191,11 +191,11 @@ Operação realizada exclusivamente entre o cliente e o servidor \textit{name no
 Nesta seção serão apresentados os detalhes sobre a implementação do nosso sistema, incluindo informações sobre a programação e algoritmos utilizados. Todo o \textit{software} foi desenvolvido na linguagem \textit{Java} com auxilio de várias bibliotecas padrões e do \textit{BFT-SMaRt}, o qual foi apresentado com mais detalhes no capítulo 3. 
 \\
 
-\subsection{Rodando o Sistema}
-O projeto pode ser encontrado no repositório do \textit{GitHub} no seguinte endereço \href{https://github.com/diogoAF/tccRAID}{https://github.com/diogoAF/tccRAID}. Vale ressaltar que todas as bibliotecas necessárias, incluindo o  \textit{BFT-SMaRt}, já estão incluídas no projeto. Para a execução do sistema é necessário ao menos oito máquinas remotas, sendo três máquinas para o serviço de metadado, quatro para o serviço de armazenamento (caso vá utilizar o RAID 0 ou 1, devido a sua natureza, é possível ser utilizado com apenas duas máquinas), e ao menos uma máquina rodando o Cliente.
+\subsection{Executando o Sistema}
+O código-fonte de todo o projeto pode ser encontrado no repositório do \textit{GitHub}, no seguinte endereço você pode ter acesso aos arquivos \href{https://github.com/diogoAF/tccRAID}{https://github.com/diogoAF/tccRAID}. Vale ressaltar que todas as bibliotecas necessárias, incluindo o  \textit{BFT-SMaRt}, já estão incluídas no projeto. Para a execução do sistema é necessário ao menos oito máquinas remotas, sendo três máquinas para o serviço de metadado, quatro para o serviço de armazenamento (caso vá utilizar o RAID 0 ou 1, devido a sua natureza, é possível ser utilizado com apenas duas máquinas), e ao menos uma máquina rodando o Cliente.
 \\
 
-O primeiro passo é modificar o arquivo \textbf{host.config} localizado no diretório \textbf{bin}, pois este arquivo é utilizado pelo \textit{BFT-SMaRt} para determinar o IP e porta de cada réplica. Ao final do arquivo deve-se inserir uma nova linha contendo o ID do servidor, endereço IP e porta pela qual ele vai escutar. Por exemplo, 7001 10.1.1.9 11100.
+O primeiro passo é criar o arquivo \textbf{host.config} dentro de um diretório chamado \textbf{config}. Localizado no diretório \textbf{bin\_ } existe um modelo de construção deste arquivo. Ele é necessário pois é utilizado pelo \textit{BFT-SMaRt} para determinar o IP e porta de cada réplica. Ao final do arquivo deve-se inserir uma nova linha contendo o ID do servidor, endereço IP e porta pela qual ele vai escutar. Por exemplo, 7001 10.1.1.9 11100.
 \\
 
 O segundo passo é inicializar o serviço de metadado, para tal deve-se chamar a classe \textit{server.meta.ServerConsole}, a qual deve receber quatro parâmetros os quais serão listado a seguir. 
@@ -207,18 +207,51 @@ O segundo passo é inicializar o serviço de metadado, para tal deve-se chamar a
 	\item "true" caso deseje rodar a versão \textit{verbose} do metadado.
 \end{itemize}
 
-Porém, antes de executar o comando de inicialização, recomenda-se criar um \textit{script} que inicialize o \textit{BFT-SMaRt} e as outras bibliotecas, para tal, basta criar um \textit{scriptBftSmart.sh} (por exemplo) no seguinte formato:
+Porém, antes de executar o comando de inicialização, recomenda-se criar um \textit{script} que inicialize o \textit{BFT-SMaRt} e as outras bibliotecas, para tal, basta seguir o formato apresentado a logo abaixo, para conveniência, doravante vamos supor que o \textit{script} foi criado e chama-se \textit{scriptBftSmart.sh}.
 
 \begin{lstlisting}
 java -cp .:lib/BFT-SMaRt.jar:lib/slf4j-api-1.5.8.jar:lib/slf4j-jdk14-1.5.8.jar:lib/netty-3.1.1.GA.jar:lib/commons-codec-1.5.jar $1 $2 $3 $4 $5 $6 $7 $8 $9
 \end{lstlisting}
 
-Com o \textit{script} criado, basta rodar o seguinte comando em cada máquina, repare que cada máquina irá receber um identificador único, entretanto, com o restante dos parâmetros inalterados. Neste exemplo o serviço está sendo iniciado para tratar o RAID 0 com quatro servidores de armazenamento e sem \textit{verbose.}
+Com o \textit{script} criado, basta rodar o seguinte comando (cada um em cada máquina), repare que cada máquina irá receber um identificador único, entretanto, o restante dos parâmetros são inalterados. Repare que é na inicialização do serviço de metadados que o tipo de RAID é determinado e ele não pode ser alterado em tempo de execução. Neste exemplo o serviço está sendo iniciado para tratar o RAID 0 com quatro servidores de armazenamento e com \textit{verbose.}
+\\
 
 \begin{lstlisting}
-sh scriptBftSmart.sh server.meta.ServerConsole 0 0 4 false
-sh scriptBftSmart.sh server.meta.ServerConsole 1 0 4 false
-sh scriptBftSmart.sh server.meta.ServerConsole 2 0 4 false
+sh scriptBftSmart.sh server.meta.ServerConsole 0 0 4 true
+sh scriptBftSmart.sh server.meta.ServerConsole 1 0 4 true
+sh scriptBftSmart.sh server.meta.ServerConsole 2 0 4 true
+\end{lstlisting}
+
+Com os servidores de metadado devidamente inicializados, deve iniciar o serviço de armazenamento. A classe que deve ser invocada é a \textit{server.data.ServerConsole}, a qual deve receber dois parâmetros, os quais serão listado a seguir. 
+
+\begin{itemize}
+	\item O identificador único da replica;
+	\item "true" caso deseje rodar a versão \textit{verbose} do servidor de armazenamento.
+\end{itemize}
+
+No exemplo a seguir, o serviço será instanciado com quatro servidores com o \textit{verbose} ativado.
+
+\begin{lstlisting}
+sh scriptBftSmart.sh server.data.ServerConsole 1001 true
+sh scriptBftSmart.sh server.data.ServerConsole 1002 true
+sh scriptBftSmart.sh server.data.ServerConsole 1003 true
+sh scriptBftSmart.sh server.data.ServerConsole 1004 true
+\end{lstlisting}
+
+Nesse ponto o serviço de metadados já deve ter estabelecido conexão com os servidores de dados. Desta forma, só o que falta é ativar o cliente. Para tal, é possível ativa-lo de dois modos, o real e o de testes. No modo real será apresentado uma interface de \textit{prompt} onde o usuário poderá interagir informando qual operação ele deseje que o sistema execute. Enquanto que no modo de teste é passado na linha de comando qual operação deve ser executada (r para leitura ou w para escrita), o tamanho do arquivo de teste (1,100,1000 ou 10000 todos em kilobytes), a quantidade de \textit{threads} que serão instanciadas e a quantidade de operações. Os arquivos que são utilizados no modo de teste também podem ser encontrados na pasta \textbf{bin\_ }.
+\\
+
+Para executar um cliente em modo real, é necessário chamar a classe \textit{client.ClientConsole}, a qual recebe apenas o identificador do cliente como parâmetro. No exemplo a seguir, é inicializado um cliente de id 7001.
+\\
+
+\begin{lstlisting}
+sh scriptBftSmart.sh client.ClientConsole 7001
+\end{lstlisting}
+
+No caso do cliente em modo de teste, deve-se chamar a classe \textit{client.ClientTest}, a qual teve seus parâmetros de entrada explicados no paragrafo anterior. Desta forma, no exemplo a seguir o cliente de teste vai instanciar 10 \textit{threads} onde cada uma irá executar 500 operações de escrita do arquivo de 1kb.
+
+\begin{lstlisting}
+sh scriptBftSmart.sh client.ClientTest 7001 w 1 10 500
 \end{lstlisting}
 	
 \subsection{Serviço de Metadados}
