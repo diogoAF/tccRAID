@@ -265,6 +265,18 @@ Nesta seção a implementação do Serviço de Metadados será detalhada. O serv
 	\item ServerMeta.
 \end{itemize}
 
+A classe \textbf{ServerConsole} serve apenas como uma interface de inicialização do serviço de metadados, no qual o \textit{ServerConsole} verifica os parâmetros de inicialização, caso tenha algo errado é apresentado uma mensagem de erro e o programa finalizado. Em contra partida, se tudo estiver correto com os parâmetros, a classe \textit{ServerMeta} é instanciada.
+\\
+
+A classe \textbf{RaidType} é apenas uma enumeração contendo os tipos de RAID suportados pelo sistema, ou seja, 0, 1 e 5.
+\\
+
+\textbf{ServerList } é a classe responsável pelas operações relacionadas ao \textit{ArrayList} contendo as informações referentes aos servidores de armazenamento cujo o serviço de metadado matem conexão.
+\\
+
+Diferente das classes supracitadas, \textbf{ServerMeta} é a classe principal do serviço de metadados. Ela é responsável por inicializar, gerenciar todo o serviço, além de executar as operações solicitadas pelos clientes. As operações disponíveis já foram apresentadas em detalhes na seção Operações no Sistema de Arquivos Distribuídos.
+\\
+
 Além das classes supracitadas, o \textit{package} do serviço de metadados trabalha diretamente com os \textit{packages} responsáveis por gerenciar todas as estruturas de diretório do sistema, por isso tais classes serão apresentadas nesta subseção e explanadas em breve.
 \\
 
@@ -291,11 +303,14 @@ Além das classes supracitadas, o \textit{package} do serviço de metadados trab
 	\end{itemize}
 \end{itemize}
 
+As classes contidas no \textit{package dt} lidam com todas características e operações refentes aos diretórios. \textbf{LockType e LockList} são utilizadas para gerenciar o controle de acesso aos diretórios, sendo a primeira responsável por enumerar os tipos dos estados de acesso dos diretórios, enquanto a segunda gerência um \textit{ArrayList} para listar os arquivos contidos no diretório e seu controle de acesso. A classe \textbf{Metadata} contêm e manipula as informações de metadado dos arquivos. Por fim, \textbf{DirectoryNode e DirectoryTree} compõem a árvore de diretórios do serviço de metadados, a primeira referente a cada nó e a segunda sobre a árvore em si.
+\\
 
+Dentro de dt, existem dois outros \textit{packges}, sendo \textit{directory} responsável por tratar os diretórios em si. Composto por duas classes, \textit{DirEntries e Directory}, sendo o primeiro composto pelas informações das entidades armazenadas nos diretórios (outros diretórios e/ou arquivos) e um método para informar se o diretório referenciado é ou não o \textit{root}, enquanto que a segunda trata dos diretórios em si composto por vários métodos de operações sobre pastas e dois \textit{HashMaps} para armazenar as informações das pastas e arquivos contidos no diretório referenciado.
+\\
 
-Maioria das funcionalidades estão presentes na classe principal ServerMeta.
-A classe ServerMeta herda a DefaultSingleRecoverable, uma classe que está contida na biblioteca de BTR-SMaRt.
-
+Por fim, o outro \textit{packge} dentro de dt é nomeado de \textit{file}, o qual compõem as classes responsáveis por armazenar e gerenciar os dados dos arquivos armazenados pelo serviço de armazenamento. \textbf{FileDFS} é a classe principal deste \textit{packge}, contendo a referencia da instância de \textit{BlockInfoList}. \textbf{Block, BlockInfo e BlockInfoList} referentes aos blocos de dados nos quais os arquivos devem ser divididos antes de serem enviados pelo cliente ao serviço de armazenamento. Dentre as classes previamente sitadas,\textit{Block} pode ser considerada como a principal, visto que é nela onde ficam armazenados os \textit{bytes} de dados, o identificador e os metodos necessários para recuperar os dados ou quebrar um dado arquivo em blocos. Enquanto que \textit{BlockInfo} funciona como a ligação do bloco ao servidor de armazenamento par ao qual ele deve ser enviado, contendo as informações necessárias para que o cliente saiba para quem o bloco deve ser enviado. Por fim, \textit{BlockInfoList} possui os meios para gerenciar um \textit{ArrayList} dos \textit{BlockInfo} de um arquivo, além de manter o tamanho de cada bloco da lista, o número de servidores de armazenamento eo tipo de RAID em que os blocos foram criados.
+\\
 
 \subsection{Serviço de Armazenamento}
 Nesta seção a implementação do Serviço de Armazenamento será detalhada. O serviço supracitado foi desenvolvido em quatro classes, as quais são listadas a seguir.
@@ -308,7 +323,17 @@ Nesta seção a implementação do Serviço de Armazenamento será detalhada. O 
 	\item ServerData.
 \end{itemize}
 
-A classe MetaDataModule faz comunicação com os servidores de metadados. Nesta comunicação os servidors de armazenamento se comportam como se fosse um cliente em sistema BRT-SMaRt.
+A classe \textbf{ServerConsole} serve apenas como uma interface de inicialização do serviço de armazenamento, no qual o \textit{ServerConsole} verifica os parâmetros de inicialização, caso tenha algo errado é apresentado uma mensagem de erro e o programa finalizado. Em contra partida, se tudo estiver correto com os parâmetros, a classe \textit{ServerData} é instanciada.
+\\
+
+A classe \textbf{Operation} é a classe responsável por efetivamente executar as operações solicitadas ao serviço de armazenamento sobre os blocos de arquivos.
+\\
+
+\textbf{ServerData} é a classe responsável por lidar diretamente com os clientes, de modo que é ela quem sabe a porta onde o servidor deve aguardar pela conexão do cliente, a sua capacidade total de armazenamento e quanto do espaço já foi ocupado.
+\\
+
+A classe \textbf{MetaDataModule} realiza a comunicação com os servidores de metadados. Tal comunicação é realizada utilizando as facilidades do \textit{BFT-SMaRt}, no qual o \textit{MetaDataModule} age no papel de um cliente solicitando algum serviço do servidor de metadados.
+\\
 
 \subsection{Cliente}
 Nesta seção a implementação do Cliente será detalhada. O serviço supracitado foi desenvolvido em seis classes, as quais são listadas a seguir.
@@ -318,18 +343,25 @@ Nesta seção a implementação do Cliente será detalhada. O serviço supracita
 	\item ClientConsole;
 	\item ClientDFS;
 	\item ClientServerSocket;
-	\item LockManager;
 	\item Option;
 	\item ClientTest.
 \end{itemize}
 
-Observe que a classe ClientTest é utilizada apenas no modo de teste, na execução normal ela é ignorada pelo sistema e não deve ser chamada.
+Observe que a classe \textbf{ClientTest} é utilizada apenas no modo de teste, na execução normal ela é ignorada pelo sistema e não deve ser chamada. Sua utilização foi explicada no tópico anterior.
 \\
 
-Está dividido em partes principais de interface e de execução. 
-A classe ClientConsole fornece interface de usuário baseado em linha de comando, e é responsável para fazer ligação entre programa e o usuário, imprimindo na tela as mensagens e opções e .
+A classe \textbf{ClientConsole} serve apenas como uma interface entre o usuário e o \textit{software}, no qual o \textit{ClientConsole} apresenta um menu baseado em linha de comando, no qual o usuário informa qual operação deseja executar, o \textit{ClientConsole} valida os dados fornecidos e avisa o módulo responsável por executar a operação desejada.
+\\
 
-A classe ClientDFS, a classe que estão concentrados os métodos para realizar as tarefas exigidas.
+A classe \textbf{Option} é apenas uma enumeração contendo os tipos de operações suportados pelo sistema, as quais foram apresentadas e discutidas previamente nesse trabalho.
+\\
+
+\textbf{ClientServerSocket} possibilita e gerencia as conexões \textit{Socket} realizadas entre o cliente e servidor, tal conexão são necessárias para a correta execução de operações entre o cliente e os servidores de armazenamento. As conexões entre o cliente e servidor de metadados ocorrem graças as facilidades do \textit{BFT-SMaRt}.
+\\
+
+
+A classe \textbf{ClientDFS} pode ser considerada como a classe principal do lado cliente do sistema, visto que é nela onde estão concentrados os métodos para realização de todas as operações listadas em \textit{Option}.
+\\
 	
 	
 	
