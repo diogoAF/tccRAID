@@ -1,3 +1,11 @@
 \section{Conclusões}
 
 \section{Trabalhos Futuros}
+Visto os resultados obtidos em nossos experimentos, observamos que o sistema comporta, sem diminuir drasticamente o tempo de resposta, cinquenta usuários simultâneos  solicitando diversas operações, pretendemos estudar modos para aumentar essa quantidade, de modo que o nosso sistema possa ser usado em um ambiente real.
+\\
+
+Atualmente todo o gerenciamento realizado pelo serviço de metadados ocorre em tempo de execução, sendo salvo apenas em memória, pretendemos modificar o código para que o mesmo possibilite que as informações gerencias sejam armazenadas em disco, memória não volátil. Pois da forma realizada atualmente, toda vez que o sistema é iniciado as informações gerencias estão em branco, ou seja, todos os blocos de arquivos armazenados no serviço de armazenamento não passam de lixo, espaço de disco desperdiçado. Quando o serviço de metadado estiver integrado com algum tipo de banco de dados esses dados serão preservados mesmo quando os servidores precisarem ser desligados por qualquer motivo
+\\
+
+Por fim, planejamos adicionar novos modos de RAID para aumentar a flexibilidade do usuário. Como apresentado no capítulo 4, existem vários outros tipos de RAID que não são suportados pelo nosso atual modelo de sistema. Dentre os vários tipos apresentados no capítulo 4, o que mais chama nossa atenção para uma possível implementação é o RAID 50 por apresentar a facilidade do RAID 0 e o poder do RAID 5.
+\\
