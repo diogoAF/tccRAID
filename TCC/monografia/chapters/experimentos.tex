@@ -44,3 +44,5 @@
 	O objetivo do teste de vazão (ou \textit{throughput}) é mensurar quantos clientes simultâneos o nosso sistema comporta sem prejudicar muito o tempo de resposta. Para tal, ele é realizado de forma extremamente simular ao teste de latência, a única diferença é que não é apenas um único cliente solicitando as operações, mas sim vários clientes concorrentes. Como em nosso experimento possuímos apenas uma máquina para o cliente, decidimos utilizar várias \textit{threads} onde cada uma age como se fosse um cliente distinto. Ao fim de cada execução do procedimento, os dados eram coletados e armazenados.
 	\\
 	
+	O processo supracitado foi inicialmente realizado com 10 \textit{threads} e os dados coletados, em seguida repetiu-se o mesmo processo porém com vinte \textit{threads} e os dados coletados comparados com o caso anterior de 10 \textit{threads}. Essa operação foi repetida até chegar ao ponto máximo de \textit{threads} concorrentes em que o sistema respondia sem grandes perda de performance, que para o nosso ambiente de teste foi de cinquenta \textit{threads} concorrentes.
+	\\
