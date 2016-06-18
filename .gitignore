@@ -1,4 +1,8 @@
-/TCC/projetoTCC/bin
+/TCC/projetoTCC/bin/client
+/TCC/projetoTCC/bin/dt
+/TCC/projetoTCC/bin/request
+/TCC/projetoTCC/bin/result
+/TCC/projetoTCC/bin/server
 /TCC/projetoTCC/nbproject
 /TCC/projetoTCC/dist
 /TCC/projetoTCC/build
