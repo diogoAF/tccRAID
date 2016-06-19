@@ -4,7 +4,6 @@ Neste capítulo iremos apresentar as conclusões obtidas com os resultados dos e
 \section{Conclusões}
 Após a analise realizada sobre os dados coletados em nossos experimentos foi possível levantar algumas conclusões sobre o nosso sistema de arquivos distribuídos baseado nos conceitos de RAID.
 
-
 \section{Trabalhos Futuros}
 Visto os resultados obtidos em nossos experimentos, observamos que o sistema comporta, sem diminuir drasticamente o tempo de resposta, cinquenta usuários simultâneos  solicitando diversas operações, pretendemos estudar modos para aumentar essa quantidade, de modo que o nosso sistema possa ser usado em um ambiente real.
 \\
@@ -12,5 +11,9 @@ Visto os resultados obtidos em nossos experimentos, observamos que o sistema com
 Atualmente todo o gerenciamento realizado pelo serviço de metadados ocorre em tempo de execução, sendo salvo apenas em memória, pretendemos modificar o código para que o mesmo possibilite que as informações gerencias sejam armazenadas em disco, memória não volátil. Pois da forma realizada atualmente, toda vez que o sistema é iniciado as informações gerencias estão em branco, ou seja, todos os blocos de arquivos armazenados no serviço de armazenamento não passam de lixo, espaço de disco desperdiçado. Quando o serviço de metadado estiver integrado com algum tipo de banco de dados esses dados serão preservados mesmo quando os servidores precisarem ser desligados por qualquer motivo
 \\
 
-Por fim, planejamos adicionar novos modos de RAID para aumentar a flexibilidade do usuário. Como apresentado no capítulo 4, existem vários outros tipos de RAID que não são suportados pelo nosso atual modelo de sistema. Dentre os vários tipos apresentados no capítulo 4, o que mais chama nossa atenção para uma possível implementação é o RAID 50 por apresentar a facilidade do RAID 0 e o poder do RAID 5.
+Durante a realização de experimentos, foi observada a ocorrência de algumas exceções durante a execução do programa nas máquinas remotas de servidores de armazenamento. Essas exceções foram de \textit{OutOfMemoryError: Java heap space}, causado pela possível falta de memória disponível no JVM, a máquina virtual de java, e de \textit{OutOfMemoryError: GC Overhead limit exceeded}, a exceção que ocorre quando o coletor de lixo de java consome a maioria de tempo de execução desalocando componentes desnecessários da memória, impedindo que o programa prossegue a sua tarefa.
+Durante experimento elas foram evitadas mudando a configuração básica do JVM, aumentando a capacidade máxima da memória que pode utilizar. Contudo, como não podemos considerar que todos os computadores são equipados com memória suficiente para executar o nosso sistema, é necessário que seja feito a redução de uso da memória por sistema. 
+Como neste trabalho foi focalizado principalmente em construção do sistema, o código fonte do programa ainda pode ser revisado e otimizado, assim, conseguindo o melhoramento em relação ao uso da memória e, se for possível, o aumento no desempenho do sistema todo.
 \\
+
+
