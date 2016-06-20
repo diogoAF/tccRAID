@@ -1,20 +1,45 @@
 
 \section{Objetivo}
 
-O nosso objeivo neste artigo é a construção de um sistema de arquivos distribuído baseado na computação em nuvem que possui menor \textit{overhead} de espaço, comparado a 200\% de método de replicação, sem degradar muito o performance e a confiabilidade na armazenamento de dados. \\
+A taxa de aumento extra de espaço causado pela geração de parte redundante é representado por \textit{overhead} de espaço.
+Por exemplo, na replicação de arquivo que possui apenas uma réplica, o \textit{overhead} é de 100\%, pois cada um arquivo será criada uma parte redundante.
+O nosso objetivo neste trabalho é a construção de um sistema de arquivos distribuídos tolerante a falha de forma que apresenta menor \textit{overhead} de espaço que o método da replicação de arquivo.
+\\
 
-Para isso, nós observamos em técnica de redundância usado na tecnologia RAID, onde tem possibilidade de diminuir o espaço ocupado pela parte redundante com atribuição de paridade nos arquivos, ao invés de simples replicação. Dessa forma, é possível de reduzir o \textit{overhead} de espaço até 50\%, quando for gerada uma paridade para cada duas partes de arquivo original, ou até menos, dependendo da configuração utilizada para calcular as paridades.
-Além de otimização de uso de espaço para armazenamento, também é esperado a melhoria na distribuição de caga entre os servidores. Como os arquivos estão fragmentados em blocos e espalhados em todos os servidores, a probabilidade de ocorrer a concentração de acesso em um servidor tende a ser reduzida.
-Também notamos no fato de que a tecnologia RAID foi inicialmente desenvolvido para aumentar a taxa de transferência da unidade de armazenamento, mantendo a mesma velocidade de leitura/estrita. Isso foi realizado com leitura/escrita simultânea em vários discos rígidos, aumentando o tamanho total de dados transferidos por vez numa operação de entrada/saída. Esta ideia também foi incorporado no nosso sistema, uma vez que no sistema distribuído é requisito básico o uso de vários servidores para trabalhar em conjunto.\\
+Para isso, nós observamos em conceitos da tecnologia RAID, pois notamos alguns pontos semelhantes com o sistema de arquivos distribuídos, como o armazenamento de forma distribuído e a preocupação com segurança dos arquivos.
+Além disso, a utilização da replicação de arquivo e do outro método diferente para atribuição da redundância também foi motivo para colocar atenção nesta tecnologia.
+A outra forma de criar as partes redundantes é a geração de paridades, que são calculadas baseando em blocos divididos a partir do próprio arquivo.
+Dessa forma, é possível de reduzir o \textit{overhead} de espaço até 50\%, a metade da replicação com uma cópia, quando as paridades forem geradas de forma mais simples, ou até menos, dependendo da condição utilizada para calcular a paridade.
+\\
 
-Para gerenciar o armazenamento de forma eficientemente, todos os arquivos são divididos em duas partes, o metadado, as informações sobre arquivo, e o conteúdo, o dado em si do arquivo. 
-Assim, no conjunto de servidor vai ter dois tipos diferentes de nós, alguns que armazena os metadados dos arquivos e outros que armazena o conteúdo dos arquivos.
-A confiabilidade do conteúdo do arquivo é assegurado com conceito de RAID, e da mesma forma os metadados serão protegidos através de BFT-SMaRt, uma biblioteca JAVA que fornece a tolerância a falha, realizada com uso de método de replicação do serviço.\\
+Também notamos no fato de que a tecnologia RAID foi inicialmente desenvolvido para aumentar a taxa de transferência da unidade de armazenamento.
+A motivação inicial desta invenção era reusar os discos rígidos que não estavam mais em uso, por serem substituídos pelo outros mais novos com melhor performance.
+O problema para fazer o reuso dos dispositivos era a baixa velocidade de leitura/escrita que estes apresentavam, por serem aparelhos relativamente velhos. 
+Para cobrir esta baixa velocidade de transferência, os discos foram colocados para trabalhar em conjunto, ou seja, fazer um acesso simultâneo em vários discos para aumentar a vazão total de dados transferidos, resultando em aumento da taxa de transferência .
+Assim, a introdução de conceito do RAID, não trata apenas de questão da segurança de arquivos, mas também no desempenho do sistema.  
+\\
+%Como uma consequência extra de introdução do RAID, é esperado que tenha a melhoria na distribuição da carga de operações entre os servidores, pois os arquivos estão armazenados espalhadamente sobre todos os nós do sistema, levando na redução da probabilidade de ocorrer a concentração de acesso em um dos nós.
 
-%Assim, a nossa abordagem está focalizado em construção de uma forma eficiente para armazenar os arquivos com segurança no sistema de arquivos distribuído.
+Para que o armazenamento de arquivo seja administrado de forma eficiente, contribuindo para aumento de desempenho do sistema, adotamos uma abordagem que separa o arquivo em duas partes para distribuir a carga de gerenciamento. 
+Uma parte é o metadado, a que guarda as informações do arquivo, como nome, tamanho ou localização. E a outra parte é o dado, a que armazena o próprio conteúdo deste arquivo. 
+Desta forma, o sistema será constituído por dois tipos diferentes de conjunto dos servidores, um que administra os metadados dos arquivos e outro que armazena os dados dos arquivos. 
+\\
 
-Também será feito a comparação de desempenho entre os dois sistemas, um que usa método de replicação e outro que usa método de RAID.
-Comparando os dois métodos de redundância, será possível a visualização das vantagens e desvantagens que existem entre eles.
+Da mesma forma que a confiabilidade do conteúdo dos arquivos é assegurado por conceito de RAID, os metadados armazenados também tem que ser protegido.
+Porém, não podemos usar o RAID para fazer isso, pois nos servidores de metadados não acontecem simples entrada/saída de dados, mas também fornecem um serviço para indicar localização de conteúdo dos arquivos. 
+Por isso, para garantir a segurança dos metadados, junto com o serviço, utilizamos o \textit{BFT-SMaRt}, uma biblioteca de Java que disponibiliza as ferramentas para desenvolver um serviço tolerante a falha, baseado na técnica de replicação de serviço.
+\\
+
+
+%e da mesma forma os metadados serão protegidos através de BFT-SMaRt, uma biblioteca JAVA que fornece a tolerância a falha no serviço, realizada com uso de método de replicação do serviço.\\
+
+
+Assim, o nosso trabalho está focalizado em construção de um sistema de arquivos distribuídos utilizando os conceitos de RAID.
+Será implementado algumas configurações de RAID, incluindo uma que utiliza a replicação de arquivo e outra que utiliza a geração de paridade, e posteriormente será feito a comparação entre as configurações desenvolvidas no sistema, para verificar a diferença de desempenho elas.
+\\
+
+%Também será feito a comparação de desempenho entre os dois sistemas, um que usa método de replicação e outro que usa método de RAID.
+%Comparando os dois métodos de redundância, será possível a visualização das vantagens e desvantagens que existem entre eles.
 
 
 
