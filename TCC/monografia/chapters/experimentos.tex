@@ -1,11 +1,11 @@
-	\section{Experimentos}
+	%\section{Experimentos}
 	Neste capítulo iremos detalhar os experimentos realizados sobre o nosso sistema. Explanando como e onde os experimentos foram realizados, apresentar e detalhar os dados colhidos para enfim, analisa-los para no final do capítulo apresentar a nossa conclusão.
 	\\
 	
-	Tais experimentos tem como objetivo avaliar o desempenho de nosso sistema sobre um ambiente de alta demanda, tanto com apenas um cliente quanto múltiplas solicitações  comitentes. Para alcançar o primeiro caso, foram realizados \textbf{testes de latência} e para o último caso, \textbf{testes de vazão}. Ambos os testes foram focados em apenas duas operações em nosso sistema, leitura e escrita, sendo cada uma repetida para arquivos de quatro distintos tamanhos, 1KB, 100KB, 1MB e 10MB. Nas próximas seções estes experimentos serão descritos em maiores detalhes, porém, antes será apresentada uma subseção descrevendo o ambiente de teste.
+	Tais experimentos tem como objetivo avaliar o desempenho de nosso sistema sobre um ambiente de alta demanda, tanto com apenas um cliente quanto com múltiplas solicitações concorrentes. Para alcançar o primeiro caso, foram realizados \textbf{testes de latência} e para o último caso, \textbf{testes de vazão}. Ambos os testes foram focados em apenas duas operações em nosso sistema, leitura e escrita, sendo cada uma repetida para arquivos de quatro distintos tamanhos, 1KB, 100KB, 1MB e 10MB. Nas próximas seções estes experimentos serão descritos em maiores detalhes, porém, antes será apresentada uma subseção descrevendo o ambiente de teste.
 	\\
 	
-	\subsubsection{O Ambiente de Teste}
+	\section{Ambiente de Teste}
 	Os testes foram todos executados utilizando-se as facilidades da plataforma \textbf{Emulab-Net}, mais informações sobre a plataforma podem ser encontradas na página oficinal pelo endereço \href{https://www.emulab.net/}{https://www.emulab.net/}. Para este trabalho, basta saber que o Emulab-Net é uma ferramenta complexa para testes de rede com mais de 900 computadores (denominados como \textit{nodes}) separados em diferentes categorias que possibilitam o desenvolvimento de experimentos sofisticados nas áreas de rede de computadores e computação distribuída.
 	\\
 	
@@ -37,12 +37,12 @@
 	
 
 	\subsubsection{Teste de latência}
-	O objetivo do teste de latência é mensurar o tempo total que o sistema leva para executar grandes quantidades seguidas de uma mesma operação. Para nosso caso, decidimos testar apenas as operações de leitura e escrita de arquivos. Cada operação foi repetida 1000 vezes de forma consecutiva utilizando-se um arquivo fixo, sendo que esse procedimento foi executado com arquivos de tamanho de 1KB, 100KB, 1MB e 10MB. Todo esse procedimento foi repetido uma única vez para cada modelo de RAID suportado pelo nosso sistema, ou seja, RAID 0, RAID 1 e RAID 5. Ao fim de cada execução desse procedimento, os dados eram coletados e armazenados.
+	O objetivo do teste de latência é mensurar o tempo total que o sistema leva para executar uma operação. Para nosso caso, decidimos testar apenas as operações de leitura e escrita de arquivos. Cada operação foi repetida 1000 vezes de forma consecutiva utilizando-se um arquivo fixo, sendo que esse procedimento foi executado com arquivos de tamanho de 1KB, 100KB, 1MB e 10MB. Todo esse procedimento foi repetido uma única vez para cada modelo de RAID suportado pelo nosso sistema, ou seja, RAID 0, RAID 1 e RAID 5. Ao fim de cada execução desse procedimento, os dados eram coletados e armazenados.
 	\\
 	
 	\subsubsection{Teste de vazão}	
-	O objetivo do teste de vazão (ou \textit{throughput}) é mensurar quantos clientes simultâneos o nosso sistema comporta sem prejudicar muito o tempo de resposta. Para tal, ele é realizado de forma extremamente simular ao teste de latência, a única diferença é que não é apenas um único cliente solicitando as operações, mas sim vários clientes concorrentes. Como em nosso experimento possuímos apenas uma máquina para o cliente, decidimos utilizar várias \textit{threads} onde cada uma age como se fosse um cliente distinto. Ao fim de cada execução do procedimento, os dados eram coletados e armazenados.
+	O objetivo do teste de vazão (ou \textit{throughput}) é mensurar quantas operações o sistema consegue executar por segundo. Para tal, ele é realizado de forma extremamente simular ao teste de latência, a única diferença é que não é apenas um único cliente solicitando as operações, mas sim vários clientes concorrentes. Como em nosso experimento possuímos apenas uma máquina para o cliente, decidimos utilizar várias \textit{threads} onde cada uma funciona como se fosse um cliente distinto. Ao fim de cada execução do procedimento, os dados eram coletados e armazenados.
 	\\
 	
-	O processo supracitado foi inicialmente realizado com 10 \textit{threads} e os dados coletados, em seguida repetiu-se o mesmo processo porém com vinte \textit{threads} e os dados coletados comparados com o caso anterior de 10 \textit{threads}. Essa operação foi repetida até chegar ao ponto máximo de \textit{threads} concorrentes em que o sistema respondia sem grandes perda de performance, que para o nosso ambiente de teste foi de cinquenta \textit{threads} concorrentes.
+	O processo supracitado foi inicialmente realizado com 10 \textit{threads} e os dados coletados, em seguida repetiu-se o mesmo processo porém com 20 \textit{threads} e os dados coletados comparados com o caso anterior de 10 \textit{threads}. Essa operação foi repetida até chegar ao ponto máximo de \textit{threads} concorrentes em que o sistema respondia aumentando a vazão, que para o nosso ambiente de teste foi de 50 \textit{threads} concorrentes.
 	\\

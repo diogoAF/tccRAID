@@ -32,11 +32,11 @@
 %\bibpunct[; ]{(}{)}{,}{a}{}{;}%muda colchetes para parênteses
 
 % definições prévias do documento
-\title{Aplicação de RAID no nível de servidor ao sistema de arquivos distribuídos com BFT SMART}
+\title{Aplicação de RAID em Sistema de Arquivos Distribuídos}
 
 \orientador{\prof \dr Eduardo A. P. Alchieri}{CIC/UnB}
 
-\coordenador{\prof \dr Flavio Barros Vidal}{CIC/UnB}
+\coordenador{\prof \dr Rodrigo Bonifacio de Almeida}{CIC/UnB}
 
 \diamesano{18}{Junho}{2016}
 
@@ -60,19 +60,18 @@
 \maketitle
 
 \pretextual
-\begin{dedicatoria}
-Dedico a....
-\end{dedicatoria}
 
 \begin{agradecimentos}
-Agradeço a....
+Foi uma tarefa árdua chegar ao momento atual, monografia completa, créditos conquistados, colação marcada. Digo que a missão foi complicada pois exigiu dezenas de horas de estudo, noites em claro, programas que não compilavam, \textit{segmentation fault} aparentemente sem explicação, cálculos que não batiam, diversos finais de semana na faculdade. Porém nenhuma dessas frustrações supera a satisfação de conseguir superar tais problemas, a conta realizada com precisão, o programa otimizado que executa com exatidão, a prova com sabor de vitória, tudo levando àquela bela e merecida noite de sono antes do ciclo recomeçar. Por isso digo que não foi fácil, mas foi enriquecedor, o quanto aprendi, o quanto vivenciei, são experiências preciosas que carregarei com carinho e orgulho. Entretanto, devo ressaltar que essa trajetória não foi percorrida por mim sozinho, em todo o momento eu recebia direta ou indiretamente o apoio de pessoas importantes. Meu pai, sempre disposto a preparar uma bela refeição entre meus estudos, minha mãe, preocupada todas as vezes em que ficava até tarde na UnB, minha irmã, sempre pronta pra me pentelhar (e ajudar a aliviar todo o estresse dos estudos), Talita, minha namorada, sempre disposta a me receber com carinho e confortar todas minhas (várias) lamurias, minha família: avôs, tias, primos também dando seu suporte da forma que podiam, amigos e colegas que passavam os momentos de desespero e diversão na faculdade ou fora dela, sou muito grato a todos. Contudo, gostaria de expressar minha gratidão em especifico à meu orientador que teve muita paciência, boa vontade e bom humor para me ajudar nessa tortuosa parte final do curso e a meu parceiro, Getúlio, que foi de fundamental importância para a conclusão deste trabalho, obrigado! Obrigado a todos! E até o próximo desafio!
+\\
+
+Diogo Assis Ferreira
+\\
+
 \end{agradecimentos}
 
 \begin{resumo}
-Este trabalho é o resultado do estudo, planejamento, desenvolvimento e análise de um sistema de arquivos distribuídos tolerantes a falha utilizando as características inerentes do conceito de RAID, conceitos estes que originalmente foram desenvolvidos afim de evitar a perda física dos dados de modo a garantir que graças a redundância de dados a perca de um disco não iria comprometer as informações armazenadas.
-\\
-
-O restante do trabalho é apresentado da seguinte forma, o primeiro capítulo apresenta uma breve contextualização comprovando a real necessidade de um sistema como o desenvolvido neste trabalho. Do segundo ao quarto capítulo é realizada uma pequena introdução teórica envolvendo o contexto do sistema proposto, tais capítulos abordam tópicos sobre os sistemas de arquivos distribuídos, a biblioteca Java \textit{BFT-SMaRt}, e finalizando sobre os conceitos originais de RAID, respectivamente. No quinto capítulo o sistema proposto é apresentado em maiores detalhes, contendo informações sobre a modelagem e implementação do sistema. Seguindo para o sexto capítulo é apresentada toda a abordagem de testes realizadas sobre o sistema, finalizando com a análise dos dados obtidos durante toda a fase de testes. Por fim, o sétimo e último capítulo apresenta nossas conclusões finais e a lista de trabalhos futuros que podem ser desenvolvidos a fim de aprimorar o sistema proposto neste trabalho.
+Este trabalho tem como foco a construção de um sistema de arquivos distribuídos que é tolerante a falhas, sem prejuízo de desempenho e que consuma menor quantidade de \textit{overhead} do que o sistema apresentado pelo método de replicação de dados tradicional. A fim de alcançar tal objetivo foram utilizadas as características inerentes ao conceito do RAID 0, RAID 1 e RAID 5, as quais possibilitaram o teste das latências e o teste do \textit{throughput} das operações de leitura e escrita com arquivos de quatro tamanhos distintos, sendo esses 1KB, 100KB, 1MB e 10MB. A coleta e a análise dos dados resultou na conclusão de que o sistema alcança o objetivo proposto, sendo que, quando executado sob as parametrizações do RAID 5, o desempenho geral é superior se comparado aos outros dois modelos de RAID implementados.
 \\
 
 \end{resumo}
@@ -80,7 +79,9 @@ O restante do trabalho é apresentado da seguinte forma, o primeiro capítulo ap
 \selectlanguage{american}
 
 \begin{abstract}
-The science...
+This work has as its focus the construction of a fault tolerant distributed file system, without compromising performance, that consumes a lesser quantity of overhead than the system presented by the traditional data replication method. In order to achieve this goal, inherent characteristics of the concept of the RAID 0, RAID 1 and RAID 5 were used, which enabled the test of the latencies and the test of the throughput of the reading and writing operations with four distinct file sizes, these being 1KB, 100KB, 1MB and 10MB. The gathering and the analysis of these data resulted in the conclusion that the system reaches the proposed objective, being that, when run under the parameterizations of the RAID 5, the overall perfomance is superior if compared to the other two implemented RAID models.
+\\
+
 \end{abstract}
 
 \selectlanguage{brazil}
@@ -102,6 +103,8 @@ The science...
 \input{chapters/raid}
 \input{chapters/capitulo5}
 \input{chapters/desenvolvimento}
+\input{chapters/implementacao}
+\input{chapters/conc_cap5}
 \input{chapters/capitulo6}
 \input{chapters/experimentos}
 \input{chapters/exp_resultados}

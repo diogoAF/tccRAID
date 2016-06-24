@@ -3,8 +3,8 @@ Este capítulo introduz o que é um sistema de arquivos distribuído. De modo di
 
 	%\section{Sistema de arquivos distribuído}
 	
-	\section{Sistema distribuído}
-	Hoje em dia, podem ser encontrada diversas tarefas computacionais que são impossíveis de ser processadas por um computador comum, devido a simples limitação da capacidade de processamento que uma máquina pode atingir. A solução tipicamente tomada por muitas organizações é o uso de sistema distribuído, no qual possui algumas vantagens comparado a um sistema centralizado, como pode ser visto a seguir.
+	\section{Sistemas distribuídos}
+	Hoje em dia, podem ser encontradas diversas tarefas computacionais que são impossíveis de ser processadas por um computador comum, devido a simples limitação da capacidade de processamento que uma máquina pode atingir. A solução tipicamente tomada por muitas organizações é o uso de sistemas distribuído, o qual possui algumas vantagens comparado a um sistema centralizado, como pode ser visto a seguir.
 	
 	\begin{itemize}
 		\item Melhor relação custo-benefício;
@@ -12,17 +12,17 @@ Este capítulo introduz o que é um sistema de arquivos distribuído. De modo di
 		\item Alta confiabilidade e disponibilidade;
 		\item Relação linear entre crescimento de custo e desempenho.
 	\end{itemize}
-	Os sistemas de computação distribuída são caracterizados pela sua estrutura, cuja consiste em interação entre um grande número de dispositivos que executam seus próprios programas, mas que são afetados recebendo as mensagens ou observando a memória compartilhada de outros dispositivos.
+	Os sistemas de computação distribuída são caracterizados pela sua estrutura, que consiste em interação entre um grande número de dispositivos que executam seus próprios programas, mas que são afetados recebendo as mensagens ou observando a memória compartilhada de outros dispositivos.
 	\\
 	
-	Existem várias definições e pontos de vista sobre o que são sistemas distribuídos. Coulouris~\cite{coulouris06} define um sistema distribuído como "um sistema no qual os componentes de hardware e software localizadas nos computadores conectados por rede comunicam e coordenam suas ações somente por passagem de mensagens", e Tanenbaum~\cite{tanenbaum07} define como "uma coleção de computadores independentes que aparenta ao usuário ser um computador único". Leslie Lamport, um famoso pesquisador sobre sistema distribuído, disse uma vez que "um sistema distribuído é aquele em que é impedido de prosseguir com seu trabalho devido a uma falha de algum computador que nunca ouviu falar" refletindo o grande número de desafios enfrentados pelos projetistas de sistemas distribuídos.
+	Existem várias definições e pontos de vista sobre o que são sistemas distribuídos. Coulouris~\cite{coulouris06} define um sistema distribuído como "um sistema no qual os componentes de hardware e software localizadas nos computadores conectados por rede comunicam e coordenam suas ações somente por passagem de mensagens", e Tanenbaum~\cite{tanenbaum07} define como "uma coleção de computadores independentes que aparenta ao usuário ser um computador único". Leslie Lamport, um famoso pesquisador sobre sistema distribuído, disse uma vez que "um sistema distribuído é aquele em que é impedido de prosseguir com seu trabalho devido a uma falha de algum computador que nunca ouviu falar" ~refletindo o grande número de desafios enfrentados pelos projetistas de sistemas distribuídos.
 	\\
 	
-	Assim, quando um sistema distribuído aumenta o seu tamanho, torna-se cada vez mais difícil de prever ou mesmo entender o seu comportamento. A parte da razão para isso é simples falta de ferramentas que gerenciam a complexidade e outra parte é que um sistema distribuído de grande porte traz consigo a quantidade enorme de não-determinismo inerente, os eventos imprevisíveis, como atrasos nas chegadas de mensagem, súbito falhas de componentes, ou em caso extremo, as ações nefastas de defeitos ou máquinas maliciosos que agem opostamente para os objetivos do sistema como um todo.
+	Assim, quando um sistema distribuído aumenta o seu tamanho, torna-se cada vez mais difícil de prever ou mesmo entender o seu comportamento. Uma parte da razão para isso é simples falta de ferramentas que gerenciam a complexidade e outra parte é que um sistema distribuído de grande porte traz consigo a quantidade enorme de não-determinismo inerente, os eventos imprevisíveis, como atrasos nas chegadas de mensagem, súbito falhas de componentes, ou em caso extremo, as ações nefastas de defeitos ou máquinas maliciosos que agem opostamente para os objetivos do sistema como um todo.
 	
 		\section{Metadados} 
 		
-		Os sistemas de arquivos, como ambientes propícios para a recuperação de informações, têm na utilização de metadados a padronização das formas de representação e a possibilidade de garantia de interoperabilidade entre sistemas, favorecendo a integridade e a acessibilidade dos recursos informacionais de forma eficiente pelo usuário final. Os metadados são "dodos de dodos", ou seja, as informações essenciais sobre os arquivos armazenados, indispensáveis para fazer o gerenciamento de arquivos, indicando as características inerentes deles. A Tabela~\ref{tab:metadado} mostra os atributos encontrados em um metadado.
+		Os sistemas de arquivos, como ambientes propícios para a recuperação de informações, têm na utilização de metadados a padronização das formas de representação e a possibilidade de garantia de interoperabilidade entre sistemas, favorecendo a integridade e a acessibilidade dos recursos informacionais de forma eficiente pelo usuário final. Os metadados são "dados de dados", ou seja, as informações essenciais sobre os arquivos armazenados, indispensáveis para fazer o gerenciamento de arquivos, indicando as características inerentes deles. A Tabela~\ref{tab:metadado} mostra os atributos típicamente encontrados em um metadado.
 		
 		\capstartfalse
 		\begin{table} [htb]
@@ -40,7 +40,7 @@ Este capítulo introduz o que é um sistema de arquivos distribuído. De modo di
 				Tipo de arquivo		& indica se ele é uma pasta ou um arquivo normal.  \\ \hline
 				Modo de acesso		& indica a permissão para acessar o arquivo. \\ \hline
 				Bloqueio			& indica se o arquivo está bloqueado para acesso. \\ \hline
-				Lista de servidores	& lista de todos os servidores que armazena partes do arquivo. \\ \hline
+				%Lista de servidores	& lista de todos os servidores que armazena partes do arquivo. \\ \hline
 				
 			\end{tabular}
 			\label{tab:metadado}
@@ -49,30 +49,30 @@ Este capítulo introduz o que é um sistema de arquivos distribuído. De modo di
 	
 	\section{Sistema de arquivos distribuído}
 	
-	O sistema de arquivos distribuído (SAD) é um tipo de sistema distribuído que tem proposta de permitir que usuários de computadores fisicamente distribuídos compartilhem dados e recursos de armazenamento usando um sistema de arquivo comum~\cite{levy90}.
+	O sistema de arquivos distribuído (SAD) é um tipo de sistema distribuído que tem proposta de permitir que usuários de computadores fisicamente distribuídos compartilhem dados e recursos de armazenamento usando um sistema de arquivo comum~\cite{levy90}. A seguir apresentamos alguns desafios encontrados no desenvolvimento de sistemas distribuídos, o que inclui um SAD
 	
 	\subsection{Transparência}
-	A transparência é uma das principais propriedades que os sistemas distribuídos em geral apresentam. Um sistema distribuído transparente é aquele que se mostra como se fosse apenas um único sistema para usuários e aplicações. O conceito de transparência pode ser aplicado diversos aspectos de um sistema distribuído, os mais importantes são mostrado a seguir~\cite{tanenbaum07}.	
+	A transparência é uma das principais propriedades que os sistemas distribuídos em geral apresentam. Um sistema distribuído transparente é aquele que se mostra como se fosse apenas um único sistema para usuários e aplicações. O conceito de transparência pode ser aplicado os diversos aspectos de um sistema distribuído, os mais importantes são mostrado a seguir~\cite{tanenbaum07}.	
 
-	\subsubsection{Transparência de acesso} não necessita fornecer a localização dos recursos, ou seja, os programas devem executar os processos de leitura/escrita de arquivos remotos da mesma maneira que operam sobre os arquivos locais, sem qualquer modificação no programa. O usuário não deve perceber se o recurso acessado é
+	\subsubsection{Transparência de acesso} Não necessita fornecer a localização dos recursos, ou seja, os programas devem executar os processos de leitura/escrita de arquivos remotos da mesma maneira que operam sobre os arquivos locais, sem qualquer modificação no programa. O usuário não deve perceber se o recurso acessado é
 	local ou remoto.
 	
-	\subsubsection{Transparência de localização} os programas clientes devem ver um espaço de nomes de arquivos uniforme, sem a necessidade de fornecer a localização física dos arquivos para encontrá-los, mesmo que esses arquivos se desloquem entre os servidores.
+	\subsubsection{Transparência de localização} Os programas clientes devem ver um espaço de nomes de arquivos uniforme, sem a necessidade de fornecer a localização física dos arquivos para encontrá-los, mesmo que esses arquivos se desloquem entre os servidores.
 	
-	\subsubsection{Transparência de migração} independente dos arquivos se moverem entre servidores, os programas clientes não precisam ser alterados para a nova localidade do grupo de arquivos. Essa característica permite flexibilidade em mover arquivos sem comprometer toda a estrutura, ou ter que refazer links entre programas clientes e o local do arquivo.
+	\subsubsection{Transparência de migração} Independente dos arquivos se moverem entre servidores, os programas clientes não precisam ser alterados para a nova localidade do grupo de arquivos. Essa característica permite flexibilidade em mover arquivos sem comprometer toda a estrutura, ou ter que refazer links entre programas clientes e o local do arquivo.
 	
-	\subsubsection{Transparência de desempenho} o desempenho da aplicação cliente não poderá ser comprometido enquanto ocorre uma variação dos processos sobre os recursos disponíveis pelos SADs, isto é, mesmo que haja concorrência no acesso pelos arquivos isso não deve afetar os usuários.
+	\subsubsection{Transparência de desempenho} O desempenho da aplicação cliente não poderá ser comprometido enquanto ocorre uma variação dos processos sobre os recursos disponíveis pelos SADs, isto é, mesmo que haja concorrência no acesso pelos arquivos isso não deve afetar os usuários.
 	
-	\subsubsection{Transparência de escalabilidade} os recursos computacionais podem sofrer alterações para abrigar maior poder computacional ou o ingresso de novos servidores sem prejudicar o serviço.
+	\subsubsection{Transparência de escalabilidade} Os recursos computacionais podem sofrer alterações para abrigar maior poder computacional ou o ingresso de novos servidores sem prejudicar o serviço.
 	
-	\subsubsection{Transparência a falhas} garantir a disponibilidade dos arquivos ininterruptamente e se ocorrerem falhas o programa cliente não deverá saber como elas serão tratadas.
+	\subsubsection{Transparência a falhas} Visa garantir a disponibilidade dos arquivos ininterruptamente e se ocorrerem falhas o programa cliente não deverá saber como elas serão tratadas.
 	
-	\subsubsection{Transparência de replicação} várias cópias dos mesmos arquivos armazenados em locais diferentes para garantir a disponibilidade. A aplicação cliente deverá
-	visualizar apenas uma cópia do mesm não necessitando saber a quantidade replicada e o local.
+	\subsubsection{Transparência de replicação} Várias cópias dos mesmos arquivos armazenados em locais diferentes para garantir a disponibilidade. A aplicação cliente deverá
+	visualizar apenas uma cópia do mesmo não necessitando saber a quantidade replicada e o local.
 	\\
 	
 	A transparência é altamente desejável em sistemas distribuídos, mas nem sempre é possível alcançá-la ou, em determinadas situações, não convém ocultá-la. Pode-se destacar uma situação que seja mais conveniente o usuário tomar uma decisão sobre
-	alguma falha do que o sistema distribuído tentar resolver por si só. Isso pode ser observado quando um serviço, por repetidas vezes tenta, estabelecer uma comunicação com o servidor na internet, neste caso o melhor é informar ao usuário sobre a falha e que ele tente mais tarde
+	alguma falha do que o sistema distribuído tentar resolver por si só. Isso pode ser observado quando um serviço, por repetidas vezes tenta estabelecer uma comunicação com o servidor na \textit{Internet}, neste caso o melhor é informar ao usuário sobre a falha e que ele tente mais tarde.
 	
 	
 	
@@ -83,43 +83,43 @@ Este capítulo introduz o que é um sistema de arquivos distribuído. De modo di
 	%\begin{itemize}
 	%\item Disponibilidade
 	\subsubsection{Disponibilidade}
-	A maioria dos SADs possuem serviços dependente da rede interna ou externa, onde ainda continua sendo um meio relativamente instável, podendo deixar o serviço fora de ar por causa de algum inconveniente que ocorreu na rede. A sua arquitetura que possui grande quantidade de computadores constituindo o sistema também é um dos fatores que causam a indisponibilidade do serviço, pois a probabilidade de acontecer uma falha cresce de acordo com aumento do número de entidades envolvidos. Foram feito vários estudos para evitar que os serviços deixem de ser oferecidos, independente de qual for a razão da inconveniência. Assim, um SAD deve implementar um esquema para manter o acesso aos seus recursos de qualquer jeito, deixando sempre disponíveis para responder às requisições enviados por usuários. A falha que acontece em alguns servidores não pode influenciar a execução de serviço do sistema. Além disso, o usuário não precisa saber como tal esquema funciona e nem como foi implementado, podendo continuar usar o sistema sem preocupar com possíveis transtornos que estão acontecendo. Essa restrição é incorporado para manter a propriedade de transparência do sistema.
+	A maioria dos SADs possuem serviços dependente da rede interna ou externa, onde ainda continua sendo um meio relativamente instável, podendo deixar o serviço fora de ar por causa de algum inconveniente que ocorreu na rede. A sua arquitetura que possui grande quantidade de computadores constituindo o sistema também é um dos fatores que causam a indisponibilidade do serviço, pois a probabilidade de acontecer uma falha cresce de acordo com aumento do número de entidades envolvidas. Foram feito vários estudos para evitar que os serviços deixem de ser oferecidos, independente de qual for a razão da inconveniência. Assim, um SAD deve implementar um esquema para manter o acesso aos seus recursos em qualquer caso, estando sempre disponíveis para responder às requisições enviados por usuários. A falha que acontece em alguns servidores não pode influenciar a execução de serviço do sistema. Além disso, o usuário não precisa saber como tal esquema funciona e nem como foi implementado, podendo continuar a usar o sistema sem preocupar com possíveis transtornos que estão acontecendo. Essa restrição é incorporada para manter a propriedade de transparência do sistema.
 	
 	%\item Operações atômicas
 	\subsubsection{Operações atômicas}
-	A operação atômica é um conjunto de operações que aparece para resto do sistema como se fosse ocorrido instantaneamente.
+	A operação atômica é um conjunto de operações que aparece para o resto do sistema como se fosse ocorrido instantaneamente.
 	Quando um arquivo é submetido a este tipo de operação, o estado dele muda de um para outro sem apresentar outros estados intermediários durante a execução.
-	Consequentemente, uma operação sobre arquivo é considerado atômica somente se as etapas que ela segue não são reconhecidas por outros processos que estão fora desta operação~\cite{tanenbaum07_2}. 
+	Consequentemente, uma operação sobre arquivo é considerada atômica somente se as etapas que ela segue não são reconhecidas por outros processos que estão fora desta operação~\cite{tanenbaum07_2}. 
 	Assim, para uma operação ser atômica deve satisfazer as seguintes condições.
 	
 	\begin{enumerate}
-	\item Enquanto as etapas da operação estejam em progressão, nenhum entidade externo consegue perceber o estado intermediário desta operação.
+	\item Enquanto as etapas da operação estejam em progressão, nenhum entidade externa consegue perceber o estado intermediário desta operação.
 	\item Uma operação é efetuada somente se todas as etapas dela são concluídas com sucesso, caso contrário, se tiver uma etapa que falhou, todas as etapas serão abortadas e o estado do sistema volta para antes de executá-la.
 	\end{enumerate}
 	
 	Geralmente as operações de leitura, escrita, criação ou remoção de um arquivo apresentam propriedade atômica para maioria dos SADs.\\
 	
 	As transações são mecanismos que permitem realizar uma sequência de operações de forma atômica. Tais mecanismos disponibilizam determinados comandos para os usuários para que eles possam escolher quais operações serão executadas dentro de transações. Para montar uma transação, existem os comandos início e fim. O comando de início avisa ao sistema que todas as operações a partir daquele ponto estarão dentro da transação, e o comando de finalização indica que não virá mais nenhuma operação para aquela transação.
-	Assim, caso alguma dessas operações falhem, o sistema desfaz, ou aborta, todas as alterações que as operações antes daquela realizaram. Isso é chamado de \textit{rollback} ou \textit{abort}. Caso todas as operações sejam executadas sem problemas ou erros, ao chegar no fim da transação é realizado um \textit{commit}, ou seja, todas as alterações que foram executadas são efetivadas e persistidas, de tal forma que outros processo possam percebê-las. Com isso as transações implementam a semântica do tudo ou nada, ou seja, ou todas as operações são executadas com sucesso, ou nenhuma será executada. Isso faz das transações um importante mecanismo de tolerância a falhas, pois elas evitam que pequenas falhas prejudiquem a integridade de todo o sistema.
+	Assim, caso alguma dessas operações falhe, o sistema desfaz, ou aborta, todas as alterações que as operações antes daquela realizaram. Isso é chamado de \textit{rollback} ou \textit{abort}. Caso todas as operações sejam executadas sem problemas ou erros, ao chegar no fim da transação é realizado um \textit{commit}, ou seja, todas as alterações que foram executadas são efetivadas e persistidas, de tal forma que outros processo possam percebê-las. Com isso as transações implementam a semântica do tudo ou nada, ou seja, ou todas as operações são executadas com sucesso, ou nenhuma será executada. Isso faz das transações um importante mecanismo de tolerância a falhas, pois elas evitam que pequenas falhas prejudiquem a integridade de todo o sistema.
 	
 	%\item Replicação de arquivos
 	\subsubsection{Replicação de arquivos}
-	No contexto de SAD, a abordagem de replicação tem dois motivos para ser utilizado. 
+	No contexto de SAD, a abordagem de replicação tem dois motivos para ser utilizada. 
 	Um deles é a distribuição da carga de acesso entre todos os servidores que constitui o sistema. 
 	Se existir um arquivo que é acessado por clientes com alta frequência, a transmissão concentra no servidor que armazena tal arquivo, causando sobrecarga neste servidor e consumo excessivo da banda dessa conexão, o que resulta na degradação de desempenho do sistema todo. 
-	Para evitar a concentração de acesso, a solução trivial que foi abordada é criar algumas cópias de arquivos, geralmente três, e distribuir ao longo dos servidores para descentralizar os acessos. \\
+	Para evitar a concentração de acesso, um solução trivial pode ser adotada é criar algumas cópias de arquivos, geralmente três, e distribuir ao longo dos servidores para descentralizar os acessos. \\
 	
 	
 	Além disso, se um sistema de arquivos oferece essa funcionalidade, a confiança do serviço de arquivos é generosamente aumentada.
 	Caso um determinado servidor caia ou fique indisponível, o serviço de arquivos ainda pode continuar com suas operações por possuir cópias dos dados em outro ponto da rede.
-	Assim, replicação de arquivos provê tolerância a falhas, já que o usuário nem sequer percebe que servidor que ele estava usando caiu e que outro entrou no lugar para prover o recurso que ele estava usando. Por isso o sistema também deve oferecer transparência de replicação pois o usuário não precisa saber como o sistema cuida da replicação desse arquivo.
-	O maior problema nessa característica do SAD é que a implementação pode ser muito complicada, pois é necessário manter os dados sincronizados e coerentes ao mesmo tempo.
+	Assim, replicação de arquivos provê tolerância a falhas, já que o usuário nem sequer percebe que o servidor que ele estava usando caiu e qual outro entrou no lugar para prover o recurso que ele estava usando. Por isso o sistema também deve oferecer transparência de replicação pois o usuário não precisa saber como o sistema cuida da replicação desse arquivo.
+	O maior problema nessa característica do SAD é que a implementação pode ser muito complicada, pois é necessário manter os dados sincronizados e consistentes ao mesmo tempo.
 	Existem dois tipos de implementações: a primeira utiliza comunicação em grupo, que consiste em quando ocorrer uma alteração por algum dos servidores, este manda por \textit{broadcast} para os outros servidores dizendo que o arquivo foi alterado. Estes, por
-	sua vez, podem alterar esse arquivo imediatamente ou somente quando forem utilizá-lo; a segunda utiliza votação e números de versão. Isso significa que quando um cliente pedir permissão para alterar um arquivo, os servidores votarão entre eles pra saber quem possui a versão mais recente, e esse servidor será o servidor padrão daquele arquivo, e seu número de versão será incrementado. Todas essas ideias, além de serem complicadas de implementar, geram alguns problemas. Manter a sincronização entre os servidores, para o caso de alterações no sistema de arquivos, é uma delas
+	sua vez, podem alterar esse arquivo imediatamente ou somente quando forem utilizá-lo; a segunda utiliza votação e números de versão. Isso significa que quando um cliente pedir permissão para alterar um arquivo, os servidores votarão entre eles pra saber quem possui a versão mais recente, e esse servidor será o servidor padrão daquele arquivo, e seu número de versão será incrementado. Todas essas ideias, além de serem complicadas de implementar, geram alguns problemas. Manter a sincronização entre os servidores, para o caso de alterações no sistema de arquivos, é uma delas.
 	
 	%\item Tolerância a falhas e gerenciamento de falhas
 	\subsubsection{Tolerância a falhas e gerenciamento de falhas}
-	O sistema deve ser capaz de continuar com sua operação normalmente mesmo que um ou mais componentes apresentam a falha, isolando esses componentes.
+	O sistema deve ser capaz de continuar com sua operação normal mesmo que um ou mais componentes apresentam falha, isolando esses componentes.
 	Durante a transmissão dos dados entre servidores e clientes, podem ocorrer falhas, seja por excesso de tráfego de pacotes pela rede, seja por algum dos servidores estar sobrecarregado. Além disso, podem ocorrer falhas de hardware, especialmente dos mecanismos de armazenamento, de transmissão, etc. Esses problemas acontecem em grande parte porque os sistemas distribuídos são implementados sobre redes de computadores que não são totalmente confiáveis. É por causa disso que a maior parte da complexidade de sua implementação está em levar em conta esse ambiente propício a falhas. Um sistema distribuído precisa usar um protocolo de comunicação com capacidade para detecção de erros de transmissão~\cite{kon94}. Assim, caso uma mensagem chegue alterada no seu destino, o protocolo precisa perceber isso e retransmiti-la. Isso deve ocorrer também para mensagens que se perderam no caminho.
 	Um outro problema que a rede pode ter é o seu particionamento por tempo indeterminado. Mas não é só com a rede que devemos nos preocupar. O \textit{hardware} dentro das máquinas também pode apresentar falhas. Por exemplo, um disco rígido pode deixar de funcionar de um momento para outro, seja por excesso de uso ou até mesmo por descargas elétricas. Nesse caso pode-se criar soluções desde redundância física do equipamento, realizada via hardware, ou redundância controlada pelo próprio sistema distribuído, que cuidaria de replicar os dados, para evitar a perda dos mesmos.\\
 	 
@@ -149,7 +149,7 @@ Este capítulo introduz o que é um sistema de arquivos distribuído. De modo di
 	%\item Escalabilidade
 	\subsubsection{Escalabilidade}
 	%- capacidade de aumentar o desempenho do sistema com adição de recurso.
-	Os sistemas distribuídos são, em geral, projetados e configurados pensando-se na configuração da rede naquele momento. Pode acontecer dessa rede aumentar, ou seja, dezenas ou centenas de novos nós serem adquiridos e conectados nesse sistema. A menos que se tenha pensado nessa situação no momento do projeto dessa rede, dificilmente um SAD apresentará bom desempenho para servir todos esses clientes após um crescimento tão grande da rede. Vários problemas podem ocorrer, como, por exemplo, quando o servidor responde a um pedido de um cliente. Mantém-se esses dados enviados em cache, para permitir uma rápida resposta caso esse mesmo dado seja requisitado novamente. No caso de se ter muitos clientes, ocorrerá de se ter muitos pedidos diferentes, fazendo com que as tabelas do cache sejam atualizadas com frequência, sem a reutilização dos dados lá contidos. Isso acabará causando uma sobrecarga do sistema, pois por ter muitos clientes, muitas requisições serão feitas em um curto intervalo de tempo, e os dados que estavam no cache rapidamente serão trocados por outros requisitados por outros clientes. Caso se tenha cache do lado dos clientes, ao se alterar um arquivo que está sendo usado por muitas outras máquinas, o servidor terá que avisá-las que o cache local das mesmas está inválido, e todas deverão atualizar com a versão do servidor, causando mais sobrecarga. \\
+	Os sistemas distribuídos são, em geral, projetados e configurados pensando-se na configuração da rede naquele momento. Pode acontecer dessa rede aumentar, ou seja, dezenas ou centenas de novos nós serem adquiridos e conectados nesse sistema. A menos que se tenha pensado nessa situação no momento do projeto dessa rede, dificilmente um SAD apresentará bom desempenho para servir todos esses clientes após um crescimento tão grande da rede. Vários problemas podem ocorrer, como, por exemplo, quando o servidor responde a um pedido de um cliente e mantém esses dados enviados em \textit{cache}, para permitir uma rápida resposta caso esse mesmo dado seja requisitado novamente. No caso de se ter muitos clientes, ocorrerá de se ter muitos pedidos diferentes, fazendo com que as tabelas do cache sejam atualizadas com frequência, sem a reutilização dos dados lá contidos. Isso acabará causando uma sobrecarga do sistema, pois por ter muitos clientes, muitas requisições serão feitas em um curto intervalo de tempo, e os dados que estavam no cache rapidamente serão trocados por outros requisitados por outros clientes. Caso se tenha cache do lado dos clientes, ao se alterar um arquivo que está sendo usado por muitas outras máquinas, o servidor terá que avisá-las que o cache local das mesmas está inválido, e todas deverão atualizar com a versão do servidor, causando mais sobrecarga. \\
 	
 	Por outro lado, caso se tenha estimado que a rede seria muito grande e se tenha distribuído o sistema de arquivos em muitos servidores, fica difícil descobrir onde um arquivo está armazenado fisicamente. Por exemplo, se para abrir um arquivo um cliente tiver que perguntar para cada servidor se ele é o responsável por aquele arquivo, certamente haverá um congestionamento na rede. Caso se tente resolver isso colocando um servidor central para resolver todos os caminhos para os arquivos, indicando a localização do mesmo, tal servidor sofrerá sobrecarga. Um sistema escalável é um sistema que leva em conta esses problemas e tenta evitar sua ocorrência quando o número de clientes aumenta extremamente.
 	
@@ -175,7 +175,8 @@ Este capítulo introduz o que é um sistema de arquivos distribuído. De modo di
 	
 	
 	Sistemas como Unix adotam um método baseado em permissões para controlar o acesso aos seus arquivos. Cada arquivo possui informações sobre quais usuários podem acessá-lo e de que maneira.
-	Nos sistemas distribuídos que rodam sob o Unix, quando um servidor recebe um pedido para enviar dados de um determinado arquivo, ele também recebe informações sobre qual usuário está tentando realizar tal acesso. Com isso, verifica se tal usuário tem permissão suficiente para realizar essa solicitação, fazendo uma comparação com as informações de permissões do arquivo.Além disso, os sistemas Unix possuem um usuário chamado \textit{root}, que possui permissão para acessar todos os arquivos da máquina local, de forma ilimitada. Isso funciona bem em sistemas locais, mas em uma rede já começam a surgir os problemas.
+	Nos sistemas distribuídos que rodam sob o Unix, quando um servidor recebe um pedido para enviar dados de um determinado arquivo, ele também recebe informações sobre qual usuário está tentando realizar tal acesso. Com isso, verifica se tal usuário tem permissão suficiente para realizar essa solicitação, fazendo uma comparação com as informações de permissões do arquivo.
+	Além disso, os sistemas Unix possuem um usuário chamado \textit{root}, que possui permissão para acessar todos os arquivos da máquina local, de forma ilimitada. Isso funciona bem em sistemas locais, mas em uma rede já começam a surgir os problemas.
 	Por exemplo, pode-se configurar as máquinas vizinhas de uma rede para confiarem no usuário \textit{root} entre elas. Assim, um usuário \textit{root} de uma máquina pode acessar os arquivos de outra máquina como se fosse o usuário \textit{root} local. O problema é se um usuário mal-intencionado consegue acesso como \textit{root}. Dessa forma ele teria acesso a todas as máquinas da rede. Outro problema é se o pedido que vier da rede for alterado para que o servidor acredite que quem está pedindo é ou o dono do arquivo ou o \textit{root}. Dessa forma, pode-se acessar qualquer arquivo da rede também. \\
 	
 	Outra forma de implementar esse controle de segurança é um sistema baseado em capacidades, que consiste de o cliente enviar ao servidor uma prova de que ele possui a capacidade de acessar um determinado arquivo. Na primeira vez que o usuário acessa tal arquivo, é enviado ao servidor sua identificação, e o servidor por sua vez retorna um código que é a sua prova de capacidade para acessar aquele arquivo. Nas próximas requisições, o cliente não precisa mais se identificar, bastando apenas enviar a prova de sua capacidade. Deve-se tomar cuidado para não criar provas de capacidade que sejam fáceis de serem forjadas. Até agora comentamos sobre o controle no acesso aos arquivos. Porém, caso haja outras máquinas no caminho de duas máquinas confiáveis, existe o risco de se ter dados interceptados ou, até mesmo, adulterados. Uma forma de se resolver esse problema é criptografar as informações antes de enviá-las.
@@ -202,7 +203,7 @@ Este capítulo introduz o que é um sistema de arquivos distribuído. De modo di
 	Um caminho representa um nó de uma estrutura de diretórios, que pode ser representada como uma árvore como mostra na Figura~\ref{fig:arv_dir}.
 	Tal árvore possui uma raiz, e cada nó pode possuir mais árvores ou arquivos.
 	Dessa forma, para localizar um arquivo em uma árvore de diretórios basta seguir o caminho do arquivo, e ao chegar no diretório final procurar pelo nome de tal arquivo.
-	A forma como esse nome e esse caminho são definidos dependem muito do sistema operacional. Por exemplo, no Unix um caminho é definido como uma sequência de nomes de diretórios, todos separados pelo caractere ’/’. O último nome dessa sequência pode ser o nome do arquivo, ou de um diretório, caso se esteja definindo um caminho para o mesmo.
+	A forma como esse nome e esse caminho são definidos dependem muito do sistema operacional. Por exemplo, no Unix um caminho é definido como uma sequência de nomes de diretórios, todos separados pelo caractere '/'. O último nome dessa sequência pode ser o nome do arquivo, ou de um diretório, caso se esteja definindo um caminho para o mesmo.
 	Em sistemas distribuídos, é possível que se encontre o nome da máquina em que o arquivo se encontra dentro dessa definição de caminho. Porém procura-se deixar isso transparente para o usuário. Essa característica será detalhada mais adiante.
 	
 	\begin{figure}[htb]
