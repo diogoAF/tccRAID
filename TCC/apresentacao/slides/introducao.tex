@@ -2,5 +2,5 @@
 
 %\section{Problema}
 \begin{frame}{Problema}
-	No sistema de arquivos distribuído, o método de replicação de arquivos é muito prático e eficiente para tolerar as falhas sobre dados, porém consome muito espaço no dispositivo de armazenamento. Quando ocorre a falta de espaço, novos servidores vão ser adicionados no conjunto para incrementar a capacidade de armazenamento do sistema. Isso gera o custo de de implantação de equipamentos, além de causar o aumento no custo de manutenção permanente do sistema.
-\end{frame} 
+	No contexto dos sistemas distribuídos o conceito de paralelismo é muito presente, o que acarreta no aumento de máquinas conectadas e consequentemente a probabilidade de alguma dessas máquinas sofrer alguma falha de \textit{hardware} ou \textit{software}. Quando essa falha ocorrer, é necessário que contramedidas tenham sido implementadas a fim de minimizar os danos. Uma dessas medidas é que o sistema de arquivos distribuido seja tolerante a falhas, tolerância essa que geralmente é alcançada utilizando-se a replicação total dos dados, entretanto esse \textit{overhead} ocupa espaços de armazenamento que poderiam ser utilizados para novos dados. O aumento de \textit{overhead} acarreta no incremento das despesas do sistema.
+\end{frame}
