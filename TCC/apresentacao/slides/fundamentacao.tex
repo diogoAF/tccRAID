@@ -1,58 +1,118 @@
 \section{Fundamentação teórica}
 
 \begin{frame}{Sistema de arquivos distribuído}
-	%\textbf{Sistema de arquivos distribuído}
+	
+	\begin{columns}
+		\column{0.6\textwidth}
+		
+		\begin{itemize}
+			\item Características:
+			
+			\begin{itemize}
+				\item Voltado para gerenciamento e armazenamento de arquivos em larga escala.
+				\item Conjunto de vários computadores distribuídos fisicamente, conectados através de rede, se mostrando como se fosse apenas um computador.
+				%\item Cria algumas copias de segurança dos dados, chamadas de réplicas, cujas são armazenadas espalhadamente entre os servidores.
+				%\item 	
+			\end{itemize}
+		\end{itemize}
+		
+		\column{0.4\textwidth}
+		
+		\includegraphics[width=\textwidth]{imagens/sad}
+	\end{columns}
+\end{frame}
+	
+\begin{frame}{}
 	\begin{itemize}
-		\item Conjunto de vários servidores distribuídos fisicamente, conectados através de redes locais ou internet.
-		\item Voltado para gerenciamento e armazenamento de arquivos em larga escala.
-		\item Cria algumas copias de segurança dos dados, chamadas de réplicas, cujas são armazenadas espalhadamente entre os servidores.
-		%\item 	
+	\item Vantagem e desvantagem:
+	\\
+	\begin{block}{Vantagem}
+		
+	Possui maior facilidade e menor custo para aumentar a escala do sistema.
+	\end{block}
+	\begin{block}{Desvantagem}
+	
+	Aumento da probabilidade de falhas nos arquivos causado pela aumento dos componentes envolvidos.
+	
+	\end{block}
+	
 	\end{itemize}
 \end{frame}
 
-\begin{frame}{}
-	\begin{columns}
-		\column{0.5\textwidth}
-		Réplica:
-		\begin{itemize}
-			\item Tolera as falhas que impedem o acesso aos arquivos armazenados,
-			\item Distribui as cargas de acesso entre servidores.
-		\end{itemize}
-		
-		\column{0.5\textwidth}
-		\begin{figure}
-			\includegraphics[width=\textwidth]{imagens/image1}
-			\label{fig:exemplo}
-		\end{figure}
-		
-		
-		%\column{0.25\textwidth}
-	\end{columns}
-\end{frame}
 
 \begin{frame}{}
-	\begin{columns}
-		\column{0.45\textwidth}
-		
-		\begin{figure}
-			\includegraphics[width=\textwidth]{imagens/image2}
-			\caption{Tolerância a falha}
-			\label{fig:exemplo}
-		\end{figure}
-		
-		\column{0.1\textwidth}
-		
-		\column{0.45\textwidth}
-		
-		\begin{figure}
-			\includegraphics[width=\textwidth]{imagens/image3}
-			\caption{Distribuição da carga}
-			\label{fig:exemplo}
-		\end{figure}
+	
+	\begin{itemize}
+	\item Solução:
+	\\
+	
+		\begin{itemize}
+		\item Atribuição de partes redundante nos arquivos para tolerar as possíveis falhas.
 		
 		
-		%\column{0.25\textwidth}
-	\end{columns}
+		\item Criação de algumas cópias de segurança dos arquivos, chamadas de réplicas.
+		
+		\end{itemize}
+	\end{itemize}
+	
+	\begin{center}
+		\includegraphics[width=0.5\textwidth]{imagens/replica}
+		
+	\end{center}
+	
+\end{frame}
+	
+\begin{frame}{}
+	\begin{itemize}
+	\item Consequência:
+		
+	\begin{itemize}
+	\item Replicação de arquivos consegue tolerar as falhas, mas acaba necessitando de espaço extra para armazenar as partes redundantes.
+
+	\item Quando cria duas réplicas, a capacidade total de armazenamento requerida triplica. 
+
+	\end{itemize}
+	
+	%\item A solução para esta consequência é tentar diminuir o tamanho da parte redundante, utilizando um esquema diferente da replicação. 
+
+	\end{itemize}
+\end{frame}
+
+
+\begin{frame}{}
+	\begin{itemize}
+	\item Outra característica:
+	
+	\begin{itemize}
+		\item Divisão de papel no gerenciamento de arquivos.
+		
+		\item Divide os arquivos em duas partes: metadado e dado.
+
+	\end{itemize}
+	\end{itemize}
+	\begin{center}
+	\includegraphics[width=0.6\textwidth]{imagens/meta}
+	\end{center}
+\end{frame}
+
+
+\begin{frame}{}
+	Metadados
+	\\
+	
+	\begin{tabular}{|l|l|} \hline
+		\textbf{Informação} & \textbf{Descrição}  \\ \hline
+		name			& Nome do arquivo/diretório \\ \hline
+		parent			& Diretório contido \\ \hline
+		creationTime	& Tempo de criação \\ \hline
+		lastAccessTime	& Tempo de último acesso \\ \hline
+		lastModifiedTime& Tempo de última modificação \\ \hline
+		size			& Tamanho do arquivo \\ \hline
+		lock			& Estado de bloqueio \\ \hline
+		
+	\end{tabular}
+	
+	
 \end{frame}
 
 \begin{frame}{BFT-SMaRt}
@@ -85,23 +145,18 @@
 				\item Falhas de sistema
 			\end{itemize}
 		\end{itemize}
-		\item Protocolos Centrais
+		
+		\item Principais métodos
 		\begin{itemize}
-			\item \textit{Total Order Multicast}	
-			\item Transferência de Estados
+			\item appExecuteOdered.	
+			\item appExecuteUnodered.
+			\item invokeOdered.
+			\item invokeUnodered.
 		\end{itemize}
 		
 	\end{itemize}
 \end{frame}
 
-
-\begin{frame}{}		
-	\begin{figure}
-		\includegraphics[width=\textwidth]{imagens/bftsmart1}
-		\caption{Modularidade do BFT-SMaRt}
-		\label{fig:bftsmart1}
-	\end{figure}
-\end{frame}
 
 
 \begin{frame}{RAID}
@@ -117,10 +172,9 @@
 	\begin{itemize}
 		\item Vantagens:
 		\begin{itemize}
-			\item Se um HD sofrer danos, os dados existentes nele não serão perdidos, pois podem ser replicados em outra unidade (redundância).
-			\item É possível aumentar a capacidade de armazenamento a qualquer momento com a adição de mais HDs.
+			\item Dependendo do nível, há maior tolerância a falhas graças a redundância.
 			\item O acesso à informação pode se tornar mais rápido, pois os dados são distribuídos a todos os discos.
-			\item Dependendo do caso, há maior tolerância a falhas, pois o sistema não é paralisado se uma unidade parar de funcionar.
+			\item É possível aumentar a capacidade de armazenamento a qualquer momento com a adição de mais HDs.
 		\end{itemize}
 	\end{itemize}
 \end{frame}
@@ -159,16 +213,15 @@
 		\column{0.5\textwidth}
 		\begin{itemize}
 			\item Mirror (Espelhamento).
-			\item Necessita de uma quantidade par de discos.
-			\item Vantagem
+			\item Vantagens
 			\begin{itemize}
 				\item Evita falhas físicas.
+				\item Alto desempenho de leitura.
 			\end{itemize}
 			\item Desvantagens
 			\begin{itemize}
-				\item Perda de desempenho.
+				\item Perda de desempenho de escrita.
 				\item Alto desperdício de espaço.
-				\item  Não dispensa soluções de \textit{backup}.
 			\end{itemize}
 		\end{itemize}
 		
@@ -185,7 +238,7 @@
 	\begin{columns}
 		\column{0.5\textwidth}
 		\begin{itemize}
-			\item Esquema de paridade, pelo uso do bit de paridade.
+			\item Esquema de paridade, pelo uso do bloco de paridade.
 			\item A informação sobre paridade é distribuída entre todos os discos.
 			\item Vantagens
 			\begin{itemize}

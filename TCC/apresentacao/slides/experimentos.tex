@@ -43,7 +43,8 @@
 
 \begin{frame}{Teste de Latência}
 	\begin{itemize}
-		\item O objetivo do teste de latência é mensurar o tempo total que o sistema leva para executar uma operação.
+		\item O objetivo do teste de latência é mensurar o tempo total que o sistema leva para executar repetidamente uma operação.
+		%\item Toma a configuração de RAID 0 como base de comparação.
 		\item Operações
 		\begin{itemize}
 			\item Leitura
@@ -58,6 +59,7 @@
 			\item 10MB
 		\end{itemize}
 		\item Repetido para os três tipos de RAID.
+		\item Medido no cliente.
 	\end{itemize}
 \end{frame}
 
@@ -72,5 +74,7 @@
 			\item ...
 			\item 50 \textit{threads}
 		\end{itemize}
+		\item Medido no servidor de metadados.
 	\end{itemize}
 \end{frame}
+
