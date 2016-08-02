@@ -38,12 +38,12 @@
 
 \coordenador{\prof \dr Rodrigo Bonifacio de Almeida}{CIC/UnB}
 
-\diamesano{18}{Junho}{2016}
+\diamesano{24}{Junho}{2016}
 
                            
-\membrobanca{\prof\dr Professor I}{CIC/UnB}
+\membrobanca{\prof \dr Edson Ishikawa}{CIC/UnB}
 
-\membrobanca{\prof \dr Professor II}{CIC/UnB}
+\membrobanca{\prof Ms. Marcos Fagundes Caetano}{CIC/UnB}
 
 \autor{Diogo Assis}{Ferreira} 
 \coautor {Getúlio Yassuyuki}{Matayoshi}
@@ -52,7 +52,7 @@
 \CDU{004.4}
 
 \palavraschave{RAID, BFT SMaRt, Sistema de arquivo distribuído}
-\keywords{RAID, BFT SMaRt, Distribuited file sistem}
+\keywords{RAID, BFT SMaRt, Distributed File System}
 
 
 \begin{document}
@@ -62,16 +62,23 @@
 \pretextual
 
 \begin{agradecimentos}
-Foi uma tarefa árdua chegar ao momento atual, monografia completa, créditos conquistados, colação marcada. Digo que a missão foi complicada pois exigiu dezenas de horas de estudo, noites em claro, programas que não compilavam, \textit{segmentation fault} aparentemente sem explicação, cálculos que não batiam, diversos finais de semana na faculdade. Porém nenhuma dessas frustrações supera a satisfação de conseguir superar tais problemas, a conta realizada com precisão, o programa otimizado que executa com exatidão, a prova com sabor de vitória, tudo levando àquela bela e merecida noite de sono antes do ciclo recomeçar. Por isso digo que não foi fácil, mas foi enriquecedor, o quanto aprendi, o quanto vivenciei, são experiências preciosas que carregarei com carinho e orgulho. Entretanto, devo ressaltar que essa trajetória não foi percorrida por mim sozinho, em todo o momento eu recebia direta ou indiretamente o apoio de pessoas importantes. Meu pai, sempre disposto a preparar uma bela refeição entre meus estudos, minha mãe, preocupada todas as vezes em que ficava até tarde na UnB, minha irmã, sempre pronta pra me pentelhar (e ajudar a aliviar todo o estresse dos estudos), Talita, minha namorada, sempre disposta a me receber com carinho e confortar todas minhas (várias) lamurias, minha família: avôs, tias, primos também dando seu suporte da forma que podiam, amigos e colegas que passavam os momentos de desespero e diversão na faculdade ou fora dela, sou muito grato a todos. Contudo, gostaria de expressar minha gratidão em especifico à meu orientador que teve muita paciência, boa vontade e bom humor para me ajudar nessa tortuosa parte final do curso e a meu parceiro, Getúlio, que foi de fundamental importância para a conclusão deste trabalho, obrigado! Obrigado a todos! E até o próximo desafio!
+Foi uma tarefa árdua chegar ao momento atual, monografia completa, créditos conquistados, colação marcada. Digo que a missão foi complicada pois exigiu dezenas de horas de estudo, noites em claro, programas que não compilavam, \textit{segmentation fault} aparentemente sem explicação, cálculos que não batiam, diversos finais de semana na faculdade. Porém nenhuma dessas frustrações supera a satisfação de conseguir superar tais problemas, a conta realizada com precisão, o programa otimizado que executa com exatidão, a prova com sabor de vitória, tudo levando àquela bela e merecida noite de sono antes do ciclo recomeçar. Por isso digo que não foi fácil, mas foi enriquecedor, o quanto aprendi, o quanto vivenciei, são experiências preciosas que carregarei com carinho e orgulho. Entretanto, devo ressaltar que essa trajetória não foi percorrida por mim sozinho, em todo o momento eu recebia direta ou indiretamente o apoio de pessoas importantes. Meu pai, sempre disposto a preparar uma bela refeição entre meus estudos, minha mãe, preocupada todas as vezes em que ficava até tarde na UnB, minha irmã, sempre pronta pra me pentelhar (e ajudar a aliviar todo o estresse dos estudos), Talita, minha namorada, sempre disposta a me receber com carinho e confortar todas minhas (várias) lamurias, minha família: avôs, tias, primos também dando seu suporte da forma que podiam, amigos e colegas que passavam os momentos de desespero e diversão na faculdade ou fora dela, sou muito grato a todos. Contudo, gostaria de expressar minha gratidão em especifico ao meu orientador que teve muita paciência, boa vontade e bom humor para me ajudar nessa tortuosa parte final do curso e a meu parceiro, Getúlio, que foi de fundamental importância para a conclusão deste trabalho, obrigado! Obrigado a todos! E até o próximo desafio!
 \\
 
 Diogo Assis Ferreira
 \\
 
+Agradeço especialmente ao meu orientador prof. Alchieri, por ter me dado bastante apoio durante o desenvolvimento deste trabalho, esclarecendo todas as dúvidas e dando várias dicas úteis para superar as dificuldades que enfrentei neste último desafio do curso. Também ao meu parceiro Diogo, que foi grande ajuda para escrever esta monografia, cobrindo as partes que sentia dificuldades.
+Agradeço mais uma vez aos dois por terem me acompanhado até o fim do trabalho mesmo que tendo algumas confusões durante o desenvolvimento.
+\\
+
+Getúlio Yassuyuki Matayoshi
+\\
+
 \end{agradecimentos}
 
 \begin{resumo}
-Este trabalho tem como foco a construção de um sistema de arquivos distribuídos que é tolerante a falhas, sem prejuízo de desempenho e que consuma menor quantidade de \textit{overhead} do que o sistema apresentado pelo método de replicação de dados tradicional. A fim de alcançar tal objetivo foram utilizadas as características inerentes ao conceito do RAID 0, RAID 1 e RAID 5, as quais possibilitaram o teste das latências e o teste do \textit{throughput} das operações de leitura e escrita com arquivos de quatro tamanhos distintos, sendo esses 1KB, 100KB, 1MB e 10MB. A coleta e a análise dos dados resultou na conclusão de que o sistema alcança o objetivo proposto, sendo que, quando executado sob as parametrizações do RAID 5, o desempenho geral é superior se comparado aos outros dois modelos de RAID implementados.
+Este trabalho tem como foco a construção de um sistema de arquivos distribuídos que é tolerante a falhas, sem prejuízo de desempenho e que crie menos \textit{overhead} do que o sistema apresentado pelo método de replicação de dados tradicional. A fim de alcançar tal objetivo foram utilizadas as características inerentes ao conceito do RAID 0, RAID 1 e RAID 5, as quais possibilitaram o teste das latências e o teste do \textit{throughput} das operações de leitura e escrita com arquivos de quatro tamanhos distintos, sendo esses 1KB, 100KB, 1MB e 10MB. A coleta e a análise dos dados resultou na conclusão de que o sistema alcança o objetivo proposto, sendo que, quando executado sob as parametrizações do RAID 5, o desempenho geral é superior se comparado aos outros dois modelos de RAID implementados.
 \\
 
 \end{resumo}

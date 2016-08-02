@@ -1,4 +1,4 @@
-Este capítulo introduz o que é um sistema de arquivos distribuído. De modo didático, primeiro é explanado o que é um sistema distribuído, o que são metadados, e então, é apresentado a definição e características de um sistema de arquivos distribuído.
+Este capítulo aborda as características de um sistema de arquivos distribuído. Primeiramente é explanado o que é um sistema distribuído, o que são metadados, e então, o texto avança apresentando as consequências de tais características no sistema de arquivos de um sistema distribuído.
 
 
 	%\section{Sistema de arquivos distribuído}
@@ -203,7 +203,7 @@ Este capítulo introduz o que é um sistema de arquivos distribuído. De modo di
 	Um caminho representa um nó de uma estrutura de diretórios, que pode ser representada como uma árvore como mostra na Figura~\ref{fig:arv_dir}.
 	Tal árvore possui uma raiz, e cada nó pode possuir mais árvores ou arquivos.
 	Dessa forma, para localizar um arquivo em uma árvore de diretórios basta seguir o caminho do arquivo, e ao chegar no diretório final procurar pelo nome de tal arquivo.
-	A forma como esse nome e esse caminho são definidos dependem muito do sistema operacional. Por exemplo, no Unix um caminho é definido como uma sequência de nomes de diretórios, todos separados pelo caractere '/'. O último nome dessa sequência pode ser o nome do arquivo, ou de um diretório, caso se esteja definindo um caminho para o mesmo.
+	A forma como esse nome e esse caminho são definidos dependem muito do sistema operacional. Por exemplo, no Unix um caminho é definido como uma sequência de nomes de diretórios, todos separados pelo caractere "/". O último nome dessa sequência pode ser o nome do arquivo, ou de um diretório, caso se esteja definindo um caminho para o mesmo.
 	Em sistemas distribuídos, é possível que se encontre o nome da máquina em que o arquivo se encontra dentro dessa definição de caminho. Porém procura-se deixar isso transparente para o usuário. Essa característica será detalhada mais adiante.
 	
 	\begin{figure}[htb]

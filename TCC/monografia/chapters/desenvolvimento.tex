@@ -13,7 +13,7 @@ Este capítulo é onde começamos a abordar nosso modelo proposto de um sistema 
 \begin{figure}[htb]
 	\begin{center}
 		
-		\includegraphics[clip,width=10.0cm]{images/image1.png}
+		\includegraphics[clip,width=10.0cm]{images/visao_geral.png}
 		\caption{Visão geral do sistema}
 		\label{fig:vis_sis}
 	\end{center}
@@ -23,19 +23,19 @@ Em um sistema de arquivos local, normalmente o metadado e o conteúdo de um arqu
 Além disso, os metadados devem ser mantidos de forma replicada para suportar falhas em algumas réplicas sem afetar a consistência do SAD.
    \\
 
-\begin{figure}[htb]
-	\begin{center}
+%\begin{figure}[htb]
+%	\begin{center}
 		
-		\includegraphics[clip,width=10.0cm]{images/image7.png}
-		\caption{\textit{Name node} e \textit{data node}}
-		\label{fig:namenode}
-	\end{center}
-\end{figure}
+%		\includegraphics[clip,width=10.0cm]{images/image7.png}
+%		\caption{\textit{Name node} e \textit{data node}}
+%		\label{fig:namenode}
+%	\end{center}
+%\end{figure}
 
 \subsection{Serviço de Metadados}
 %Grupo de servidores que fazem o gerenciamento dos dados.\\
 
-Em nosso sistema utilizamos o conceito de blocos, onde um bloco é um conjunto de dados de um dado arquivo ou os dados de paridade de um determinado arquivo. O tamanho do bloco é determinado levando em consideração a quantidade de servidores de armazenamento ativos, ou seja, se houverem quatro servidores ativos, então o arquivo (independente de seu tamanho) será dividido em quatro blocos de tamanhos idênticos, caso seja necessário, o último bloco será preenchido com bits '0' até que o bloco alcance o tamanho previamente fixado.
+Em nosso sistema utilizamos o conceito de blocos, onde um bloco é um conjunto de dados de um dado arquivo ou os dados de paridade de um determinado arquivo. O tamanho do bloco é determinado levando em consideração a quantidade de servidores de armazenamento ativos, ou seja, se houverem quatro servidores ativos, então o arquivo (independente de seu tamanho) será dividido em quatro blocos de tamanhos idênticos, caso seja necessário, o último bloco será preenchido com bits "0" ~até que o bloco alcance o tamanho previamente fixado.
 \\ 
 
 O Serviço de metadados é o conjunto de servidores, chamados de \textit{name node}, que gerencia as informações dos arquivos armazenados, utilizando-se dos metadados. Em nosso sistema a data de criação, data da última modificação, data do último acesso, tamanho, identificador do bloco de dados e nome do servidor são considerados metadados. 

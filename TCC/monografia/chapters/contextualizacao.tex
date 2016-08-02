@@ -1,33 +1,63 @@
 
 	\section{Contextualização}
-	Atualmente, o volumes de dados que são processados e armazenados no mundo inteiro está crescendo cada vez mais, impulsionado intensamente com o aumento da capacidade de processamento e armazenamento de dados e a popularização da internet entre as pessoas. Na área da ciência surgiu um novo e quarto paradigma científico, seguindo de ciência empírica, ciência lógica e ciência computacional, chamado de \textit{data-intensive science}~\cite{hey2009}, proposto pelo cientista da computação pioneiro Jim Gray. Esse paradigma é caracterizado por focalizar na intensiva coleta e acúmulo de dados, para serem submetidos em análise a fim de extrair as informações vantajosas. Várias empresas e organizações estão dando atenção especial em \textit{big data}, um novo conceito que surgiu com aplicação do paradigma \textit{data-intensive science}, que consiste em um conjunto de dados não estruturados extremamente amplo, e por esse motivo, é impossível de ser processado por um computador convencional. O \textit{big data} é usado para analisar as relações complexas que existem entre enorme quantidade de dados contidos nele para obter as informações como previsões ou tendencias, onde geralmente são impossíveis de serem obtidas se fosse usado um volume convencional de dados. Esse crescimento de volume de dados não afetou somente áreas de negócio ou cientifico, mas também os usuários finais, com foco em armazenamento de dados, evidenciado com aumento de capacidade do disco rígido contido em um computador pessoal ou aumento de demanda por um serviço de armazenamento remoto baseando em conceitos de computação em nuvem, chamado de \textit{cloud storage service}.
-	\\ 
-
-	%Atualmente, a importância de coleta e acúmulo de dados para submeter em análise a fim de extrair as informações vantajosas está sendo discutida em diversas áreas. Este fato é evidenciado com o surgimento de , e definição de novo conceito denominado de \textit{big data}, o conjunto de dados extremamente amplo, e por esse motivo, é impossível de ser processado por um computador convencional. \\
-	
-	Para ter noção concreta de tamanho de dados processados, apresentamos como exemplo alguns casos da utilização de \textit{big data}. O CERN, o maior laboratório de física de partículas do mundo, que tinha anunciado em 2013 que registrou mais de 100 petabytes de dados de pesquisa ao longo dos últimos 20 anos, em que 75 petabytes destes dados foram gerado com as experiências de colisão no \textit{Large Hadron Collider} (LHC), nos últimos 3 anos~\cite{cern}. Também temos o Facebook, um serviço de rede social que em 2012 foi considerado maior do mundo, possui um \textit{data warehouse} que armazena mais de 300 petabytes de dados acumulados, e ainda 600 terabytes de dados chegam a cada dia~\cite{facebook14}. No caso de Dropbox, o serviço \textit{cloud storage} mais pupular do mundo, oferece 2 gigabytes de espaço básico para todos os usuários, podendo ser aumentado até espaço ilimitado dependendo do plano, e registrou mais de 300.000.000 usuários cadastrados~\cite{dropbox}, necessitando manter o espaço de armazenamento de no mínimo 600 petabytes disponível a qualquer instante para suprir todos seus usuários.\\
-	
-	Como mostra nos exemplos apresentados, um volume imenso de dados estão sendo intensamente coletado e submetido a análise. No caso do Dropbox que possui um sistema com 600 petabytes de capacidade de armazenamento estimada, implicando que será necessário, quando for usado um disco rígido com 2 terabytes de capacidade na sua composição, utilizar 300.000 dispositivos, sendo extremamente difícil de ser equipados em uma máquina que pode ser encontrada normalmente. Existe também problema com gerenciamento de dados, pois nenhum computador convencional possui o desempenho suficiente para tratamento de dados nesta escala. \\
-	
-	
-	Uma solução tipicamente adotada  para  resolver esta questão de armazenar os dados de grande porte é aumentar igualmente a escala do sistema de armazenamento, introduzindo um sistema de arquivo distribuído.
-	Esta abordagem é mais escolhida que as outras pelo fato de que apresenta uma vantagem em relação ao incremento da escala do sistema, em que neste processo o sistema distribuído possui mais facilidade e o menor custo relativo comparados com outras abordagens. 
-	Um sistema distribuído consiste de um conjunto de vários computadores, chamados de nós, fisicamente distribuídos e conectados através de uma rede. 
-	O nó que constitui o sistema pode ser um computador comum ou até um de grande porte, como servidor, e quando precisa aumentar o desempenho do sistema todo basta adicionar novos nós no conjunto. 
-	Contudo, na abordagem de armazenamento distribuído quase sempre é  acompanhado com a questão de degradação da confiabilidade de conteúdos armazenados. 
-	Como os dados que estão contidos no sistema estão localizados distribuidamente sobre vários nós, o risco da perda ou alteração de algum destes dados cresce com o aumento da escala do sistema, pois a probabilidade de ocorrer uma falha em algum dos componentes cresce proporcionalmente com o aumento da quantidade de dispositivos envolvidos.
-	Para solucionar esse problema de confiabilidade dos conteúdos armazenados, muitos sistemas de arquivos distribuídos introduzem alguns mecanismos para tolerar possíveis falhas. 
-	Um deles é a atribuição da redundância nos arquivos, em que são realizados principalmente com simples criação das cópias de segurança, chamadas de réplicas, para cada um dos arquivos encontrados no sistema. 
+	Tradicionalmente a ciência era dividida em três paradigmas: empírica, lógica e computacional, porém o cientista computacional Jim Gray idealizou um quarto chamado de \textit{data-intensive science}~\cite{hey2009}. Tal paradigma caracteriza-se pelo intenso processamento de \textit{big data} afim de conseguir informações úteis. \textit{Big data} consiste de um conjunto extremamente amplo de dados não estruturados. Justamente pela quantidade massiva de dados que compõe o \textit{big data}, é impraticável utilizar computadores convencionais para seu processamento.
 	\\
 	
-	A atribuição de redundância consegue impedir a queda da confiabilidade dos arquivos, mas isto tem um custo extra.
-	Se um arquivo é protegido com duas réplicas significa que no sistema existem três dados idênticos, consumindo o triplo de espaço que este arquivo realmente ocupa no dispositivo de armazenamento. 
-	Assim, manter a grande quantidade de dados sem degradar a segurança está tornando-se cada vez mais custoso com o aumento de volume dos dados armazenados. 
-	A situação agrava ainda mais quando a ordem de tamanho chega em centenas de petabytes, como ocorre no caso de um conjunto de dados considerado como \textit{big data} ou no caso de arquivos gravados por todos os usuários de algum serviço de armazenamento nas nuvens. 
-	%Para lidar com essa complexidade, uma opção é o uso da abordagem de \textit{State Machine Replication} (SMR), ou a replicação de máquina de estado, que possui o objetivo de aumentar o desempenho e a capacidade de sistema ou de prover tolerância a falha~\cite{alchieri}, criando as réplicas de computador ou servidor.\\
+	Atualmente a taxa de dados processados e armazenados globalmente aumenta anualmente. Tal crescimento não foi influenciado apenas pelos estudos científicos e grandes empresas, visto que grande parcela da população criou o abito de acessar diariamente as mais diversas modalidades de redes sociais, além de utilizar as facilidades da computação nas nuvens disponibilizada por empresas como o Dropbox ou a Google. Como exemplo da popularização de tais serviços, o \textit{Dropbox} divulgou possuir mais de 300.000.000 usuários cadastrados~\cite{dropbox} em 2014, onde cada usuários dispõem um espaço mínimo de 2GB para armazenar seus arquivos remotamente, desta forma, para suprir as necessidades de seus clientes, são necessários no mínimo 600PB de espaço de armazenamento. Sobre o ramo das redes sociais, existe o caso do \textit{Facebook}, considerada em 2012 como a mario em seu ramo de atuação, cujos usuários produzem cerca de 600TB diariamente~\cite{facebook14}. Enquanto que na área de pesquisas, A Organização Europeia para a Pesquisa Nuclear (\textit{The European Organization for Nuclear Research - CERN}), o maior laboratório de física de partículas do mundo, informou em 2013 que ao longo de 20 anos produziu 100PB de dados em seus experimentos~\cite{cern}.
+	\\
 	
-	%O uso do sistema de arquivos distribuídos resolve a questão de capacidade para armazenamento de dados de grande porte com incremento de escala, acrescentando um servidor quando for necessário. Este método é bem eficiente, prático e relativamente barato, contudo pode se tornar custoso, pois não ocorre somente adicionamento das máquinas, mas também a substituição, seja parcial ou inteira, dos componentes que apresentou algum defeito, e certamente isso ocorre com uma frequência significante e ser intenso cada vez que aumenta a escala, acumulando o custo ao longo do tempo.\\
+	Os casos apresentados anteriormente demonstram o imenso volume de dados que são gerados, processados e armazenados diariamente em todo o globo. Nesses casos em que o volume de dados armazenados chega na ordem de \textit{petabytes} faz-se necessário buscar formas eficientes e seguras para salvar todas as informações. Por exemplo, utilizando-se discos rígidos de 2 TB, serão necessários 50.000 dispositivos para conseguir a capacidade total de 100 PB. Tamanha quantidade de equipamentos seria impossível de serem instaladas em um único servidor, o que acarreta na necessidade de se utilizar um sistema distribuído com vários servidores, ditos como nós, trabalhando conectados através de uma rede. Desta forma, é indispensável a utilização de um sistema de arquivos distribuído (SAD) para o gerenciamento de todos os arquivos espalhados entre todos os servidores. Como exemplos reais de SAD, temos  o \textit{Google File System}, desenvolvido e utilizado pela própria \textit{Google}, O \textit{Apache Hadoop}, utilizado pelo \textit{Facebook},além do \textit{Amazon S3}, utilizado pelo \textit{Dropbox}.
+	\\
 	
+	Visto que em um SAD os arquivos estão armazenados distribuidamente entre vários nós, a falha de um nó pode inviabilizar o uso do sistema como um todo.
+	
+	% AQUI!!!!! 
+	
+	Quando um dos computadores fica indisponível ou apresenta algum problema grave, todos os arquivos contidos nele também ficam inacessíveis ou até sejam perdidos, resultando em grande prejuízo para sistema.
+	Além disso, como a probabilidade de ocorrer falhas em algum dos componentes cresce proporcionalmente com o aumento da quantidade de componentes envolvidos, o incremento da escala resulta em redução da confiabilidade dos arquivos armazenados.
+	Por isso, no SAD existe um mecanismo de proteção dos arquivos armazenados que é possível tolerar as falhas ocorridas em nós.
+	A forma de proteção é a atribuição de redundância para cada um dos arquivos, criando algumas cópias de segurança chamadas de réplicas.
+	A parte original do arquivo e cada uma das réplicas serão armazenados em computadores diferentes, assim, mesmo que um deles apresenta problema, o sistema ainda consegue acessar no arquivo, mantendo funcionamento normal.
+	Como ocorre em \textit{Google File System}, em caso geral mantém 3 réplicas por configuração padrão, podendo ser alterada dependendo da necessidade.
+	\\
+	
+A atribuição da redundância consegue impedir a queda da confiabilidade dos arquivos, mas isto tem um custo extra.
+Se um arquivo é protegido com quantidade mínima de redundância, de só uma cópia, significa que no sistema existem dois dados idênticos, consumindo o 100\% de espaço a mais que somente o arquivo original ocuparia no dispositivo de armazenamento. 
+Desta forma, manter os dados em larga escala sem degradar a segurança torna-se cada vez mais custoso com o aumento de volume total dos dados armazenados. 
+Este aumento de custo causado pela necessidade do espaço extra é crucial quando trata de dados que possuem centenas de \textit{petabytes} de volume, como ocorre no caso de arquivos armazenados por um provedor de alguns serviços em rede ou no caso de um conjunto de dados considerado como \textit{big data}. \\
+
+	
+	\section{Justificativa}
+	No contexto dos sistemas distribuídos o conceito de paralelismo é muito presente, o que acarreta no aumento de máquinas conectadas e consequentemente a probabilidade de alguma dessas máquinas sofrer alguma falha de \textit{hardware} ou \textit{software}. Quando essa falha ocorrer, é necessário que contra medidas tenham sido implementadas a fim de minimizar os danos. Uma dessas medidas é que o sistema de arquivos distribuído seja tolerante a falhas, tolerância essa que pode ser alcançada utilizando-se a replicação total dos dados, entretanto esse \textit{overhead} ocupa espaços de armazenamento que poderiam ser utilizados para novos dados. Por exemplo, na replicação tradicional de arquivo, o \textit{overhead} é de 100\%, pois para cada arquivo será criado uma cópia idêntica do mesmo.
+	\\
+	
+	
+	Para isso, nós observamos conceitos da tecnologia RAID, pois notamos alguns pontos semelhantes com o sistema de arquivos distribuídos, como o armazenamento de forma distribuído e a preocupação com a segurança dos arquivos.
+	Além disso, a utilização da replicação de arquivo e de outro método para atribuição da redundância também foi motivo para colocar atenção nesta tecnologia.
+	A outra forma de criar as partes redundantes é a geração de paridades, que são calculadas baseando-se em blocos divididos a partir do próprio arquivo.
+	Dessa forma, é possível reduzir o \textit{overhead} de espaço até 50\%, a metade da replicação com uma cópia, quando as paridades forem geradas de forma mais simples, ou até menos, dependendo da condição utilizada para calcular a paridade.
+	\\
+	
+	Também notamos o fato de que a tecnologia RAID foi inicialmente desenvolvida para aumentar a taxa de transferência da unidade de armazenamento.
+	A motivação inicial desta invenção era reusar os discos rígidos que não estavam mais em uso, por serem substituídos por outros mais novos com melhor performance.
+	O problema para fazer o reuso dos dispositivos era a baixa velocidade de leitura/escrita que estes apresentavam, por serem aparelhos relativamente velhos. 
+	Para cobrir esta baixa velocidade de transferência, os discos foram colocados para trabalhar em conjunto, ou seja, fazer um acesso simultâneo em vários discos para aumentar a vazão total de dados transferidos, resultando em aumento da taxa de transferência .
+	Assim, a introdução de conceito do RAID, não trata apenas de questão da segurança de arquivos, mas também no desempenho do sistema.  
+	\\
+	
+	Para que o armazenamento de arquivo seja administrado de forma eficiente, contribuindo para aumento do desempenho do sistema, adotamos uma abordagem que separa o arquivo em duas partes para distribuir a carga de gerenciamento. 
+	Uma parte são os metadados, que guardam as informações do arquivo, como nome, tamanho ou localização. E a outra parte é o dado, que armazena o próprio conteúdo deste arquivo. 
+	Desta forma, o sistema será constituído por dois tipos diferentes de conjunto dos servidores, um que administra os metadados dos arquivos e outro que armazena os dados dos arquivos. 
+	\\
+	
+	Da mesma forma que a confiabilidade do conteúdo dos arquivos é assegurado por conceito de RAID, os metadados armazenados também precisam ser protegidos.
+	Porém, não podemos usar o RAID para fazer isso, pois nos servidores de metadados não acontecem simples entrada/saída de dados, mas também fornecem um serviço para indicar localização de conteúdo dos arquivos. 
+	Por isso, para garantir a segurança dos metadados, junto com o serviço, utilizamos o \textit{BFT-SMaRt}, uma biblioteca em Java que disponibiliza as ferramentas para desenvolver um serviço tolerante a falhas, baseado na técnica de replicação de serviço.
+	\\	
+	
+	Assim, o nosso trabalho está focalizado em construção de um sistema de arquivos distribuídos utilizando os conceitos de RAID.
+	Será implementado algumas configurações de RAID, incluindo uma que utiliza a replicação de arquivo e outra que utiliza a geração de paridade, e posteriormente será feito a comparação entre as configurações desenvolvidas no sistema, para verificar a diferença de desempenho entre elas.
+	\\
 
 	
 	

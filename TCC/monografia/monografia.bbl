@@ -1,9 +1,5 @@
 \begin{thebibliography}{10}
 
-\bibitem{wikiRAIDlevels}
-Wikipedia: Standard raid levels.
-\newblock acessado em 03/07/2015.
-
 \bibitem{cern}
 {CERN Data Centre passes 100 petabytes}, 2013.
 \newblock [Online; Last updated 12 Mar 2015, 13.40.], acessado em 9/5/2015.
@@ -16,32 +12,9 @@ Scaling the facebook data warehouse to 300 pb, 2014.
 What is dropbox?, 2014.
 \newblock acessado em 30/5/2015.
 
-\bibitem{bessani1}
-Alysson Bessani, Ricardo Mendes, Tiago Oliveira, Nuno Neves, Miguel Correia,
-  Marcelo Pasin, and Paulo Verissimo.
-\newblock Scfs: A shared cloud-backed file system.
-\newblock 2013.
-
 \bibitem{bessani3}
 Alysson Bessani, João Sousa, and Eduardo Alchieri.
 \newblock State machine replication for the masses with bft-smart.
-
-\bibitem{buyya2}
-Rajkumar Buyya, Rajiv Ranjan, and Rodrigo~N. Calheiros.
-\newblock Intercloud: Utility-oriented federation of cloud computing
-  environments for scaling of application services.
-\newblock 2010.
-
-\bibitem{buyya1}
-Rajkumar Buyya, Chee~Shin Yeo, Srikumar Venugopal, James Broberg, and Ivona
-  Brandic.
-\newblock Cloud computing and emerging it platforms: Vision, hype, and reality
-  for delivering computing as the 5th utility.
-
-\bibitem{celesti1}
-Antonio Celesti, Francesco Tusa, Massimo Villari, and Antonio Puliafito.
-\newblock How to enhance cloud architectures to enable cross-federation.
-\newblock {\em 3th IEEE International Conference on Cloud Computing}, 2010.
 
 \bibitem{coulouris06}
 George Coulouris, Jean Dollimore, and Tim Kindberg.
@@ -82,11 +55,5 @@ Andrew~S. Tanenbaum.
 Andrew~S. Tanenbaum and Maarten~Van Steen.
 \newblock {\em Distributed Systems: Principles and Paradigms}.
 \newblock Pearson Prentice Hall, 2007.
-
-\bibitem{drasko1}
-Drasko Tomié, Osman Muftié, and Berislav Biocié.
-\newblock A novel scheduling approach of e-learning content on cloud computing
-  infrastructure.
-\newblock {\em MIPRO}, 2011.
 
 \end{thebibliography}
