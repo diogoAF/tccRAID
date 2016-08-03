@@ -3,105 +3,105 @@
 \select@language {brazil}
 \contentsline {chapter}{\numberline {1}Introdu\IeC {\c c}\IeC {\~a}o}{1}{chapter.1}
 \contentsline {section}{\numberline {1.1}Contextualiza\IeC {\c c}\IeC {\~a}o}{1}{section.1.1}
-\contentsline {section}{\numberline {1.2}Justificativa}{3}{section.1.2}
-\contentsline {section}{\numberline {1.3}Objetivo}{4}{section.1.3}
-\contentsline {section}{\numberline {1.4}Organiza\IeC {\c c}\IeC {\~a}o de cap\IeC {\'\i }tulos}{4}{section.1.4}
-\contentsline {chapter}{\numberline {2}Sistema de arquivos distribu\IeC {\'\i }do}{5}{chapter.2}
-\contentsline {section}{\numberline {2.1}Sistemas distribu\IeC {\'\i }dos}{5}{section.2.1}
-\contentsline {section}{\numberline {2.2}Metadados}{6}{section.2.2}
-\contentsline {section}{\numberline {2.3}Sistema de arquivos distribu\IeC {\'\i }do}{6}{section.2.3}
-\contentsline {subsection}{\numberline {2.3.1}Transpar\IeC {\^e}ncia}{7}{subsection.2.3.1}
-\contentsline {subsubsection}{Transpar\IeC {\^e}ncia de acesso}{7}{section*.7}
-\contentsline {subsubsection}{Transpar\IeC {\^e}ncia de localiza\IeC {\c c}\IeC {\~a}o}{7}{section*.8}
-\contentsline {subsubsection}{Transpar\IeC {\^e}ncia de migra\IeC {\c c}\IeC {\~a}o}{7}{section*.9}
-\contentsline {subsubsection}{Transpar\IeC {\^e}ncia de desempenho}{7}{section*.10}
-\contentsline {subsubsection}{Transpar\IeC {\^e}ncia de escalabilidade}{7}{section*.11}
-\contentsline {subsubsection}{Transpar\IeC {\^e}ncia a falhas}{7}{section*.12}
-\contentsline {subsubsection}{Transpar\IeC {\^e}ncia de replica\IeC {\c c}\IeC {\~a}o}{7}{section*.13}
-\contentsline {subsection}{\numberline {2.3.2}Caracter\IeC {\'\i }sticas}{8}{subsection.2.3.2}
-\contentsline {subsubsection}{Disponibilidade}{8}{section*.14}
-\contentsline {subsubsection}{Opera\IeC {\c c}\IeC {\~o}es at\IeC {\^o}micas}{8}{section*.15}
-\contentsline {subsubsection}{Replica\IeC {\c c}\IeC {\~a}o de arquivos}{9}{section*.16}
-\contentsline {subsubsection}{Toler\IeC {\^a}ncia a falhas e gerenciamento de falhas}{10}{section*.17}
-\contentsline {subsubsection}{Escalabilidade}{11}{section*.18}
-\contentsline {subsubsection}{Acesso concorrente}{11}{section*.19}
-\contentsline {subsubsection}{Seguran\IeC {\c c}a}{13}{section*.20}
-\contentsline {subsubsection}{Heterogeneidade}{13}{section*.21}
-\contentsline {subsubsection}{Extensibilidade e abertura}{14}{section*.22}
-\contentsline {subsubsection}{Migra\IeC {\c c}\IeC {\~a}o e balanceamento de carga}{14}{section*.23}
-\contentsline {subsection}{\numberline {2.3.3}Nomes e localiza\IeC {\c c}\IeC {\~a}o}{14}{subsection.2.3.3}
-\contentsline {subsection}{\numberline {2.3.4}Servi\IeC {\c c}o de Nomes}{15}{subsection.2.3.4}
-\contentsline {section}{\numberline {2.4}Conclus\IeC {\~o}es do Cap\IeC {\'\i }tulo}{15}{section.2.4}
-\contentsline {chapter}{\numberline {3}BFT-SMaRt}{16}{chapter.3}
-\contentsline {section}{\numberline {3.1}Conceitos}{16}{section.3.1}
-\contentsline {section}{\numberline {3.2}Princ\IeC {\'\i }pios do Projeto}{17}{section.3.2}
-\contentsline {subsection}{\numberline {3.2.1}Modelo Harmonioso de Falhas}{17}{subsection.3.2.1}
-\contentsline {subsection}{\numberline {3.2.2}Simplicidade}{17}{subsection.3.2.2}
-\contentsline {subsection}{\numberline {3.2.3}Modularidade}{17}{subsection.3.2.3}
-\contentsline {subsection}{\numberline {3.2.4}Interface de Programa\IeC {\c c}\IeC {\~a}o de Aplica\IeC {\c c}\IeC {\~a}o Simples e Extens\IeC {\'\i }vel}{18}{subsection.3.2.4}
-\contentsline {subsection}{\numberline {3.2.5}Consci\IeC {\^e}ncia de ambiente Multi-Core}{18}{subsection.3.2.5}
-\contentsline {subsection}{\numberline {3.2.6}Modelo do Sistema}{18}{subsection.3.2.6}
-\contentsline {section}{\numberline {3.3}Protocolos Centrais}{18}{section.3.3}
-\contentsline {subsection}{\numberline {3.3.1}\textit {Total Order Multicast}}{18}{subsection.3.3.1}
-\contentsline {subsection}{\numberline {3.3.2}Transfer\IeC {\^e}ncia de Estado}{19}{subsection.3.3.2}
-\contentsline {section}{\numberline {3.4}Reconfigura\IeC {\c c}\IeC {\~a}o}{19}{section.3.4}
-\contentsline {section}{\numberline {3.5}Implementa\IeC {\c c}\IeC {\~a}o}{19}{section.3.5}
-\contentsline {section}{\numberline {3.6}Configura\IeC {\c c}\IeC {\~o}es Alternativas}{21}{section.3.6}
-\contentsline {subsection}{\numberline {3.6.1}\textit {Crash Fault Tolerance}}{21}{subsection.3.6.1}
-\contentsline {subsection}{\numberline {3.6.2}Falhas Bizantinas Maliciosas}{22}{subsection.3.6.2}
-\contentsline {section}{\numberline {3.7}Conclus\IeC {\~o}es do Cap\IeC {\'\i }tulo}{22}{section.3.7}
-\contentsline {chapter}{\numberline {4}RAID}{23}{chapter.4}
-\contentsline {section}{\numberline {4.1}Conceitos}{23}{section.4.1}
-\contentsline {subsection}{\numberline {4.1.1}RAID 0}{24}{subsection.4.1.1}
-\contentsline {subsubsection}{Desempenho}{24}{section*.24}
-\contentsline {subsection}{\numberline {4.1.2}RAID 1}{25}{subsection.4.1.2}
-\contentsline {subsubsection}{Desempenho}{25}{section*.25}
-\contentsline {subsection}{\numberline {4.1.3}RAID 2}{26}{subsection.4.1.3}
-\contentsline {subsubsection}{Desempenho}{27}{section*.26}
-\contentsline {subsection}{\numberline {4.1.4}RAID 3}{27}{subsection.4.1.4}
-\contentsline {subsubsection}{Desempenho}{27}{section*.27}
-\contentsline {subsection}{\numberline {4.1.5}RAID 4}{28}{subsection.4.1.5}
-\contentsline {subsubsection}{Desempenho}{28}{section*.28}
-\contentsline {subsection}{\numberline {4.1.6}RAID 5}{28}{subsection.4.1.6}
-\contentsline {subsubsection}{Desempenho}{29}{section*.29}
-\contentsline {subsection}{\numberline {4.1.7}RAID 6}{29}{subsection.4.1.7}
-\contentsline {subsubsection}{Desempenho}{30}{section*.30}
-\contentsline {subsection}{\numberline {4.1.8}RAID 50}{30}{subsection.4.1.8}
-\contentsline {subsubsection}{Desempenho}{30}{section*.31}
-\contentsline {section}{\numberline {4.2}Conclus\IeC {\~o}es do Cap\IeC {\'\i }tulo}{30}{section.4.2}
-\contentsline {chapter}{\numberline {5}Proposta de Sistema de Arquivos Distribu\IeC {\'\i }do}{32}{chapter.5}
-\contentsline {section}{\numberline {5.1}Arquitetura do sistema}{32}{section.5.1}
-\contentsline {subsection}{\numberline {5.1.1}Servi\IeC {\c c}o de Metadados}{33}{subsection.5.1.1}
-\contentsline {subsection}{\numberline {5.1.2}Servi\IeC {\c c}o de Armazenamento}{34}{subsection.5.1.2}
-\contentsline {subsection}{\numberline {5.1.3}Cliente}{34}{subsection.5.1.3}
-\contentsline {section}{\numberline {5.2}Opera\IeC {\c c}\IeC {\~o}es no Sistema de Arquivos Distribu\IeC {\'\i }dos}{36}{section.5.2}
-\contentsline {subsection}{\numberline {5.2.1}Cliente-Servidor}{36}{subsection.5.2.1}
-\contentsline {subsubsection}{Criar arquivo}{36}{section*.32}
-\contentsline {subsubsection}{Criar diret\IeC {\'o}rio}{37}{section*.33}
-\contentsline {subsubsection}{Abrir arquivos}{37}{section*.34}
-\contentsline {subsubsection}{Abrir diret\IeC {\'o}rio}{38}{section*.35}
-\contentsline {subsubsection}{Deletar arquivos}{38}{section*.36}
-\contentsline {subsubsection}{Deletar diret\IeC {\'o}rio}{38}{section*.37}
-\contentsline {subsubsection}{Fechar um arquivo aberto}{39}{section*.38}
-\contentsline {subsubsection}{Fechar diret\IeC {\'o}rio}{39}{section*.39}
-\contentsline {subsubsection}{Editar um arquivo}{39}{section*.40}
-\contentsline {subsubsection}{Renomear um arquivo}{39}{section*.41}
-\contentsline {subsubsection}{Renomear Diret\IeC {\'o}rio}{40}{section*.42}
-\contentsline {section}{\numberline {5.3}Implementa\IeC {\c c}\IeC {\~a}o}{40}{section.5.3}
-\contentsline {subsection}{\numberline {5.3.1}Servi\IeC {\c c}o de Metadados}{40}{subsection.5.3.1}
-\contentsline {subsection}{\numberline {5.3.2}Servi\IeC {\c c}o de Armazenamento}{43}{subsection.5.3.2}
-\contentsline {subsection}{\numberline {5.3.3}Cliente}{45}{subsection.5.3.3}
-\contentsline {subsection}{\numberline {5.3.4}Executando o Sistema}{50}{subsection.5.3.4}
-\contentsline {section}{\numberline {5.4}Conclus\IeC {\~o}es do Cap\IeC {\'\i }tulo}{52}{section.5.4}
-\contentsline {chapter}{\numberline {6}Experimentos}{53}{chapter.6}
-\contentsline {section}{\numberline {6.1}Ambiente de Teste}{53}{section.6.1}
-\contentsline {subsubsection}{Teste de lat\IeC {\^e}ncia}{54}{section*.43}
-\contentsline {subsubsection}{Teste de vaz\IeC {\~a}o}{54}{section*.44}
-\contentsline {section}{\numberline {6.2}Resultados}{54}{section.6.2}
-\contentsline {subsubsection}{Teste de lat\IeC {\^e}ncia}{55}{section*.45}
-\contentsline {subsubsection}{Teste de vaz\IeC {\~a}o}{56}{section*.46}
-\contentsline {section}{\numberline {6.3}Conclus\IeC {\~o}es do Cap\IeC {\'\i }tulo}{58}{section.6.3}
-\contentsline {chapter}{\numberline {7}Conclus\IeC {\~o}es e Trabalhos Futuros}{59}{chapter.7}
-\contentsline {section}{\numberline {7.1}Conclus\IeC {\~o}es}{59}{section.7.1}
-\contentsline {section}{\numberline {7.2}Trabalhos Futuros}{59}{section.7.2}
-\contentsline {chapter}{Refer\^encias}{61}{section*.47}
+\contentsline {section}{\numberline {1.2}Justificativa}{2}{section.1.2}
+\contentsline {section}{\numberline {1.3}Objetivo}{3}{section.1.3}
+\contentsline {section}{\numberline {1.4}Organiza\IeC {\c c}\IeC {\~a}o de cap\IeC {\'\i }tulos}{3}{section.1.4}
+\contentsline {chapter}{\numberline {2}Sistema de arquivos distribu\IeC {\'\i }do}{4}{chapter.2}
+\contentsline {section}{\numberline {2.1}Sistemas distribu\IeC {\'\i }dos}{4}{section.2.1}
+\contentsline {section}{\numberline {2.2}Metadados}{5}{section.2.2}
+\contentsline {section}{\numberline {2.3}Sistema de arquivos distribu\IeC {\'\i }do}{5}{section.2.3}
+\contentsline {subsection}{\numberline {2.3.1}Transpar\IeC {\^e}ncia}{6}{subsection.2.3.1}
+\contentsline {subsubsection}{Transpar\IeC {\^e}ncia de acesso}{6}{section*.7}
+\contentsline {subsubsection}{Transpar\IeC {\^e}ncia de localiza\IeC {\c c}\IeC {\~a}o}{6}{section*.8}
+\contentsline {subsubsection}{Transpar\IeC {\^e}ncia de migra\IeC {\c c}\IeC {\~a}o}{6}{section*.9}
+\contentsline {subsubsection}{Transpar\IeC {\^e}ncia de desempenho}{6}{section*.10}
+\contentsline {subsubsection}{Transpar\IeC {\^e}ncia de escalabilidade}{6}{section*.11}
+\contentsline {subsubsection}{Transpar\IeC {\^e}ncia a falhas}{6}{section*.12}
+\contentsline {subsubsection}{Transpar\IeC {\^e}ncia de replica\IeC {\c c}\IeC {\~a}o}{6}{section*.13}
+\contentsline {subsection}{\numberline {2.3.2}Caracter\IeC {\'\i }sticas}{7}{subsection.2.3.2}
+\contentsline {subsubsection}{Disponibilidade}{7}{section*.14}
+\contentsline {subsubsection}{Opera\IeC {\c c}\IeC {\~o}es at\IeC {\^o}micas}{7}{section*.15}
+\contentsline {subsubsection}{Replica\IeC {\c c}\IeC {\~a}o de arquivos}{8}{section*.16}
+\contentsline {subsubsection}{Toler\IeC {\^a}ncia a falhas e gerenciamento de falhas}{9}{section*.17}
+\contentsline {subsubsection}{Escalabilidade}{10}{section*.18}
+\contentsline {subsubsection}{Acesso concorrente}{10}{section*.19}
+\contentsline {subsubsection}{Seguran\IeC {\c c}a}{12}{section*.20}
+\contentsline {subsubsection}{Heterogeneidade}{12}{section*.21}
+\contentsline {subsubsection}{Extensibilidade e abertura}{13}{section*.22}
+\contentsline {subsubsection}{Migra\IeC {\c c}\IeC {\~a}o e balanceamento de carga}{13}{section*.23}
+\contentsline {subsection}{\numberline {2.3.3}Nomes e localiza\IeC {\c c}\IeC {\~a}o}{13}{subsection.2.3.3}
+\contentsline {subsection}{\numberline {2.3.4}Servi\IeC {\c c}o de Nomes}{14}{subsection.2.3.4}
+\contentsline {section}{\numberline {2.4}Conclus\IeC {\~o}es do Cap\IeC {\'\i }tulo}{14}{section.2.4}
+\contentsline {chapter}{\numberline {3}BFT-SMaRt}{15}{chapter.3}
+\contentsline {section}{\numberline {3.1}Conceitos}{15}{section.3.1}
+\contentsline {section}{\numberline {3.2}Princ\IeC {\'\i }pios do Projeto}{16}{section.3.2}
+\contentsline {subsection}{\numberline {3.2.1}Modelo Harmonioso de Falhas}{16}{subsection.3.2.1}
+\contentsline {subsection}{\numberline {3.2.2}Simplicidade}{16}{subsection.3.2.2}
+\contentsline {subsection}{\numberline {3.2.3}Modularidade}{16}{subsection.3.2.3}
+\contentsline {subsection}{\numberline {3.2.4}Interface de Programa\IeC {\c c}\IeC {\~a}o de Aplica\IeC {\c c}\IeC {\~a}o Simples e Extens\IeC {\'\i }vel}{17}{subsection.3.2.4}
+\contentsline {subsection}{\numberline {3.2.5}Consci\IeC {\^e}ncia de ambiente Multi-Core}{17}{subsection.3.2.5}
+\contentsline {subsection}{\numberline {3.2.6}Modelo do Sistema}{17}{subsection.3.2.6}
+\contentsline {section}{\numberline {3.3}Protocolos Centrais}{17}{section.3.3}
+\contentsline {subsection}{\numberline {3.3.1}\textit {Total Order Multicast}}{17}{subsection.3.3.1}
+\contentsline {subsection}{\numberline {3.3.2}Transfer\IeC {\^e}ncia de Estado}{18}{subsection.3.3.2}
+\contentsline {section}{\numberline {3.4}Reconfigura\IeC {\c c}\IeC {\~a}o}{18}{section.3.4}
+\contentsline {section}{\numberline {3.5}Implementa\IeC {\c c}\IeC {\~a}o}{18}{section.3.5}
+\contentsline {section}{\numberline {3.6}Configura\IeC {\c c}\IeC {\~o}es Alternativas}{20}{section.3.6}
+\contentsline {subsection}{\numberline {3.6.1}\textit {Crash Fault Tolerance}}{20}{subsection.3.6.1}
+\contentsline {subsection}{\numberline {3.6.2}Falhas Bizantinas Maliciosas}{21}{subsection.3.6.2}
+\contentsline {section}{\numberline {3.7}Conclus\IeC {\~o}es do Cap\IeC {\'\i }tulo}{21}{section.3.7}
+\contentsline {chapter}{\numberline {4}RAID}{22}{chapter.4}
+\contentsline {section}{\numberline {4.1}Conceitos}{22}{section.4.1}
+\contentsline {subsection}{\numberline {4.1.1}RAID 0}{23}{subsection.4.1.1}
+\contentsline {subsubsection}{Desempenho}{23}{section*.24}
+\contentsline {subsection}{\numberline {4.1.2}RAID 1}{24}{subsection.4.1.2}
+\contentsline {subsubsection}{Desempenho}{24}{section*.25}
+\contentsline {subsection}{\numberline {4.1.3}RAID 2}{25}{subsection.4.1.3}
+\contentsline {subsubsection}{Desempenho}{26}{section*.26}
+\contentsline {subsection}{\numberline {4.1.4}RAID 3}{26}{subsection.4.1.4}
+\contentsline {subsubsection}{Desempenho}{26}{section*.27}
+\contentsline {subsection}{\numberline {4.1.5}RAID 4}{27}{subsection.4.1.5}
+\contentsline {subsubsection}{Desempenho}{27}{section*.28}
+\contentsline {subsection}{\numberline {4.1.6}RAID 5}{27}{subsection.4.1.6}
+\contentsline {subsubsection}{Desempenho}{28}{section*.29}
+\contentsline {subsection}{\numberline {4.1.7}RAID 6}{28}{subsection.4.1.7}
+\contentsline {subsubsection}{Desempenho}{29}{section*.30}
+\contentsline {subsection}{\numberline {4.1.8}RAID 50}{29}{subsection.4.1.8}
+\contentsline {subsubsection}{Desempenho}{29}{section*.31}
+\contentsline {section}{\numberline {4.2}Conclus\IeC {\~o}es do Cap\IeC {\'\i }tulo}{29}{section.4.2}
+\contentsline {chapter}{\numberline {5}Proposta de Sistema de Arquivos Distribu\IeC {\'\i }do}{31}{chapter.5}
+\contentsline {section}{\numberline {5.1}Arquitetura do sistema}{31}{section.5.1}
+\contentsline {subsection}{\numberline {5.1.1}Servi\IeC {\c c}o de Metadados}{32}{subsection.5.1.1}
+\contentsline {subsection}{\numberline {5.1.2}Servi\IeC {\c c}o de Armazenamento}{33}{subsection.5.1.2}
+\contentsline {subsection}{\numberline {5.1.3}Cliente}{33}{subsection.5.1.3}
+\contentsline {section}{\numberline {5.2}Opera\IeC {\c c}\IeC {\~o}es no Sistema de Arquivos Distribu\IeC {\'\i }dos}{35}{section.5.2}
+\contentsline {subsection}{\numberline {5.2.1}Cliente-Servidor}{35}{subsection.5.2.1}
+\contentsline {subsubsection}{Criar arquivo}{35}{section*.32}
+\contentsline {subsubsection}{Criar diret\IeC {\'o}rio}{36}{section*.33}
+\contentsline {subsubsection}{Abrir arquivos}{36}{section*.34}
+\contentsline {subsubsection}{Abrir diret\IeC {\'o}rio}{37}{section*.35}
+\contentsline {subsubsection}{Deletar arquivos}{37}{section*.36}
+\contentsline {subsubsection}{Deletar diret\IeC {\'o}rio}{37}{section*.37}
+\contentsline {subsubsection}{Fechar um arquivo aberto}{38}{section*.38}
+\contentsline {subsubsection}{Fechar diret\IeC {\'o}rio}{38}{section*.39}
+\contentsline {subsubsection}{Editar um arquivo}{38}{section*.40}
+\contentsline {subsubsection}{Renomear um arquivo}{38}{section*.41}
+\contentsline {subsubsection}{Renomear Diret\IeC {\'o}rio}{39}{section*.42}
+\contentsline {section}{\numberline {5.3}Implementa\IeC {\c c}\IeC {\~a}o}{39}{section.5.3}
+\contentsline {subsection}{\numberline {5.3.1}Servi\IeC {\c c}o de Metadados}{39}{subsection.5.3.1}
+\contentsline {subsection}{\numberline {5.3.2}Servi\IeC {\c c}o de Armazenamento}{42}{subsection.5.3.2}
+\contentsline {subsection}{\numberline {5.3.3}Cliente}{44}{subsection.5.3.3}
+\contentsline {subsection}{\numberline {5.3.4}Executando o Sistema}{49}{subsection.5.3.4}
+\contentsline {section}{\numberline {5.4}Conclus\IeC {\~o}es do Cap\IeC {\'\i }tulo}{51}{section.5.4}
+\contentsline {chapter}{\numberline {6}Experimentos}{52}{chapter.6}
+\contentsline {section}{\numberline {6.1}Ambiente de Teste}{52}{section.6.1}
+\contentsline {subsubsection}{Teste de lat\IeC {\^e}ncia}{53}{section*.43}
+\contentsline {subsubsection}{Teste de vaz\IeC {\~a}o}{53}{section*.44}
+\contentsline {section}{\numberline {6.2}Resultados}{53}{section.6.2}
+\contentsline {subsubsection}{Teste de lat\IeC {\^e}ncia}{54}{section*.45}
+\contentsline {subsubsection}{Teste de vaz\IeC {\~a}o}{55}{section*.46}
+\contentsline {section}{\numberline {6.3}Conclus\IeC {\~o}es do Cap\IeC {\'\i }tulo}{57}{section.6.3}
+\contentsline {chapter}{\numberline {7}Conclus\IeC {\~o}es e Trabalhos Futuros}{58}{chapter.7}
+\contentsline {section}{\numberline {7.1}Conclus\IeC {\~o}es}{58}{section.7.1}
+\contentsline {section}{\numberline {7.2}Trabalhos Futuros}{58}{section.7.2}
+\contentsline {chapter}{Refer\^encias}{60}{section*.47}

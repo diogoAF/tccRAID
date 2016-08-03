@@ -9,62 +9,18 @@
 	Os casos apresentados anteriormente demonstram o imenso volume de dados que são gerados, processados e armazenados diariamente em todo o globo. Nesses casos em que o volume de dados armazenados chega na ordem de \textit{petabytes} faz-se necessário buscar formas eficientes e seguras para salvar todas as informações. Por exemplo, utilizando-se discos rígidos de 2 TB, serão necessários 50.000 dispositivos para conseguir a capacidade total de 100 PB. Tamanha quantidade de equipamentos seria impossível de serem instaladas em um único servidor, o que acarreta na necessidade de se utilizar um sistema distribuído com vários servidores, ditos como nós, trabalhando conectados através de uma rede. Desta forma, é indispensável a utilização de um sistema de arquivos distribuído (SAD) para o gerenciamento de todos os arquivos espalhados entre todos os servidores. Como exemplos reais de SAD, temos  o \textit{Google File System}, desenvolvido e utilizado pela própria \textit{Google}, O \textit{Apache Hadoop}, utilizado pelo \textit{Facebook},além do \textit{Amazon S3}, utilizado pelo \textit{Dropbox}.
 	\\
 	
-	Visto que em um SAD os arquivos estão armazenados distribuidamente entre vários nós, a falha de um nó pode inviabilizar o uso do sistema como um todo.
-	
-	% AQUI!!!!! 
-	
-	Quando um dos computadores fica indisponível ou apresenta algum problema grave, todos os arquivos contidos nele também ficam inacessíveis ou até sejam perdidos, resultando em grande prejuízo para sistema.
-	Além disso, como a probabilidade de ocorrer falhas em algum dos componentes cresce proporcionalmente com o aumento da quantidade de componentes envolvidos, o incremento da escala resulta em redução da confiabilidade dos arquivos armazenados.
-	Por isso, no SAD existe um mecanismo de proteção dos arquivos armazenados que é possível tolerar as falhas ocorridas em nós.
-	A forma de proteção é a atribuição de redundância para cada um dos arquivos, criando algumas cópias de segurança chamadas de réplicas.
-	A parte original do arquivo e cada uma das réplicas serão armazenados em computadores diferentes, assim, mesmo que um deles apresenta problema, o sistema ainda consegue acessar no arquivo, mantendo funcionamento normal.
-	Como ocorre em \textit{Google File System}, em caso geral mantém 3 réplicas por configuração padrão, podendo ser alterada dependendo da necessidade.
+	Visto que em um SAD os arquivos estão armazenados distribuidamente entre vários nós, a falha de um nó pode inviabilizar o uso do sistema como um todo. Tal situação ocorre pelo fato de que os arquivos armazenados pelo nó faltoso ficam inacessíveis para o restante dos nós do sistema, deste modo inviabilizando a recuperação de alguns ou até mesmo todos os dados contidos no SAD. Somado a isso, ainda temos o agravante de que a probabilidade de ocorrerem falhas em algum dos equipamentos cresce proporcionalmente com o aumento dos componentes envolvidos, desta forma, o incremento de escala pode resultar na redução da confiabilidade no sistema.
 	\\
 	
-A atribuição da redundância consegue impedir a queda da confiabilidade dos arquivos, mas isto tem um custo extra.
-Se um arquivo é protegido com quantidade mínima de redundância, de só uma cópia, significa que no sistema existem dois dados idênticos, consumindo o 100\% de espaço a mais que somente o arquivo original ocuparia no dispositivo de armazenamento. 
-Desta forma, manter os dados em larga escala sem degradar a segurança torna-se cada vez mais custoso com o aumento de volume total dos dados armazenados. 
-Este aumento de custo causado pela necessidade do espaço extra é crucial quando trata de dados que possuem centenas de \textit{petabytes} de volume, como ocorre no caso de arquivos armazenados por um provedor de alguns serviços em rede ou no caso de um conjunto de dados considerado como \textit{big data}. \\
-
-	
+	É fundamental encontrar formas de contornar os problemas enfrentados pelos sistemas distribuídos, de modo a torná-lo tolerante à falhas. Para o caso de dados inacessíveis, o método de maior simplicidade é o de replicação. Na replicação os dados contidos em um nó são copiados integralmente para outros nós, assim criando cópias de segurança chamadas réplicas. Deste modo, mesmo quando algum nó apresentar problemas, o sistema ainda será capaz de recuperar qualquer arquivo que estivesse armazenado no nó defeituoso. O grande gargalo dessa abordagem é o desperdício de espaço, visto que cada réplica irá consumir a mesma quantidade de espaço de armazenamento que o arquivo original. Em sistemas que lidam com \textit{big data}, a redundância total de dados muitas vezes é impraticável.
+	\\
+		
 	\section{Justificativa}
-	No contexto dos sistemas distribuídos o conceito de paralelismo é muito presente, o que acarreta no aumento de máquinas conectadas e consequentemente a probabilidade de alguma dessas máquinas sofrer alguma falha de \textit{hardware} ou \textit{software}. Quando essa falha ocorrer, é necessário que contra medidas tenham sido implementadas a fim de minimizar os danos. Uma dessas medidas é que o sistema de arquivos distribuído seja tolerante a falhas, tolerância essa que pode ser alcançada utilizando-se a replicação total dos dados, entretanto esse \textit{overhead} ocupa espaços de armazenamento que poderiam ser utilizados para novos dados. Por exemplo, na replicação tradicional de arquivo, o \textit{overhead} é de 100\%, pois para cada arquivo será criado uma cópia idêntica do mesmo.
+	No contexto dos sistemas distribuídos o conceito de paralelismo é muito presente, característica essa que acarreta no aumento de máquinas conectadas pela rede e consequentemente a probabilidade de alguma dessas máquinas sofrer erros de \textit{hardware} ou \textit{software}. Quando qualquer falha dessa natureza ocorrer, é necessário que contra medidas tenham sido implementadas a fim de minimizar os danos. Uma dessas medidas é que o sistema de arquivos distribuído seja tolerante a falhas, tolerância essa que pode ser alcançada utilizando-se a replicação total dos dados, entretanto esse \textit{overhead} ocupa espaços de armazenamento que poderiam ser utilizados para novos dados.
 	\\
 	
-	
-	Para isso, nós observamos conceitos da tecnologia RAID, pois notamos alguns pontos semelhantes com o sistema de arquivos distribuídos, como o armazenamento de forma distribuído e a preocupação com a segurança dos arquivos.
-	Além disso, a utilização da replicação de arquivo e de outro método para atribuição da redundância também foi motivo para colocar atenção nesta tecnologia.
-	A outra forma de criar as partes redundantes é a geração de paridades, que são calculadas baseando-se em blocos divididos a partir do próprio arquivo.
-	Dessa forma, é possível reduzir o \textit{overhead} de espaço até 50\%, a metade da replicação com uma cópia, quando as paridades forem geradas de forma mais simples, ou até menos, dependendo da condição utilizada para calcular a paridade.
+	Os conceitos de RAID podem ser utilizados a fim de aumentar o desempenho e a confiabilidade de um sistema. Durante o planejamento da tecnologia RAID vários pontos foram levados em consideração, um deles foi como aumentar a taxa de transferência da unidade de armazenamento. O modo escolhido foi utilizar o paralelismos. Com um conjunto de discos onde cada um deles executa de forma independente e paralela aos outros, é possível realizar acesso simultâneo em vários discos do conjunto, assim aumentando a vazão total de dados transferidos e resultando no aumento de desempenho do sistema. Enquanto que na área de segurança, exitem distintas formas de proteção dos dados baseadas na redundância, tais como espelhamento, replicação e paridade.
 	\\
 	
-	Também notamos o fato de que a tecnologia RAID foi inicialmente desenvolvida para aumentar a taxa de transferência da unidade de armazenamento.
-	A motivação inicial desta invenção era reusar os discos rígidos que não estavam mais em uso, por serem substituídos por outros mais novos com melhor performance.
-	O problema para fazer o reuso dos dispositivos era a baixa velocidade de leitura/escrita que estes apresentavam, por serem aparelhos relativamente velhos. 
-	Para cobrir esta baixa velocidade de transferência, os discos foram colocados para trabalhar em conjunto, ou seja, fazer um acesso simultâneo em vários discos para aumentar a vazão total de dados transferidos, resultando em aumento da taxa de transferência .
-	Assim, a introdução de conceito do RAID, não trata apenas de questão da segurança de arquivos, mas também no desempenho do sistema.  
+	Os pontos fortes da tecnologia RAID podem ser extrapoladas para um sistema de arquivos distribuídos a fim de suprir suas fragilidades sobre proteção de dados e problemas de confiabilidade.
 	\\
-	
-	Para que o armazenamento de arquivo seja administrado de forma eficiente, contribuindo para aumento do desempenho do sistema, adotamos uma abordagem que separa o arquivo em duas partes para distribuir a carga de gerenciamento. 
-	Uma parte são os metadados, que guardam as informações do arquivo, como nome, tamanho ou localização. E a outra parte é o dado, que armazena o próprio conteúdo deste arquivo. 
-	Desta forma, o sistema será constituído por dois tipos diferentes de conjunto dos servidores, um que administra os metadados dos arquivos e outro que armazena os dados dos arquivos. 
-	\\
-	
-	Da mesma forma que a confiabilidade do conteúdo dos arquivos é assegurado por conceito de RAID, os metadados armazenados também precisam ser protegidos.
-	Porém, não podemos usar o RAID para fazer isso, pois nos servidores de metadados não acontecem simples entrada/saída de dados, mas também fornecem um serviço para indicar localização de conteúdo dos arquivos. 
-	Por isso, para garantir a segurança dos metadados, junto com o serviço, utilizamos o \textit{BFT-SMaRt}, uma biblioteca em Java que disponibiliza as ferramentas para desenvolver um serviço tolerante a falhas, baseado na técnica de replicação de serviço.
-	\\	
-	
-	Assim, o nosso trabalho está focalizado em construção de um sistema de arquivos distribuídos utilizando os conceitos de RAID.
-	Será implementado algumas configurações de RAID, incluindo uma que utiliza a replicação de arquivo e outra que utiliza a geração de paridade, e posteriormente será feito a comparação entre as configurações desenvolvidas no sistema, para verificar a diferença de desempenho entre elas.
-	\\
-
-	
-	
-	
-	
-
- 
-
-	
-
