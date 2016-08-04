@@ -1,5 +1,5 @@
 
-	\section{Contextualização}
+	%\section{Contextualização}
 	Tradicionalmente a ciência era dividida em três paradigmas: empírica, lógica e computacional, porém o cientista computacional Jim Gray idealizou um quarto chamado de \textit{data-intensive science}~\cite{hey2009}. Tal paradigma caracteriza-se pelo intenso processamento de \textit{big data} afim de conseguir informações úteis. \textit{Big data} consiste de um conjunto extremamente amplo de dados não estruturados. Justamente pela quantidade massiva de dados que compõe o \textit{big data}, é impraticável utilizar computadores convencionais para seu processamento.
 	\\
 	
@@ -15,7 +15,7 @@
 	É fundamental encontrar formas de contornar os problemas enfrentados pelos sistemas distribuídos, de modo a torná-lo tolerante à falhas. Para o caso de dados inacessíveis, o método de maior simplicidade é o de replicação. Na replicação os dados contidos em um nó são copiados integralmente para outros nós, assim criando cópias de segurança chamadas réplicas. Deste modo, mesmo quando algum nó apresentar problemas, o sistema ainda será capaz de recuperar qualquer arquivo que estivesse armazenado no nó defeituoso. O grande gargalo dessa abordagem é o desperdício de espaço, visto que cada réplica irá consumir a mesma quantidade de espaço de armazenamento que o arquivo original. Em sistemas que lidam com \textit{big data}, a redundância total de dados muitas vezes é impraticável.
 	\\
 		
-	\section{Justificativa}
+	%\section{Justificativa}
 	No contexto dos sistemas distribuídos o conceito de paralelismo é muito presente, característica essa que acarreta no aumento de máquinas conectadas pela rede e consequentemente a probabilidade de alguma dessas máquinas sofrer erros de \textit{hardware} ou \textit{software}. Quando qualquer falha dessa natureza ocorrer, é necessário que contra medidas tenham sido implementadas a fim de minimizar os danos. Uma dessas medidas é que o sistema de arquivos distribuído seja tolerante a falhas, tolerância essa que pode ser alcançada utilizando-se a replicação total dos dados, entretanto esse \textit{overhead} ocupa espaços de armazenamento que poderiam ser utilizados para novos dados.
 	\\
 	

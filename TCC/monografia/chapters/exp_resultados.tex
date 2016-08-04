@@ -4,10 +4,28 @@
 	\\
 	
 	\subsubsection{Teste de latência}
-	Primeiramente descreve o resultado do processo de leitura para teste de latência.
-	Como no gráfico da Figura~\ref{fig:latencia_l} é difícil distinguir as linhas de cada RAID por ter valores de latência bem próximos entre eles, foi colocado a Tabela~\ref{tab:latencia_l} para mostrar a diferença dos valores.
-	Os resultados representam a média dos 1000 operações, descartando-se 10\% dos com maior desvio.
-	 \\
+	Primeiramente descreve o resultado do teste de latência.
+	Foram coletadas as média dos 1000 operações, descartando-se 10\% dos valores com maior desvio.
+	Ainda, a Tabela~\ref{tab:desvio_padrao} mostra a razão entre o desvio padrão e o valor da média para os testes de cada tamanho de arquivo.
+	É colocada na tabela a maior razão entre os três tipos de RAID, para ambos processos de leitura/escrita.
+	Desta forma, podemos dizer que a variação das latências foi bem pequena e, por isso, os valores da média são capazes de serem utilizados para realizar a comparação de desempenho. 
+	
+	\capstartfalse
+	\begin{table} [htb]
+		\caption{A taxa de desvio padrão}
+		\centering
+		\begin{tabular}{|l|c|c|c|c|} \hline
+						& 1KB	& 100KB		& 1MB		& 10MB  \\ \hline
+			desvio padão/média	& 1,7\%	& 6,7\%		& 3,7\%		& 3,1\% \\ \hline
+		\end{tabular}
+		\label{tab:desvio_padrao}
+	\end{table}
+	\capstarttrue
+	
+	A Figura~\ref{fig:latencia_l} mostra o gráfico do resultado do teste de latência para processo de leitura.
+	Como no gráfico é difícil distinguir as linhas de cada RAID por ter valores de latência bem próximos entre eles, foi colocado a Tabela~\ref{tab:latencia_l} para mostrar a diferença dos valores.
+	Neste resultado a linha tem forma crescente, pois conforma aumenta o tamanho do arquivo de teste, o tempo gasto para concluir uma operação também aumenta, levando em incremento da latência.
+	\\
 	 
 	De acordo com Tabela~\ref{tab:latencia_l} o RAID 1 apresenta menor valor de latência entre todos os tipos de RAID quando o arquivo tem tamanho de 1KB ou 100KB. Contudo, quando os arquivos crescem de tamanho, ficando com 1MB e 10MB, o resultado reverte deixando o RAID 1 com a latência mais alta de todos. 
 	Isso pode ser explicado pelo fato de que nos RAID 0 e RAID 5 ocorrem a reconstrução de arquivo a partir de alguns pedaços de dados, cujo este procedimento extra possui maior custo de tempo que a transmissão de dados quando trata de arquivos pequenos. Porém, o custo entre dois se aproxima conforme aumenta o tamanho do arquivo e a sua relação inverte quando ultrapassa de um determinado tamanho.
@@ -103,21 +121,24 @@
 		\end{tabular}
 	\end{figure}
 	
-	\subsubsection{Teste de vazão}
-	Agora apresentamos a descrição do resultado obtido no teste de vazão, para operação de leitura de arquivo. O gráfico e os valores são mostrados respectivamente nas Figura~\ref{fig:throughput_l} e Tabela~\ref{tab:throughput_l}.
+	\subsubsection{Teste de throughput}
+	Agora apresentamos a descrição do resultado obtido no teste de \textit{throughput}.
+	No experimento foram coletados o maior valor de \textit{throughput} observado durante a toda execução de cada teste.
+	As linhas do gráfico gerado tem forma decrescente, pois cada vez que o tamanho do arquivo cresce a transferência de dados fica mais demorada, diminuindo a quantidade total das operações executadas em determinado tempo.
 	\\
-	
-	Neste resultado também o RAID 1 mostrou o comportamento já visto no teste de latência, onde os arquivos de tamanhos de 1KB e de 100KB possuírem maiores valores de vazão de todos, enquanto tamanhos de 1MB e 10MB apresentam menores valores de todos. A explicação para este fato pode ser a mesma que foi analisado no teste anterior, o que considera a relação de custo de tempo entre o processo de reconstrução e a transmissão de dados.
+	 
+	O gráfico e os valores do teste de \textit{throughput} para operação de leitura de arquivo são mostrados respectivamente nas Figura~\ref{fig:throughput_l} e Tabela~\ref{tab:throughput_l}.	
+	Neste resultado também o RAID 1 mostrou o comportamento já visto no teste de latência, onde os arquivos de tamanhos de 1KB e de 100KB possuírem maiores valores de \textit{throughput} de todos, enquanto tamanhos de 1MB e 10MB apresentam menores valores de todos. A explicação para este fato pode ser a mesma que foi analisado no teste anterior, o que considera a relação de custo de tempo entre o processo de reconstrução e a transmissão de dados.
 	\\
 	
 	No gráfico da Figura~\ref{fig:throughput_l} podemos observar que a linha de RAID 0 supera a linha de RAID 1 no ponto aproximado de 250KB, enquanto a linha de  RAID 5 somente consegue superar no ponto aproximado de 500KB. 
 	Esta diferença relativamente grande de tamanho para superar a linha do RAID 1 não foi observado no teste de latência, apresentando tamanhos bem próximos entre RAID 0 e RAID 5. Este fato pode ser explicado por existência de vários clientes em operação ao mesmo tempo, diferentemente do teste de latência que existia um único cliente, cujo a pequena diferença do custo de tempo entre RAID 0 e RAID 5 não foi explícita.
 	\\
 	
-	Depois que o tamanho do arquivo passa de 1MB, as linhas da taxa de vazão dos três tipos de RAID começam a se aproximar, aparentemente convergindo em um único valor no ponto de 10MB. Porém, pela Tabela~\ref{tab:throughput_l} é possível observar que a relação das taxas ainda continuam RAID 0 < RAID 5 < RAID 1.
+	Depois que o tamanho do arquivo passa de 1MB, as linhas da taxa de \textit{throughput} dos três tipos de RAID começam a se aproximar, aparentemente convergindo em um único valor no ponto de 10MB. Porém, pela Tabela~\ref{tab:throughput_l} é possível observar que a relação das taxas ainda continuam RAID 0 < RAID 5 < RAID 1.
 	\\
 	
-	Em geral, exceto quando trata de arquivos maiores que 500KB, podemos considerar que a taxa de vazão para leitura de arquivo entre três tipos de RAID obedecem a relação de RAID 0 > RAID 5 > RAID 1, como esperado.
+	Em geral, exceto quando trata de arquivos maiores que 500KB, podemos considerar que a taxa de \textit{throughput} para leitura de arquivo entre três tipos de RAID obedecem a relação de RAID 0 > RAID 5 > RAID 1, como esperado.
 	\\
 	
 	\begin{figure}[h]
@@ -126,7 +147,7 @@
 				\begin{center}
 					
 					\includegraphics[clip,width=8.0cm]{images/resultados/throughput_leitura.png}
-					\caption{Gráfico de vazão para leitura(ops/s)}
+					\caption{Gráfico de throughput para leitura(ops/s)}
 					\label{fig:throughput_l}
 					
 				\end{center}
@@ -137,7 +158,7 @@
 				\makeatletter
 				\def\@captype{table}
 				\makeatother
-				\caption{Tabela de vazão para leitura(ops/s)}
+				\caption{Tabela de throughput para leitura(ops/s)}
 				\label{tab:throughput_l}
 				\begin{center}
 					\begin{tabular}{|c|c|c|c|c|} \hline
@@ -155,14 +176,15 @@
 	\end{figure}
 	
 	
-	O último experimento feito é o teste de vazão para escrita de arquivos.
-	Diferentemente dos resultados obtidos pelos testes anteriores, em que o RAID 1 apresentava melhor desempenho para casos de arquivos pequenos, o gráfico da Figura~\ref{fig:throughput_e} mostra que o RAID 0 apresenta o melhor valor para a taxa de vazão independentemente de tamanho do arquivo. 
+	O último experimento feito é o teste de \textit{throughput} para escrita de arquivos.
+	Diferentemente dos resultados obtidos pelos testes anteriores, em que o RAID 1 apresentava melhor desempenho para casos de arquivos pequenos, o gráfico da Figura~\ref{fig:throughput_e} mostra que o RAID 0 apresenta o melhor valor para a taxa de \textit{throughput} independentemente de tamanho do arquivo. 
 	Contudo, observando a inclinação das linhas de RAID 0 e RAID 1, supomos que a inversão do custo de tempo entre a divisão de arquivo e o envio de dado já acontecem em algum tamanho menor que 1KB. Assim, podemos considerar que este gráfico também apresenta o mesmo comportamento visto nos testes anteriores. 
 	\\
+	
 	Em tamanho aproximado de 25KB a linha de RAID 5 ultrapassa a linha de RAID 1 e depois que o tamanho do arquivo chega em 100KB, todas as linhas de RAID começam a prosseguir de forma quase paralela entre si.
 	\\
 	
-	Assim, quando consideramos arquivo de tamanhos maiores que 25KB, a taxa de vazão entre os três tipos de RAID possui relação de RAID 0 > RAID 5 > RAID 1.
+	Assim, quando consideramos arquivo de tamanhos maiores que 25KB, a taxa de \textit{throughput} entre os três tipos de RAID possui relação de RAID 0 > RAID 5 > RAID 1.
 	\\
 	
 	\begin{figure}[h]
@@ -171,7 +193,7 @@
 				\begin{center}
 					
 					\includegraphics[clip,width=8.0cm]{images/resultados/throughput_escrita.png}
-					\caption{Gráfico de vazão para escrita}
+					\caption{Gráfico de throughput para escrita}
 					\label{fig:throughput_e}
 					
 				\end{center}
@@ -182,7 +204,7 @@
 				\makeatletter
 				\def\@captype{table}
 				\makeatother
-				\caption{Tabela de vazão para escrita(ops/s)}
+				\caption{Tabela de throughput para escrita(ops/s)}
 				\label{tab:throughput_e}
 				\begin{center}
 					\begin{tabular}{|c|c|c|c|c|} \hline

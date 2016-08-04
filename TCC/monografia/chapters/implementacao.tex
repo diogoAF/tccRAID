@@ -1,115 +1,11 @@
 
 \section{Implementação}
-Nesta seção serão apresentados os detalhes sobre a implementação do nosso sistema, incluindo informações sobre a programação e algoritmos utilizados. Todo o \textit{software} foi desenvolvido na linguagem Java com auxilio de várias bibliotecas padrões e do \textit{BFT-SMaRt}, o qual foi apresentado com mais detalhes no capítulo 3. 
+Nesta seção serão apresentados os detalhes sobre a implementação do nosso sistema, incluindo informações sobre a programação e algoritmos utilizados. Todo o \textit{software} foi desenvolvido na linguagem Java com auxilio de várias bibliotecas padrões e do \textit{BFT-SMaRt}, o qual foi apresentado com mais detalhes no capítulo 4. 
 \\
 
-\subsection{Serviço de Metadados}
-Nesta seção a implementação do Serviço de Metadados será detalhada. O serviço supracitado foi desenvolvido em quatro classes, as quais são listadas a seguir.
-\\
 
-\begin{itemize}
-	\item RaidType;
-	\item ServerConsole;
-	\item ServerList;
-	\item ServerMeta.
-\end{itemize}
-
-A classe \textbf{ServerConsole} serve apenas como uma interface de inicialização do serviço de metadados, no qual o \textit{ServerConsole} verifica os parâmetros de inicialização, caso tenha algo errado é apresentado uma mensagem de erro e o programa finalizado. Em contra partida, se tudo estiver correto com os parâmetros, a classe \textit{ServerMeta} é instanciada.
-\\
-\begin{lstlisting}[basicstyle=\ttfamily\footnotesize, frame=single]	
-			...
-		
-	public ServerMeta(int id){
-		new ServiceReplica(id, this, this);
-		dt   = new DirectoryTree();
-		list = new ServerList(); 
-	}
-
-			...
-\end{lstlisting}	
-
-O método mostrado abaixo serve para atender à requisição por operações que a ordem da execução precisa ser considerada.
-Primeiro recebe o tipo de operação para ser executado, e depois chama o método adequado para continuar com o processo.
-As operações que podem ser processados em qualquer ordem são atendidas pelo método \textit{appExecuteUnordered}.
-
-\begin{lstlisting}[basicstyle=\ttfamily\footnotesize, frame=single]		
-public byte[] appExecuteOrdered(byte[] command, MessageContext msgCtx) {
-			
-			...
-			
-	byte[] resultBytes = null;
-	
-	try {
-		ByteArrayInputStream in  = new ByteArrayInputStream(command);
-		ObjectInputStream    ois = new ObjectInputStream(in);
-		
-		int reqType = ois.readInt();
-		
-		switch(reqType) {
-			case RequestType.CREATEDIR:
-			resultBytes = criateDir(ois);
-			break;
-			
-			case RequestType.DELETEDIR:
-			resultBytes = deleteDir(ois);
-			break;
-
-			...
-\end{lstlisting}	
-
-Todos os métodos desta classe possuem um fluxo de execução padronizado desta forma; recebe requisição, processa a operação e retorna o resultado. 
-O método \textit{open} abaixo, que faz a operação de abrir um arquivo, mostra o fluxo apresentado.
-
-\begin{lstlisting}[basicstyle=\ttfamily\footnotesize, frame=single]		
-private byte[] open(ObjectInputStream ois) throws ClassNotFoundException, IOException {
-	String   currPath = (String)ois.readObject();
-	String   tgtName  = (String)ois.readObject();
-	long     accTime  = ois.readLong();
-	
-			...
-	
-	Directory currDir   = dt.openDirectory(currPath, accTime);
-	int       result    = -1;
-	long      fileSize  = 0;
-	FileDFS   target    = null;
-	BlockInfoList bList = null;
-	
-	if(currDir == null) {
-		currDir = dt.getRoot();
-		result  = ResultType.FAILURE;
-	} else if(!currDir.existFile(tgtName)) {
-		result = ResultType.FILENOTEXISTS;
-	} else {
-		target = currDir.getFile(tgtName);
-		if( ( target.isLokedW() ) &&
-			( System.currentTimeMillis()-target.getLastAccTime() ) <= 30*1000 ) 
-		{
-			result = ResultType.FILELOCKED;
-		} else {
-			target.lockR();
-			bList  = target.getBlockList();
-			fileSize = target.getMetadata().size();
-			result = ResultType.SUCCESS;
-		}
-	}
-
-	ByteArrayOutputStream out = new ByteArrayOutputStream();
-	ObjectOutputStream    oos = new ObjectOutputStream(out);
-
-	oos.writeInt(result);
-	oos.writeObject(currDir.getDirEntries());
-	oos.writeObject(bList);
-	oos.writeLong(fileSize);
-	oos.flush();
-	
-			...
-				
-	return out.toByteArray();
-}
-\end{lstlisting}
-
-
-Além das classes supracitadas, o pacote do serviço de metadados trabalha diretamente com os pacotes responsáveis por gerenciar todas as estruturas de diretório do sistema, por isso tais classes serão apresentadas nesta subseção e brevemente explanadas.
+\subsection{Árvode de Diretórios}
+Nesta seção será apresentado o pacote responsável por gerenciar todas as estruturas de diretório do sistema, junto com as classes contidas nele.
 \\
 
 \begin{itemize}
@@ -135,57 +31,308 @@ Além das classes supracitadas, o pacote do serviço de metadados trabalha diret
 	\end{itemize}
 \end{itemize}
 
-As classes contidas no pacote \textit{dt} lidam com todas características e operações refentes aos diretórios. \textbf{LockType e LockList} são utilizadas para gerenciar o controle de acesso aos diretórios, sendo a primeira responsável por enumerar os tipos dos estados de acesso dos diretórios, enquanto a segunda gerência um \textit{ArrayList} para listar os arquivos contidos no diretório e seu controle de acesso. A classe \textbf{Metadata} contêm e manipula as informações de metadado dos arquivos. Por fim, \textbf{DirectoryNode e DirectoryTree} compõem a árvore de diretórios do serviço de metadados, a primeira referente a cada nó e a segunda sobre a árvore em si.
+As classes contidas no pacote \textit{dt} lidam com todas características e operações refentes aos diretórios. \textbf{LockType} e \textbf{LockList} são utilizadas para gerenciar o controle de acesso aos diretórios, sendo a primeira responsável por enumerar os tipos dos estados de acesso dos diretórios, enquanto a segunda gerência uma lista, na forma de \textit{ArrayList}, dos arquivos ou diretório que estão abertos por usuários.
+Esta lista serve para que os programas clientes requisitarem ao servidores de metadado a atualização do estado de acesso. 
 \\
 
-Dentro de dt, existem dois outros pacotes, sendo \textit{directory} responsável por tratar os diretórios em si. Composto por duas classes, \textit{DirEntries e Directory}, sendo o primeiro composto pelas informações das entidades armazenadas nos diretórios (outros diretórios e/ou arquivos) e um método para informar se o diretório referenciado é ou não o \textit{root}, enquanto que a segunda trata dos diretórios em si composto por vários métodos de operações sobre pastas e dois \textit{HashMaps} para armazenar as informações das pastas e arquivos contidos no diretório referenciado.
+A classe \textbf{Metadata} contêm e manipula as informações de metadado dos arquivos. 
+Como mostra no Código~\ref{code:metadata}, implementa a interface \textit{Serializable} para poder transformar o conteúdo dos campos em sequência de \textit{bytes} e posteriormente ser enviado através da rede.
+
+\begin{lstlisting}[basicstyle=\ttfamily\footnotesize, frame=single, caption=Classe Metadata, label=code:metadata]	
+public class Metadata implements Serializable {
+	private long creationTimeL;
+	private long lastAccessTimeL;
+	private long lastModifiedTimeL;
+	
+	private long size;
+	
+	private int lock;
+	
+			...
+\end{lstlisting}	
+
+Por fim, \textbf{DirectoryNode} e \textbf{DirectoryTree} compõem a árvore de diretórios do serviço de metadados, a primeira referente a cada nó da árvore e a segunda sobre a árvore em si, carregando o diretório raiz e os métodos das operações relacionadas.
 \\
 
-Por fim, o outro pacote dentro de dt é nomeado de \textit{file}, o qual compõem as classes responsáveis por armazenar e gerenciar os dados dos arquivos armazenados pelo serviço de armazenamento. \textbf{FileDFS} é a classe principal deste pacote, contendo a referencia da instância de \textit{BlockInfoList}. \textbf{Block, BlockInfo e BlockInfoList} referentes aos blocos de dados nos quais os arquivos devem ser divididos antes de serem enviados pelo cliente ao serviço de armazenamento. Dentre as classes previamente sitadas,\textit{Block} pode ser considerada como a principal, visto que é nela onde ficam armazenados os \textit{bytes} de dados, o identificador e os métodos necessários para recuperar os dados ou quebrar um dado arquivo em blocos. Enquanto que \textit{BlockInfo} funciona como a ligação do bloco ao servidor de armazenamento par ao qual ele deve ser enviado, contendo as informações necessárias para que o cliente saiba para quem o bloco deve ser enviado. Por fim, \textit{BlockInfoList} possui os meios para gerenciar um \textit{ArrayList} dos \textit{BlockInfo} de um arquivo, além de manter o tamanho de cada bloco da lista, o número de servidores de armazenamento e o tipo de RAID em que os blocos foram criados.
+Dentro do pacote \textit{dt}, existem dois outros pacotes.
+Primeiro é o \textit{directory}, responsável por tratar os diretórios em si, composto pelas classes \textbf{Directory} e \textbf{DirEntries}.
+A classe \textit{Directory} trata dos diretórios em si composto por vários métodos de operações sobre pastas e possui no seu campo dois \textit{HashMaps}, um para armazenar as informações das pastas contidas e outro para arquivos contidos no diretório referenciado.
+Esta classe, por ser um dos tipos de nó da árvore de diretórios, herda a classe \textit{DirectoryNode}.
+O Código~\ref{code:directory} mostra as partes da implementação citadas.
+\begin{lstlisting}[basicstyle=\ttfamily\footnotesize, frame=single, caption=Declaração e os campos da classe Directory, label=code:directory]
+public class Directory extends DirectoryNode {
+	private HashMap<String, Directory> dirs;
+	private HashMap<String, FileDFS>   files;
+	
+			...
+\end{lstlisting}
+
+O \textit{DirEntries} é usado por serviço de metadados para informar aos clientes as entradas de um determinado diretório quando este foi aberto pelo usuário, na forma de uma lista de nomes dos diretórios e arquivos contidos nele. 
 \\
+
+Por fim, o segundo pacote dentro de \textit{dt} é nomeado de \textit{file}, o qual compõem as classes responsáveis para gerenciamento das informações sobre arquivos ou dos dados armazenados na forma de bloco. 
+O \textbf{FileDFS} é a classe principal deste pacote, encarregando a parte das informações sobre arquivos.
+Ele mesmo não possui muita funcionalidade, apenas carregando a classe \textit{BlockInfoList} no seu campo, como mostra no Código~\ref{code:filedfs}.
+Por ser um tipo de nó da árvore de diretórios, herda as características da classe \textit{DirectoryNode}.
+\begin{lstlisting}[basicstyle=\ttfamily\footnotesize, frame=single, caption=Classe FileDFS, label=code:filedfs]
+public class FileDFS extends DirectoryNode {
+	private BlockInfoList blockList;
+	
+	public FileDFS(String name, Directory parent, Metadata metadata, BlockInfoList blockList) {
+		super(name, parent, metadata);	
+		this.blockList = blockList;
+	}
+	
+	public BlockInfoList getBlockList() {
+		return blockList;
+	}
+}
+\end{lstlisting}
+
+Como mostra no Código~\ref{code:blockinfolist}, o \textbf{BlockInfoList} é a classe que possui as propriedades do arquivo, como a lista de \textit{BlockInfo}, o tamanho dos blocos, o tipo de RAID utilizado e o número dos servidores que armazenam os blocos.
+A sua função principal é para que o serviço de metadados consiga informar aos clientes as informações operativas de um determinado arquivo, quando precisa enviar ou receber os blocos de dados deste arquivo.
+\begin{lstlisting}[basicstyle=\ttfamily\footnotesize, frame=single, caption=Declaração e os campos da classe BlockInfoList, label=code:blockinfolist]
+public class BlockInfoList implements Serializable {
+	private ArrayList<BlockInfo> blocks;
+	private long blockSize;
+	private int  raidType;
+	private int  nServers;
+ 
+			...
+\end{lstlisting}
+
+Cada \textbf{BlockInfo} gerencia a localização de um bloco, indicando o endereço do servidor onde está armazenado e o identificador do bloco referente.
+\\
+
+
+A classe \textbf{Block} está encarregado da parte de conteúdo dos arquivos, gerenciando em forma de blocos.
+Ela é usado para fazer a transferência de dados de arquivo, contidos em blocos, entre cliente e servidor de armazenamento.
+Também tem papel de informar os servidores o identificador de cada bloco na hora de carregar ou armazenar o conteúdo no disco.
+%\textbf{Block, BlockInfo e BlockInfoList} referentes aos blocos de dados nos quais os arquivos devem ser divididos antes de serem enviados pelo cliente ao serviço de armazenamento. 
+
+%Dentre as classes previamente sitadas,\textit{Block} pode ser considerada como a principal, visto que é nela onde ficam armazenados os \textit{bytes} de dados, o identificador e os métodos necessários para recuperar os dados ou quebrar um dado arquivo em blocos. 
+
+%Enquanto que \textit{BlockInfo} funciona como a ligação do bloco ao servidor de armazenamento par ao qual ele deve ser enviado, contendo as informações necessárias para que o cliente saiba para quem o bloco deve ser enviado. Por fim, \textit{BlockInfoList} possui os meios para gerenciar um \textit{ArrayList} dos \textit{BlockInfo} de um arquivo, além de manter o tamanho de cada bloco da lista, o número de servidores de armazenamento e o tipo de RAID em que os blocos foram criados.
+
+
+\subsection{Serviço de Metadados}
+Nesta seção a implementação do Serviço de Metadados será detalhada. O serviço supracitado foi desenvolvido em quatro classes principais e um auxiliar, as quais são listadas a seguir de acordo com  a estrutura do pacote.
+\\
+
+\begin{itemize}
+	
+	\item server
+	\begin{itemize}
+		\item ServerList;
+	\end{itemize}
+	\item server.meta
+	\begin{itemize}
+		\item RaidType;
+		\item ServerConsole;
+		\item ServerInfo;
+		\item ServerMeta.
+	\end{itemize}
+
+\end{itemize}
+
+A classe \textbf{RaidType} é apenas enumeração dos tipos de RAID em forma de campos constantes de tipo inteiro.
+\\
+
+A classe \textbf{ServerConsole} serve apenas como uma interface de inicialização do serviço de metadados, no qual o \textit{ServerConsole} verifica os parâmetros de inicialização, caso tenha algo errado é apresentado uma mensagem de erro e o programa finalizado. Em contra partida, se tudo estiver correto com os parâmetros, a classe \textit{ServerMeta} é instanciada.
+Código~\ref{code:meta_con}.
+\\
+
+\begin{lstlisting}[basicstyle=\ttfamily\footnotesize, frame=single, caption=Classe ServerConsole, label=code:meta_con]	
+public class ServerConsole {
+	
+	public static void main(String[] args){
+		if(args.length < 3) {
+			System.out.println("Use: java ServerConsole <processId> <raidType> <nServers> <verbose>");
+			System.exit(-1);
+		}
+		boolean verbose = false;
+		boolean test    = true;
+		if(args.length > 3) {
+			if(args[3].contains("v"))
+			verbose = true;
+			if(args[3].contains("n"))
+			test = false;
+		}
+		
+		new ServerMeta(Integer.parseInt(args[0]), Integer.parseInt(args[1]), Integer.parseInt(args[2]), verbose, test);
+	}
+}
+\end{lstlisting}	
+
+A classe \textbf{ServerList} implementa a lista de servidores de armazenamento, em forma de \textit{ArrayList} do Java, e suas operações relacionadas.
+\\
+
+Cada item da lista é de classe \textbf{ServerItem}, que possui as informações sobre servidores de armazenamento, como mostra no Código~\ref{code:serv_info}.
+
+\begin{lstlisting}[basicstyle=\ttfamily\footnotesize, frame=single, caption=Campos da classe ServerInfo, label=code:serv_info]	
+public class ServerInfo {
+	private String hostName;
+	private int    port;
+	private long   capacity;
+	private long   size;
+	private long   lastID;
+	private long   lastAccessTime;
+
+			...
+\end{lstlisting}	
+
+A classe \textbf{ServerMeta} é o núcleo do serviço de metadados, possuindo como superclasse o \textit{DefaultSingleRecoverable}, uma classe que pertence na biblioteca \textit{BFT-SMaRt}.
+Dentro do construtor ela inicializa o árvore de diretórios e a lista de servidores de armazenamento, como mostra no Código~\ref{code:serv_meta_con}.
+
+\begin{lstlisting}[basicstyle=\ttfamily\footnotesize, frame=single, caption=Declaração e construtor da classe ServerMeta, label=code:serv_meta_con]
+
+public class ServerMeta extends DefaultSingleRecoverable {
+			...
+		
+	public ServerMeta(int id){
+		new ServiceReplica(id, this, this);
+		dt   = new DirectoryTree();
+		list = new ServerList(); 
+	}
+
+			...
+\end{lstlisting}	
+
+O método \textit{appExecuteOrdered}, sobre escrito da superclasse, mostrado no Código~\ref{code:serv_meta_app} serve para atender às requisições por operação onde a sua ordem da execução precisa ser considerada.
+Primeiro recebe o tipo de operação para ser executado em variável \textit{reqType}, e depois chama o método correspondente para continuar com o processo.
+As operações que podem ser processados em qualquer ordem são atendidas pelo método \textit{appExecuteUnordered}.
+
+\begin{lstlisting}[basicstyle=\ttfamily\footnotesize, frame=single, caption=Métodos para atender às requisições, label=code:serv_meta_app ]		
+	@Override
+	public byte[] appExecuteOrdered(byte[] command, MessageContext msgCtx) {
+				
+			...
+				
+		byte[] resultBytes = null;
+		
+		try {
+			ByteArrayInputStream in  = new ByteArrayInputStream(command);
+			ObjectInputStream    ois = new ObjectInputStream(in);
+			
+			int reqType = ois.readInt();
+			
+			switch(reqType) {
+				case RequestType.CREATEDIR:
+				resultBytes = criateDir(ois);
+				break;
+				
+				case RequestType.DELETEDIR:
+				resultBytes = deleteDir(ois);
+				break;
+	
+			...
+				
+		} catch (ClassNotFoundException | IOException e) {
+	
+			...
+			
+	}
+			
+	@Override
+	public byte[] executeUnordered(byte[] command, MessageContext msgCtx) {	
+			...
+\end{lstlisting}	
+
+Todos os métodos da classe \textit{ServerMeta} possuem um fluxo de execução padronizado desta forma; recebe requisição, processa a operação e retorna o resultado. 
+O método \textit{open} mostrado no Código~\ref{code:serv_meta_open} apresenta o fluxo padrão, realizando a operação de abrir um arquivo.
+
+\begin{lstlisting}[basicstyle=\ttfamily\footnotesize, frame=single, caption=Exemplo de método da classe ServerMeta, label=code:serv_meta_open]		
+	private byte[] open(ObjectInputStream ois) throws ClassNotFoundException, IOException {
+		String   currPath = (String)ois.readObject();
+		String   tgtName  = (String)ois.readObject();
+		long     accTime  = ois.readLong();
+		
+				...
+		
+		Directory currDir   = dt.openDirectory(currPath, accTime);
+		int       result    = -1;
+		long      fileSize  = 0;
+		FileDFS   target    = null;
+		BlockInfoList bList = null;
+		
+		if(currDir == null) {
+			currDir = dt.getRoot();
+			result  = ResultType.FAILURE;
+		} else if(!currDir.existFile(tgtName)) {
+			result = ResultType.FILENOTEXISTS;
+		} else {
+			target = currDir.getFile(tgtName);
+			if( ( target.isLokedW() ) &&
+				( System.currentTimeMillis()-target.getLastAccTime() ) <= 30*1000 ) 
+			{
+				result = ResultType.FILELOCKED;
+			} else {
+				target.lockR();
+				bList  = target.getBlockList();
+				fileSize = target.getMetadata().size();
+				result = ResultType.SUCCESS;
+			}
+		}
+	
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		ObjectOutputStream    oos = new ObjectOutputStream(out);
+	
+		oos.writeInt(result);
+		oos.writeObject(currDir.getDirEntries());
+		oos.writeObject(bList);
+		oos.writeLong(fileSize);
+		oos.flush();
+		
+				...
+					
+		return out.toByteArray();
+	}
+\end{lstlisting}
+
 
 \subsection{Serviço de Armazenamento}
 Nesta seção a implementação do Serviço de Armazenamento será detalhada. O serviço supracitado foi desenvolvido em quatro classes, as quais são listadas a seguir.
 \\
 
 \begin{itemize}
+	\item server.data;
+	\begin{itemize}
 	\item MetadataModule;
 	\item ServerConsole;
 	\item Operation;
 	\item ServerData.
+	\end{itemize}
 \end{itemize}
 
 A classe \textbf{ServerConsole} serve apenas como uma interface de inicialização do serviço de armazenamento, no qual o \textit{ServerConsole} verifica os parâmetros de inicialização, caso tenha algo errado é apresentado uma mensagem de erro e o programa finalizado. Em contra partida, se tudo estiver correto com os parâmetros, a classe \textit{ServerData} é instanciada.
 \\
 
 A classe \textbf{Operation} é a classe responsável por efetivamente executar as operações solicitadas ao serviço de armazenamento sobre os blocos de arquivos.
-\\
-
-O \textit{Operation} herda a classe \textit{Thread} para realizar o processamento em \textit{multithread}.
-Na parte de execução mostrado abaixo faz a chamada de método adequado de acordo com tipo de operação requerida.
-\begin{lstlisting}[basicstyle=\ttfamily\footnotesize, frame=single]		
+Ela herda a classe \textit{Thread} para realizar o processamento em \textit{multithread}.
+Na parte de execução mostrado no Código~\ref{code:operation} faz a chamada de método adequado de acordo com tipo de operação requerida.
+\begin{lstlisting}[basicstyle=\ttfamily\footnotesize, frame=single, caption=Declaração e o método de execução da classe Operation, label=code:operation]		
 public class Operation extends Thread {
 	
 			...
 			
-public void run() {
-	if(verbose)
-		System.out.println("Cliente conectado do IP "
-		+clientSocket.getInetAddress().getHostAddress());
-	
-	try {
-		InputStream in = clientSocket.getInputStream();
-		ObjectInputStream ois = new ObjectInputStream(in);
+	public void run() {
+		if(verbose)
+			System.out.println("Cliente conectado do IP "
+			+clientSocket.getInetAddress().getHostAddress());
 		
-		int   reqType = ois.readInt();
-		Block block   = (Block)ois.readObject();
-		
-		switch(reqType) {
-			case(RequestType.CREATE):
-				create(block);
-				break;
-		
-			case(RequestType.DELETE):
+		try {
+			InputStream in = clientSocket.getInputStream();
+			ObjectInputStream ois = new ObjectInputStream(in);
+			
+			int   reqType = ois.readInt();
+			Block block   = (Block)ois.readObject();
+			
+			switch(reqType) {
+				case(RequestType.CREATE):
+					create(block);
+					break;
+			
+				case(RequestType.DELETE):
 			
 			...
 \end{lstlisting}
@@ -193,26 +340,25 @@ public void run() {
 
 
 \textbf{ServerData} é a classe responsável por lidar diretamente com os clientes, de modo que é ela quem sabe a porta onde o servidor deve aguardar pela conexão do cliente, a sua capacidade total de armazenamento e quanto do espaço já foi ocupado.
-\\
 
-O trecho do código mostrado a seguir é parte principal de execução da classe \textit{ServerData}.
+O trecho do código mostrado no Código~\ref{code:serv_data} é a parte principal de execução da classe \textit{ServerData}.
 O fluxo começa esperando cliente,  segue para criação da instancia de \textit{Operation} e dá início à instancia criada.
-\begin{lstlisting}[basicstyle=\ttfamily\footnotesize, frame=single]		
-while(true) {
-	iterations++;
-	if(verbose)
-		System.out.println("Aguardando cliente...");
-	try {
-		Socket clientSocket = serverSocket.accept();
-		
-		Operation op = new Operation(clientSocket, dirName, verbose);
-		op.start();
-	} catch (SocketException e) {
-		e.printStackTrace();
-		System.exit(0);
+\begin{lstlisting}[basicstyle=\ttfamily\footnotesize, frame=single, caption=Declaração e o método de execução da classe Operation, label=code:serv_data]		
+	while(true) {
+		iterations++;
+		if(verbose)
+			System.out.println("Aguardando cliente...");
+		try {
+			Socket clientSocket = serverSocket.accept();
+			
+			Operation op = new Operation(clientSocket, dirName, verbose);
+			op.start();
+		} catch (SocketException e) {
+			e.printStackTrace();
+			System.exit(0);
+		}
 	}
-}
-
+	
 			...
 \end{lstlisting}
 
@@ -220,67 +366,70 @@ A classe \textbf{MetaDataModule} realiza a comunicação com os servidores de me
 \\
 
 \subsection{Cliente}
-Nesta seção a implementação do Cliente será detalhada. O serviço supracitado foi desenvolvido em seis classes, as quais são listadas a seguir.
+Nesta seção a implementação do Cliente será detalhada. O serviço supracitado foi desenvolvido em cinco classes contidos no pacote \textit{client}, as quais são listadas a seguir.
 \\
 
 \begin{itemize}
+	\item client
+	\begin{itemize}
 	\item ClientConsole;
 	\item ClientDFS;
 	\item ClientServerSocket;
 	\item Option;
 	\item ClientTest.
+	\end{itemize}
 \end{itemize}
 
-Observe que a classe \textbf{ClientTest} é utilizada apenas no modo de teste, na execução normal ela é ignorada pelo sistema e não deve ser chamada. A parte de preparação é mostrado abaixo, onde são criados vários \textit{threads} da classe \textbf{ClientDFS} e colocado para executar o teste.
+Observe que a classe \textbf{ClientTest} é utilizada apenas para realizar os testes, na execução normal ela é ignorada pelo sistema e não deve ser chamada. A parte de preparação é mostrado Código~\ref{code:clent_test1}, onde são criados vários \textit{threads} da classe \textit{ClientDFS} e colocado para executar o teste.
 
-\begin{lstlisting}[basicstyle=\ttfamily\footnotesize, frame=single]		
-long[] values = new long[numThreads];
-Client[] c = new Client[numThreads];
-
-for (int i = 0; i < numThreads; i++) {
-	try {
-		Thread.sleep(100);
-	} catch (InterruptedException e) {
-		e.printStackTrace();
-	}
-
-	System.out.println("Launching client " + (initId + i));
-	c[i] = new ClientTest.Client(values, i, opsType, numberOfOps, interval);
-}
+\begin{lstlisting}[basicstyle=\ttfamily\footnotesize, frame=single, caption=Preparação de teste na classe ClientTest, label=code:clent_test1]		
+	long[] values = new long[numThreads];
+	Client[] c = new Client[numThreads];
 	
+	for (int i = 0; i < numThreads; i++) {
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	
+		System.out.println("Launching client " + (initId + i));
+		c[i] = new ClientTest.Client(values, i, opsType, numberOfOps, interval);
+	}
+		
 			...
 \end{lstlisting}
 
-Agora executa o teste chamando os métodos de acordo com tipo de  operação escolhido. 
+Agora executa o teste chamando os métodos de acordo com tipo de  operação escolhido, como mostra no Código~\ref{code:clent_test2}. 
 Ao terminar a execução de todas as operações, apenas a instancia de \textbf{ClientDFS} que possui número de ID igual a ID inicial imprime o resultado e termina o teste.
 
-\begin{lstlisting}[basicstyle=\ttfamily\footnotesize, frame=single]
-for (int i = 0; i < numberOfOps; i++, req++) {
-	System.out.print("Sending req " + req + "...");
-	
-	try {
-		switch(opsType) {
-			case(READ):
-				last_send_instant = System.nanoTime();
-				cdfs.open("test_"+id+"_"+i);
-				st.store(System.nanoTime() - last_send_instant);
-				break;
-			
-			case(WRITE):
-				last_send_instant = System.nanoTime();
-				cdfs.create("test", "test_"+id+"_"+i);
-				st.store(System.nanoTime() - last_send_instant);
-				break;
+\begin{lstlisting}[basicstyle=\ttfamily\footnotesize, frame=single, caption=Execução de teste na classe ClientTest, label=code:clent_test2]
+	for (int i = 0; i < numberOfOps; i++, req++) {
+		System.out.print("Sending req " + req + "...");
+		
+		try {
+			switch(opsType) {
+				case(READ):
+					last_send_instant = System.nanoTime();
+					cdfs.open("test_"+id+"_"+i);
+					st.store(System.nanoTime() - last_send_instant);
+					break;
+				
+				case(WRITE):
+					last_send_instant = System.nanoTime();
+					cdfs.create("test", "test_"+id+"_"+i);
+					st.store(System.nanoTime() - last_send_instant);
+					break;
+				
+			...
+				
+		if (id == initId) {
+			System.out.println(this.id + " // Average time for " + numberOfOps + " executions (-10%) = " + st.getAverage(true) / 1000 + " us ");
 			
 			...
+				
+		}	
 			
-	if (id == initId) {
-		System.out.println(this.id + " // Average time for " + numberOfOps + " executions (-10%) = " + st.getAverage(true) / 1000 + " us ");
-		
-			...
-			
-	}	
-		
 			...
 \end{lstlisting}
  
@@ -289,218 +438,215 @@ for (int i = 0; i < numberOfOps; i++, req++) {
 A classe \textbf{ClientConsole} serve apenas como uma interface entre o usuário e o \textit{software}, no qual o \textit{ClientConsole} apresenta um menu baseado em linha de comando, no qual o usuário informa qual operação deseja executar, o \textit{ClientConsole} valida os dados fornecidos e avisa o módulo responsável por executar a operação desejada.
 \\
 
-O código abaixo mostra o método para executar a operação de criação de arquivo.
+No Código~\ref{code:clent_con} é mostrado o método para executar a operação de criação de arquivo.
 Basicamente todos os métodos que executa a operação possuem esta forma; interação com usuário, chamada de método do \textit{ClientDFS} e processamento de resultado.
-\begin{lstlisting}[basicstyle=\ttfamily\footnotesize, frame=single]
-private void create(Console con) throws ClassNotFoundException, IOException  {
-	System.out.println();
-	System.out.println("Criar arquivo");
-	String srcName  = con.readLine("Nome ou local do arquivo:\n>");
-	
-	if(srcName.isEmpty())
-		return;
-	
-	int result = c.create(srcName, null);
-	
-	if(result == ResultType.SUCCESS)
-		System.out.println("Arquivo criado");
-	else
-		reportError(result);
-}
+\begin{lstlisting}[basicstyle=\ttfamily\footnotesize, frame=single, caption=Exemplo de método da classe ClientConsole, label=code:clent_con]
+		private void create(Console con) throws ClassNotFoundException, IOException  {
+			System.out.println();
+			System.out.println("Criar arquivo");
+			String srcName  = con.readLine("Nome ou local do arquivo:\n>");
+			
+			if(srcName.isEmpty())
+				return;
+			
+			int result = c.create(srcName, null);
+			
+			if(result == ResultType.SUCCESS)
+				System.out.println("Arquivo criado");
+			else
+				reportError(result);
+		}
 \end{lstlisting}
 
 A classe \textbf{Option} é apenas uma enumeração contendo os tipos de operações suportados pelo sistema, as quais foram apresentadas e discutidas previamente nesse trabalho.
 \\
 
 \textbf{ClientServerSocket} possibilita e gerencia as conexões \textit{Socket} realizadas entre o cliente e os servidores de dados, tal conexão são necessárias para a correta execução de operações entre o cliente e os servidores de armazenamento. As conexões entre o cliente e servidor de metadados ocorrem graças as facilidades do \textit{BFT-SMaRt}.
-\\
-
-O método \textit{open} mostrado abaixo serve para receber o bloco de arquivo, enviado pelo servidor de armazenamento.
+O método \textit{open} mostrado no Código~\ref{code:clent_socket1} serve para receber o bloco de arquivo, enviado pelo servidor de armazenamento.
 Primeiramente envia o tipo de requisição junto à informação sobre bloco de arquivo desejado e logo a seguir espera o envio de dado pelo servidor.
 Para tolerar a falha da rede externa, quando detecta exceção de conexão espera por 10 segundos e inicia o processo novamente, fazendo três tentativas.
 
-\begin{lstlisting}[basicstyle=\ttfamily\footnotesize, frame=single]	
-public byte[] open(Block block) throws ConnectException  {
-	int triedCount = 0;
-	
-	while(true) {
-		try {
-			clientSocket = new Socket(blockInfo.getHostName(), blockInfo.getPort());
-			System.out.println("O cliente se conectou ao servidor na porta " 
-			+ blockInfo.getPort());
-			
-			ByteArrayOutputStream bos = new ByteArrayOutputStream();
-			ObjectOutputStream    oos = new ObjectOutputStream(bos);
-			
-			oos.writeInt(RequestType.OPEN);
-			oos.writeObject(block);
-			oos.flush();
-			
-			OutputStream out = clientSocket.getOutputStream();
-			
-			out.write(bos.toByteArray());
+\begin{lstlisting}[basicstyle=\ttfamily\footnotesize, frame=single, caption=Exemplo de método da classe ClientServerSocket, label=code:clent_socket1]	
+	public byte[] open(Block block) throws ConnectException  {
+		int triedCount = 0;
 		
-			InputStream         is = clientSocket.getInputStream();
-			BufferedInputStream in = new BufferedInputStream(is);
-			
-			while(is.available() == 0);
-			
-			byte[] buffer = new byte[BUFFER_SIZE];
-			int length = in.read(buffer);
-			System.out.println(length);
-		
-			return Arrays.copyOfRange(buffer, 0, length);
-		} catch(ConnectException | UnknownHostException e) {
+		while(true) {
 			try {
-				Thread.sleep(10*1000);
-			} catch (InterruptedException e1) {
-				e1.printStackTrace();
-				System.exit(-1);
-			}
+				clientSocket = new Socket(blockInfo.getHostName(), blockInfo.getPort());
+				System.out.println("O cliente se conectou ao servidor na porta " 
+				+ blockInfo.getPort());
+				
+				ByteArrayOutputStream bos = new ByteArrayOutputStream();
+				ObjectOutputStream    oos = new ObjectOutputStream(bos);
+				
+				oos.writeInt(RequestType.OPEN);
+				oos.writeObject(block);
+				oos.flush();
+				
+				OutputStream out = clientSocket.getOutputStream();
+				
+				out.write(bos.toByteArray());
 			
-			triedCount++;
-			if(triedCount>3) {
-				System.out.println("O cliente nao conseguiu conectar no servidor");
-				throw new ConnectException();
+				InputStream         is = clientSocket.getInputStream();
+				BufferedInputStream in = new BufferedInputStream(is);
+				
+				while(is.available() == 0);
+				
+				byte[] buffer = new byte[BUFFER_SIZE];
+				int length = in.read(buffer);
+				System.out.println(length);
+			
+				return Arrays.copyOfRange(buffer, 0, length);
+			} catch(ConnectException | UnknownHostException e) {
+				try {
+					Thread.sleep(10*1000);
+				} catch (InterruptedException e1) {
+					e1.printStackTrace();
+					System.exit(-1);
+				}
+				
+				triedCount++;
+				if(triedCount>3) {
+					System.out.println("O cliente nao conseguiu conectar no servidor");
+					throw new ConnectException();
+				}
+			} catch (IOException e) {
+				...
 			}
-		} catch (IOException e) {
-			...
 		}
 	}
-}
 \end{lstlisting}
 
-O método \textit{send} foi implementado como privado para ser chamado pelo outros métodos públicos, o \textit{create} e o \textit{delete}, que servem para fazer, respectivamente, o envido do bloco de arquivo e a requisição de deletar um bloco.
+O método \textit{send} foi implementado como privado para ser chamado pelo outros métodos públicos, o \textit{create} e o \textit{delete}, que servem para fazer o envido do bloco de arquivo e a requisição de deletar um bloco, respectivamente.
 Utiliza o mesmo esquema de tolerar a falha da rede externa que foi apresentado no método acima.
-
-\begin{lstlisting}[basicstyle=\ttfamily\footnotesize, frame=single]	
-
-public void create(Block block) throws ConnectException  {
-	send(RequestType.CREATE, block);
-}
-
-public void delete(Block block) throws ConnectException  {
-	send(RequestType.DELETE, block);
-}
-
-			...
-
-private void send(int ReqType, Block block) throws ConnectException  {
-	int triedCount = 0;
+A implementação é mostra do no Código~\ref{code:clent_socket2}
+\begin{lstlisting}[basicstyle=\ttfamily\footnotesize, frame=single, caption=Exemplo de métodos da classe ClientServerSocket, label=code:clent_socket2]	
+	public void create(Block block) throws ConnectException  {
+		send(RequestType.CREATE, block);
+	}
 	
-	while(true) {
-		try {
-			clientSocket = new Socket(blockInfo.getHostName(), blockInfo.getPort());
-			System.out.println("O cliente se conectou ao servidor na porta " 
-			+ blockInfo.getPort());
-			
-			ByteArrayOutputStream bos = new ByteArrayOutputStream();
-			ObjectOutputStream    oos = new ObjectOutputStream(bos);
-			
-			oos.writeInt(ReqType);
-			oos.writeObject(block);
-			oos.flush();
-			
-			OutputStream out = clientSocket.getOutputStream();
-			
-			out.write(bos.toByteArray());
-			
-			clientSocket.close();
-			
-			return;
-		} catch(ConnectException | UnknownHostException e) {
-		
+	public void delete(Block block) throws ConnectException  {
+		send(RequestType.DELETE, block);
+	}
+	
 				...
+	
+	private void send(int ReqType, Block block) throws ConnectException  {
+		int triedCount = 0;
+		
+		while(true) {
+			try {
+				clientSocket = new Socket(blockInfo.getHostName(), blockInfo.getPort());
+				System.out.println("O cliente se conectou ao servidor na porta " 
+				+ blockInfo.getPort());
 				
+				ByteArrayOutputStream bos = new ByteArrayOutputStream();
+				ObjectOutputStream    oos = new ObjectOutputStream(bos);
+				
+				oos.writeInt(ReqType);
+				oos.writeObject(block);
+				oos.flush();
+				
+				OutputStream out = clientSocket.getOutputStream();
+				
+				out.write(bos.toByteArray());
+				
+				clientSocket.close();
+				
+				return;
+			} catch(ConnectException | UnknownHostException e) {
+			
+					...
+					
+			}
 		}
-}
+	}
 \end{lstlisting}
 
 A classe \textbf{ClientDFS} pode ser considerada como a classe principal do lado cliente do sistema, visto que é nela onde estão concentrados os métodos para realização de todas as operações listadas em \textit{Option}.
-\\
-Quando o método não envolve com operação sobre arquivo faz comunicação somente com servidores de metadados.
-O código abaixo mostra o método que implementa a operação de criar novo diretório, em que a requisição desta operação é enviado para servidores usando o \textit{BFT-SMaRt}, através do método \textit{invokeOrdered}.
+Quando o método não envolve com uma operação sobre arquivo, o cliente faz a comunicação somente entre servidores de metadados.
+O Código~\ref{code:clent_dfs1} mostra o método que implementa a operação de criar novo diretório, em que a requisição desta operação é enviado para servidores usando o \textit{BFT-SMaRt}, através do método \textit{invokeOrdered}.
 O \textit{invokeOrdered} é chamado para requisitar as operações que a ordem de execução precisa ser considerado. Caso contrário, é chamado  \textit{invokeUnordered}.
 Os métodos desta classe também possuem uma forma padrão; prepara o dado, envia para servidores, aguarda a resposta, e faz processamento restante de acordo com a resposta obtida.  
-\begin{lstlisting}[basicstyle=\ttfamily\footnotesize, frame=single]	
-public int criateDir(String tgtName) throws ClassNotFoundException, IOException {
-	Metadata metadata = new Metadata(System.currentTimeMillis());
-	
-	ByteArrayOutputStream out = new ByteArrayOutputStream();
-	ObjectOutputStream    oos = new ObjectOutputStream(out);
-	
-	oos.writeInt(RequestType.CREATEDIR);
-	oos.writeObject(currPath.toString());
-	oos.writeObject(tgtName);
-	oos.writeObject(metadata);
-	oos.writeLong(System.currentTimeMillis());
-	oos.flush();
-	
-	byte[]  bytes   = this.proxy.invokeOrdered(out.toByteArray());
-	
-	ByteArrayInputStream in  = new ByteArrayInputStream(bytes);
-	ObjectInputStream    ois = new ObjectInputStream(in);
-	
-	int result = ois.readInt();
-	currDir    = (DirEntries)ois.readObject();
-	
-	if(result == ResultType.FAILURE) {
-		currPath = currDir.getPath();
-	}
-	
-	return result;
-}
-\end{lstlisting}
-Quado o método envolve uma operação sobre arquivo, é necessário fazer comunicação com ambos tipos de servidores, o de metadados e o de armazenamento, como no método \textit{create} mostrado abaixo.
-A comunicação com servidor de metadado possui mesma característica que foi apresentado no método acima.
-No caso de comunicação com servidores de armazenamento ocorre através da classe \textit{ClientServerSocket} de forma \textit{multithread}.
-Nas operações de leitura e escrita de arquivo a rotina de execução subdivide de acordo com tipo de RAID, mas o fluxo segue de forma parecida, como ocorre em alguns métodos apresentados anteriormente.
-\begin{lstlisting}[basicstyle=\ttfamily\footnotesize, frame=single]	
-public int create(String fileName, String tgtName) throws ClassNotFoundException, IOException  {
-	int result = ResultType.FAILURE;
-	try {
-				...
+\begin{lstlisting}[basicstyle=\ttfamily\footnotesize, frame=single, caption=Exemplo de método da classe ClientDFS, label=code:clent_dfs1]	
+	public int criateDir(String tgtName) throws ClassNotFoundException, IOException {
+		Metadata metadata = new Metadata(System.currentTimeMillis());
+		
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		ObjectOutputStream    oos = new ObjectOutputStream(out);
+		
+		oos.writeInt(RequestType.CREATEDIR);
+		oos.writeObject(currPath.toString());
+		oos.writeObject(tgtName);
+		oos.writeObject(metadata);
+		oos.writeLong(System.currentTimeMillis());
+		oos.flush();
 		
 		byte[]  bytes   = this.proxy.invokeOrdered(out.toByteArray());
 		
-				...
-				
-		ClientServerSocket[] css = new ClientServerSocket[nServers];
-		byte [] buffer = new byte[blockSize];
+		ByteArrayInputStream in  = new ByteArrayInputStream(bytes);
+		ObjectInputStream    ois = new ObjectInputStream(in);
 		
-		switch(raidType) {
-			case(RaidType.RAID0):
-			for(int i=0; i<nServers; i++) {
-				Arrays.fill(buffer, (byte) 0);
-				
-				bInfo = bList.get(i);
-				
-				bis.read(buffer, 0, blockSize);
-				
-				Block block = new Block(bInfo.getID(),buffer);
-				
-				
-				css[i] = new ClientServerSocket(bInfo, block, Option.CREATE, verbose);
-				css[i].start();   
-			}
-			for(int i=0; i<nServers; i++) {
-				css[i].join();
-			}
-			for(int i=0; i<nServers; i++) {
-				if(css[i].failure()) {
-					failure(bList.get(i));
-					result = ResultType.FAILURE;
-					break;
-				}
-			}
-			break;
+		int result = ois.readInt();
+		currDir    = (DirEntries)ois.readObject();
+		
+		if(result == ResultType.FAILURE) {
+			currPath = currDir.getPath();
+		}
+		
+		return result;
+	}
+\end{lstlisting}
+Quado o método envolve uma operação sobre arquivo, é necessário fazer comunicação com ambos tipos de servidores, o de metadados e o de armazenamento, como no método \textit{create} mostrado abaixo no Código~\ref{code:clent_dfs2}.
+A comunicação com servidor de metadado possui mesma característica que foi apresentado no método acima.
+No caso de comunicação com servidores de armazenamento ocorre através da classe \textit{ClientServerSocket} de forma \textit{multithread}.
+Nas operações de leitura e escrita de arquivo a rotina de execução subdivide de acordo com tipo de RAID, mas o fluxo segue de forma parecida, como ocorre em alguns métodos apresentados anteriormente.
+\begin{lstlisting}[basicstyle=\ttfamily\footnotesize, frame=single, caption=Exemplo de método da classe ClientDFS para operação sobre arquivos, label=code:clent_dfs2]	
+	public int create(String fileName, String tgtName) throws ClassNotFoundException, IOException  {
+		int result = ResultType.FAILURE;
+		try {
+				...
+		
+			byte[]  bytes   = this.proxy.invokeOrdered(out.toByteArray());
 			
-			case(RaidType.RAID1):
+				...
 					
+			ClientServerSocket[] css = new ClientServerSocket[nServers];
+			byte [] buffer = new byte[blockSize];
+			
+			switch(raidType) {
+				case(RaidType.RAID0):
+				for(int i=0; i<nServers; i++) {
+					Arrays.fill(buffer, (byte) 0);
+					
+					bInfo = bList.get(i);
+					
+					bis.read(buffer, 0, blockSize);
+					
+					Block block = new Block(bInfo.getID(),buffer);
+					
+					
+					css[i] = new ClientServerSocket(bInfo, block, Option.CREATE, verbose);
+					css[i].start();   
+				}
+				for(int i=0; i<nServers; i++) {
+					css[i].join();
+				}
+				for(int i=0; i<nServers; i++) {
+					if(css[i].failure()) {
+						failure(bList.get(i));
+						result = ResultType.FAILURE;
+						break;
+					}
+				}
+				break;
+				
+				case(RaidType.RAID1):
+						
 			...
-			
-			case(RaidType.RAID5):
-			
+		
+				case(RaidType.RAID5):
+				
 			...
 			
 \end{lstlisting}
@@ -519,7 +665,8 @@ O segundo passo é inicializar o serviço de metadados, para tal deve-se chamar 
 	\item O identificador único da réplica;
 	\item O tipo do RAID que será utilizado;
 	\item O número de servidores de armazenamento;
-	\item "true" caso deseje mostrar na tela as informações da execução.
+	\item "v" ~caso deseje mostrar na tela as informações da execução.
+	\item "n" ~caso deseje não executar em modo de teste, um modo que grava os dados em um único arquivo do disco.
 \end{itemize}
 
 Porém, antes de executar o comando de inicialização, recomenda-se criar um \textit{script} que inicialize o \textit{BFT-SMaRt} e as outras bibliotecas, para tal, basta seguir o formato apresentado logo abaixo, para conveniência, doravante vamos supor que o \textit{script} foi criado e chama-se \textit{scriptBftSmart.sh}.
@@ -529,32 +676,33 @@ java -cp .:lib/BFT-SMaRt.jar:lib/slf4j-api-1.5.8.jar:lib/slf4j-jdk14-1.5.8.jar:
 lib/netty-3.1.1.GA.jar:lib/commons-codec-1.5.jar $1 $2 $3 $4 $5 $6 $7 $8 $9
 \end{lstlisting}
 
-Com o \textit{script} criado, basta executar o seguinte comando (cada um em cada máquina), repare que cada máquina irá receber um identificador único, entretanto, o restante dos parâmetros são inalterados. Repare que é na inicialização do serviço de metadados que o tipo de RAID é determinado e ele não pode ser alterado em tempo de execução. Neste exemplo o serviço está sendo iniciado para tratar o RAID 0 com quatro servidores de armazenamento e com \textit{verbose.}
+Com o \textit{script} criado, basta executar o seguinte comando (cada um em cada máquina), repare que cada máquina irá receber um identificador único, entretanto, o restante dos parâmetros são inalterados. Repare que é na inicialização do serviço de metadados que o tipo de RAID é determinado e ele não pode ser alterado em tempo de execução. Neste exemplo o serviço está sendo iniciado para tratar o RAID 0 com quatro servidores de armazenamento em modo normal e mostrando as informações da execução.
 \\
 
 \begin{lstlisting}
-sh scriptBftSmart.sh server.meta.ServerConsole 0 0 4 true
-sh scriptBftSmart.sh server.meta.ServerConsole 1 0 4 true
-sh scriptBftSmart.sh server.meta.ServerConsole 2 0 4 true
+sh scriptBftSmart.sh server.meta.ServerConsole 0 0 4 vn
+sh scriptBftSmart.sh server.meta.ServerConsole 1 0 4 vn
+sh scriptBftSmart.sh server.meta.ServerConsole 2 0 4 vn
 \end{lstlisting}
 
 Com os servidores de metadados devidamente inicializados, deve iniciar o serviço de armazenamento. A classe que deve ser invocada é a \textit{server.data.ServerConsole}, a qual deve receber dois parâmetros, os quais serão listado a seguir. 
 
 \begin{itemize}
 	\item O identificador único da réplica;
-	\item "true" caso deseje mostrar na tela as informações da execução.
+	\item "v" ~caso deseje mostrar na tela as informações da execução.
 \end{itemize}
 
-No exemplo a seguir, o serviço será instanciado com quatro servidores com o \textit{verbose} ativado.
+No exemplo a seguir, o serviço será instanciado com quatro servidores mostrando as informações de execução na tela.
+\\
 
 \begin{lstlisting}
-sh scriptBftSmart.sh server.data.ServerConsole 1001 true
-sh scriptBftSmart.sh server.data.ServerConsole 1002 true
-sh scriptBftSmart.sh server.data.ServerConsole 1003 true
-sh scriptBftSmart.sh server.data.ServerConsole 1004 true
+sh scriptBftSmart.sh server.data.ServerConsole 1001 v
+sh scriptBftSmart.sh server.data.ServerConsole 1002 v
+sh scriptBftSmart.sh server.data.ServerConsole 1003 v
+sh scriptBftSmart.sh server.data.ServerConsole 1004 v
 \end{lstlisting}
 
-Nesse ponto os servidores de dados já deve ter estabelecido conexão com o serviço de metadados. Desta forma, só o que falta é ativar o cliente. Para tal, é possível ativa-lo de dois modos, o real e o de testes. No modo real será apresentado uma interface de \textit{prompt} onde o usuário poderá interagir informando qual operação ele deseja que o sistema execute. Enquanto que no modo de teste é passado na linha de comando qual operação deve ser executada (r para leitura ou w para escrita), o tamanho do arquivo de teste (1,100,1000 ou 10000 todos em kilobytes), a quantidade de \textit{threads} clientes que serão instanciadas e a quantidade de operações. Os arquivos que são utilizados no modo de teste também podem ser encontrados na pasta \textbf{bin }.
+Nesse ponto os servidores de dados já deve ter estabelecido conexão com o serviço de metadados. Desta forma, só o que falta é ativar o cliente. Para tal, é possível ativá-lo de dois modos, o real e o de testes. No modo real será apresentado uma interface de terminal onde o usuário poderá interagir informando qual operação ele deseja que o sistema execute. Enquanto que no modo de teste é passado na linha de comando qual operação deve ser executada (\textit{r} para leitura ou \textit{w} para escrita), o tamanho do arquivo de teste (1,100,1000 ou 10000 todos em \textit{kilobytes}), a quantidade de \textit{threads} clientes que serão instanciadas e a quantidade de operações. Os arquivos que são utilizados no modo de teste também podem ser encontrados na pasta \textbf{bin}.
 \\
 
 
@@ -565,7 +713,8 @@ Para executar um cliente em modo real, é necessário chamar a classe \textit{cl
 sh scriptBftSmart.sh client.ClientConsole 7001
 \end{lstlisting}
 
-No caso do cliente em modo de teste, deve-se chamar a classe \textit{client.ClientTest}, a qual teve seus parâmetros de entrada explicados no paragrafo anterior. Desta forma, no exemplo a seguir o cliente de teste vai instanciar 10 \textit{threads} clientes onde cada uma irá executar 500 operações de escrita de arquivo de 1KB.
+No caso do cliente em modo de teste, deve-se chamar a classe \textit{client.ClientTest}, a qual teve seus parâmetros de entrada explicados no paragrafo anterior. Desta forma, no exemplo a seguir o cliente de teste vai instanciar 10 \textit{threads} clientes onde cada uma irá executar 500 operações de escrita de arquivo de 1 KB.
+\\
 
 \begin{lstlisting}
 sh scriptBftSmart.sh client.ClientTest 7001 w 1 10 500
