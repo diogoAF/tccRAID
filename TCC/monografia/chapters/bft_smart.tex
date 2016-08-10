@@ -96,25 +96,25 @@ Este capítulo detalha o \textit{BFT-SMaRt} apresentando seu conceito, princípi
 	 
 	 \section{Configurações Alternativas}
 	 
-	 Como mencionado nas seções anteriores, por padrão o \textit{BFT-SMaRt} tolera falhas bizantinas não maliciosas. Entretanto, o sistema pode ser configurado para suportar dois outros modelos de falhas.\\
+	 Como mencionado nas seções anteriores, por padrão, o \textit{BFT-SMaRt} tolera falhas bizantinas não maliciosas. Entretanto, o sistema pode ser configurado para suportar dois outros modelos de falhas.\\
 	 
 	 %\begin{itemize}
 	 	%\item \textit{Crash Fault Tolerance} \\
 	 	\subsection{Falhas de Sistema}
-	 	\textit{BFT-SMaRt} suporta uma configuração de um parâmetro que caso seja ativado faz com que o sistema tolere apenas falhas de sistema. Quando esta propriedade está ativa, o sistema tolera  f \textless  n/2 (minoria simples), o que implica alterações em todos os passos necessários do protocolo, inclusive ignorando o passo de \textit{WRITE} durante a execução do consenso. Fora essas alterações, os protocolos são os mesmos do caso de tolerância de falha bizantina. 
+	 	O \textit{BFT-SMaRt} suporta uma configuração de um parâmetro que, caso seja ativado, faz com que o sistema tolere apenas falhas de sistema. Quando esta propriedade está ativa, o sistema tolera  f \textless  n/2 (minoria simples), o que implica alterações em todos os passos necessários do protocolo, inclusive ignorando o passo de \textit{WRITE} durante a execução do consenso. Fora essas alterações, os protocolos são os mesmos do caso de tolerância á falha bizantina. 
 	 	
 	 	%\item Falhas Bizantinas Maliciosas\\
 	 	\subsection{Falhas Bizantinas Maliciosas}
-	 	Trabalhos anteriores ao \textit{BFT-SMaRt} demonstraram que o uso de assinaturas com chaves públicas sobre solicitações tornam impossível para os clientes forjarem vetores MAC e forçar que o líder seja alterado. Por padrão, o \textit{BFT-SMaRt} não utiliza assinaturas de chave pública além da utilizada para estabelecer chaves simétricas compartilhadas entre réplicas e durante a mudança do líder. Contudo, o sistema opcionalmente permite o uso de solicitações assinadas para evitar esse problema.\\
+	 	Trabalhos anteriores ao \textit{BFT-SMaRt} demonstraram que, o uso de assinaturas com chaves públicas sobre solicitações, torna impossível para os clientes forjarem vetores MAC e forçar que o líder seja alterado. Por padrão, o \textit{BFT-SMaRt} não utiliza assinaturas de chave pública além da utilizada para estabelecer chaves simétricas compartilhadas entre réplicas e durante a mudança do líder. Contudo, o sistema opcionalmente permite o uso de solicitações assinadas para evitar tal problema.\\
 	 	
 	 	Os mesmos trabalhos também mostram que líderes maliciosos podem lançar ataques de degradação de performance indetectáveis, fazendo com que a vazão do sistema caia drasticamente. Até o presente momento, o \textit{BFT-SMaRt} não apresenta meios de defesa contra este tipo de ataque. \\
 	 	
-	 	Por fim, o fato do \textit{BFT-SMaRt} ter sido desenvolvido em Java faz com que seja fácil aplicar o sistema em diferentes plataformas. Esta escolha permitiu que o time de desenvolvimento evitasse falhas de um único nó causadas por eventos acidentais (por exemplo, algum \textit{bug} ou problemas de infraestrutura) ou ataques maliciosos aproveitando de vulnerabilidades comuns.  \\
+	 	Por fim, o fato do \textit{BFT-SMaRt} ter sido desenvolvido em Java, faz com que seja fácil aplicar o sistema em diferentes plataformas. Tal escolha permitiu que o time de desenvolvimento evitasse falhas de um único nó causadas por eventos acidentais (por exemplo, algum \textit{bug} ou problemas de infraestrutura) ou ataques maliciosos aproveitando de vulnerabilidades comuns.  \\
 	 %\end{itemize}
 	   
 	
 	%texto.... referência \cite{borsley96}
 		
 		\section{Conclusões do Capítulo}
-	Neste capítulo foi detalhado a biblioteca \textit{BFT-SMaRt} apresentando seu conceito, princípios de projeto, protocolos centrais, reconfiguração, implementação e configurações alternativas.	Estes conceitos são fundamentais para a construção de um serviço de metadados possuindo alta confiabilidade e disponibilidade. 
+		Neste capítulo a biblioteca BFT-SMaRt foi detalhada por meio da apresentação de seu conceito, princípios de projeto, protocolos centrais, reconfiguração, implementação e configurações alternativas. Tais conceitos são fundamentais para a construção de um serviço de metadados, possuindo alta confiabilidade e disponibilidade. 
 	

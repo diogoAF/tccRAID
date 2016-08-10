@@ -22,8 +22,9 @@
 \contentsline {figure}{\numberline {5.2}{\ignorespaces Gera\IeC {\c c}\IeC {\~a}o de paridade}}{33}{figure.5.2}
 \contentsline {figure}{\numberline {5.3}{\ignorespaces Recuperando um arquivo de uma falha}}{34}{figure.5.3}
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {6.1}{\ignorespaces Gr\IeC {\'a}fico de lat\IeC {\^e}ncia pata leitura}}{58}{figure.6.1}
-\contentsline {figure}{\numberline {6.2}{\ignorespaces Gr\IeC {\'a}fico de lat\IeC {\^e}ncia pata escrita}}{58}{figure.6.2}
-\contentsline {figure}{\numberline {6.3}{\ignorespaces Gr\IeC {\'a}fico de throughput para leitura(ops/s)}}{60}{figure.6.3}
-\contentsline {figure}{\numberline {6.4}{\ignorespaces Gr\IeC {\'a}fico de throughput para escrita}}{60}{figure.6.4}
+\contentsline {figure}{\numberline {6.1}{\ignorespaces Topologia da rede nos experimentos.}}{57}{figure.6.1}
+\contentsline {figure}{\numberline {6.2}{\ignorespaces Gr\IeC {\'a}fico de lat\IeC {\^e}ncia pata leitura}}{59}{figure.6.2}
+\contentsline {figure}{\numberline {6.3}{\ignorespaces Gr\IeC {\'a}fico de lat\IeC {\^e}ncia pata escrita}}{60}{figure.6.3}
+\contentsline {figure}{\numberline {6.4}{\ignorespaces Gr\IeC {\'a}fico de throughput para leitura(ops/s)}}{60}{figure.6.4}
+\contentsline {figure}{\numberline {6.5}{\ignorespaces Gr\IeC {\'a}fico de throughput para escrita}}{61}{figure.6.5}
 \addvspace {10\p@ }

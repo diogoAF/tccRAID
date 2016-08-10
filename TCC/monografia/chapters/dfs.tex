@@ -4,7 +4,7 @@
 
 	\section{Sistema de arquivos}
 	
-	
+	%Reescrever!!!
 	O sistema de arquivos é um sistema fundamental que possui papel de gerenciar todos os dados armazenados em um computador.
 	Em geral está incluso no sistema operacional, como ocorre nos casos de FAT32 e NTFS para sistema de \textit{Windows} ou EXT4 para sistema de \textit{Linux}.
 	%\section{Sistema distribuído}
@@ -23,7 +23,7 @@
 	
 	\subsection{Metadado} 
 	
-	Os sistemas de arquivos, como ambientes propícios para a recuperação de informações, têm na utilização de metadados a padronização das formas de representação e a possibilidade de garantia de interoperabilidade entre sistemas, favorecendo a integridade e a acessibilidade dos recursos informacionais de forma eficiente pelo usuário final. Os metadados são "dados de dados", ou seja, as informações essenciais sobre os arquivos armazenados, indispensáveis para fazer o gerenciamento de arquivos, indicando as características inerentes deles. A Tabela~\ref{tab:metadado} mostra os atributos tipicamente encontrados em um metadado.
+	Os sistemas de arquivos, como ambientes propícios para a recuperação de informações, têm na utilização de metadados a padronização das formas de representação e a possibilidade de garantia de interoperabilidade entre sistemas. Favorecendo a integridade e a acessibilidade dos recursos informacionais de forma eficiente pelo usuário final. Os metadados são "dados de dados", ou seja, as informações essenciais sobre os arquivos armazenados, indispensáveis para fazer o gerenciamento dos arquivos, indicando as características inerentes deles. A Tabela~\ref{tab:metadado} mostra os atributos tipicamente encontrados em um metadado.
 	
 	\capstartfalse
 	\begin{table} [htb]
@@ -33,14 +33,14 @@
 			\textbf{Informação} & \textbf{Descrição} \\ \hline
 			
 			Nome do arquivo		& O nome do arquivo, incluindo o caminho do diretório.\\ \hline
-			Proprietário		& O identificador de usuário que é o dono do arquivo.\\ \hline
-			Data de criação     & Data que o arquivo foi criado.\\ \hline
-			Data de acesso		& Data de último acesso do arquivo. \\ \hline
-			Data de atualização	& Data de última atualização feito sobre o arquivo. \\ \hline
-			Tamanho				& Espaço ocupado pelo arquivo ao longo do disco. \\ \hline
-			Tipo de arquivo		& indica se ele é uma pasta ou um arquivo normal.  \\ \hline
-			Modo de acesso		& indica a permissão para acessar o arquivo. \\ \hline
-			Bloqueio			& indica se o arquivo está bloqueado para acesso. \\ \hline
+			Proprietário		& O identificador do usuário dono do arquivo.\\ \hline
+			Data de criação     & Data de criação do arquivo.\\ \hline
+			Data de acesso		& Data do último acesso. \\ \hline
+			Data de atualização	& Data da última atualização feito sobre o arquivo. \\ \hline
+			Tamanho				& Espaço ocupado pelo arquivo. \\ \hline
+			Tipo de arquivo		& Indica se trata-se de uma pasta ou dum arquivo de dados.  \\ \hline
+			Modo de acesso		& Indica a permissão para acessar o arquivo. \\ \hline
+			Bloqueio			& Indica se o arquivo está bloqueado para acesso. \\ \hline
 			%Lista de servidores	& lista de todos os servidores que armazena partes do arquivo. \\ \hline
 			
 		\end{tabular}
@@ -58,17 +58,11 @@
 	
 	\section{Sistema de arquivos distribuído}
 	
-	O sistema de arquivos distribuído (SAD) é um tipo de sistema distribuído que tem proposta de permitir que usuários de computadores fisicamente distribuídos compartilhem dados e recursos de armazenamento usando um sistema de arquivo comum~\cite{levy90}.
-	Vários SAD são utilizados para resolver diferentes tipos de problemas, portanto as características de um sistema variam dependendo de requisitos do sistema. 
-	Alguns sistemas dão mais importância na taxa de transferência e outros em manter a consistência dos arquivos, por exemplo. Entretanto, em geral a maioria dos sistemas devem ter as características essenciais para lidar com as seguintes questões a saber~\cite{tanenbaum07,coulouris06, galli00, kon94}.
-	A seguir serão mostradas algumas características que são encontradas em um SAD.
+	O sistema de arquivos distribuído (SAD) é um tipo de sistema distribuído, que tem como proposta permitir aos usuários de computadores fisicamente distribuídos compartilhem dados e recursos de armazenamento usando um sistema de arquivo comum~\cite{levy90}. Vários SAD são utilizados para resolver diferentes tipos de problemas, portanto as características de um sistema variam dependendo dos requisitos do sistema. Alguns sistemas dão mais importância na taxa de transferência e outros em manter a consistência dos arquivos, por exemplo. Entretanto, em geral, a maioria dos sistemas devem ter as características essenciais para lidar com as seguintes questões a saber~\cite{tanenbaum07,coulouris06, galli00, kon94}.
 	\\
 	
-
-	
 	\subsection{Transparência}
-	A transparência é uma das principais características que os sistemas distribuídos em geral apresentam. 
-	Um sistema distribuído transparente é aquele que se mostra como se fosse apenas um único sistema para usuários, como ilustra na Figura~\ref{fig:transparente}. 
+	A transparência é uma das principais características que os sistemas distribuídos, de modo geral, apresentam. Um sistema distribuído transparente é aquele que se mostra como se fosse apenas um único sistema para os usuários, como ilustrado na Figura~\ref{fig:transparente}. 
 	\\
 
 	\begin{figure}[htb]
@@ -81,7 +75,8 @@
 	\end{figure}
 	
 	
-	O conceito de transparência pode ser aplicado os diversos aspectos de um sistema distribuído, os mais importantes são mostrado a seguir~\cite{tanenbaum07}:	
+	O conceito de transparência pode ser aplicado aos diversos aspectos de um sistema distribuído, os mais importantes são mostrado a seguir~\cite{tanenbaum07}:
+	\\	
 
 	\begin{itemize}
 		
@@ -95,29 +90,24 @@
 	
 	\item\textbf{transparência de escalabilidade} Os recursos computacionais podem sofrer alterações para abrigar maior poder computacional ou o ingresso de novos servidores sem prejudicar o serviço;
 	
-	\item\textbf{transparência a falhas} Visa garantir a disponibilidade dos arquivos ininterruptamente e se ocorrerem falhas o programa cliente não deverá saber como elas serão tratadas;
+	\item\textbf{transparência a falhas} Visa garantir a disponibilidade dos arquivos ininterruptamente, e se ocorrerem falhas o programa cliente não deverá saber como elas serão tratadas;
 	
-	\item\textbf{transparência de replicação}, Várias cópias dos mesmos arquivos armazenados em locais diferentes para garantir a disponibilidade. A aplicação cliente deverá
-	visualizar apenas uma cópia do mesmo não necessitando saber a quantidade replicada e o local.
+	\item\textbf{transparência de replicação} Várias cópias dos mesmos arquivos armazenados em locais diferentes para garantir a disponibilidade. A aplicação cliente deverá
+	visualizar apenas uma cópia do mesmo arquivo, não necessitando saber a quantidade replicada e os locais.
 	
 	\end{itemize}
-	
-	
-	A transparência é altamente desejável em sistemas distribuídos, mas nem sempre é possível alcançá-la ou, em determinadas situações, não convém ocultá-la. Pode-se destacar uma situação que seja mais conveniente o usuário tomar uma decisão sobre
-	alguma falha do que o sistema distribuído tentar resolver por si só. Isso pode ser observado quando um serviço, por repetidas vezes tenta estabelecer uma comunicação com o servidor na \textit{Internet}, neste caso o melhor é informar ao usuário sobre a falha e que ele tente mais tarde.
-	
-	
+		
+	A transparência é altamente desejável em sistemas distribuídos, mas nem sempre é possível alcançá-la ou, em determinadas situações, não convém ocultá-la. Pode-se destacar uma situação que seja mais conveniente o usuário tomar uma decisão sobre alguma falha do que o sistema distribuído tentar resolver por si só. Isso pode ser observado quando um serviço, por repetidas vezes tenta estabelecer uma comunicação com o servidor na \textit{Internet}, neste caso o melhor é informar ao usuário sobre a falha para que ele tente novamente mais tarde.
+	\\
 	
 	%\begin{itemize}
 	%\item Disponibilidade
 	\subsection{Disponibilidade}
-	A maioria dos SADs possuem serviços dependente da rede interna ou externa, onde ainda continua sendo um meio relativamente instável, podendo deixar o serviço fora de ar por causa de algum inconveniente que ocorreu na rede. 
-	A sua arquitetura que possui grande quantidade de computadores constituindo o sistema também é um dos fatores que causam a indisponibilidade do serviço, pois a probabilidade de acontecer uma falha cresce de acordo com aumento do número de entidades envolvidas. 
-	Foram feito vários estudos para evitar que os serviços deixem de ser oferecidos, independente de qual for a razão da inconveniência. 
-	Assim, um SAD deve implementar um esquema para manter o acesso aos seus recursos em qualquer caso, estando sempre disponíveis para responder às requisições enviados por usuários. A falha que acontece em alguns servidores não pode influenciar a execução de serviço do sistema. 
-	Além disso, o usuário não precisa saber como tal esquema funciona e nem como foi implementado, podendo continuar a usar o sistema sem preocupar com possíveis transtornos que estão acontecendo. 
-	Essa restrição é incorporada para manter a propriedade de transparência do sistema.
+	A maioria dos SADs possuem serviços dependentes da rede interna ou externa, a qual ainda continua sendo um meio relativamente instável, podendo até deixar o serviço fora do ar por causa de algum inconveniente que ocorreu na rede. A sua arquitetura, que possui grande quantidade de computadores constituindo o sistema, também é um dos fatores que podem causar a indisponibilidade do serviço. Pois a probabilidade de acontecer alguma falha cresce de acordo com o aumento do número de entidades envolvidas.  
+	Assim, um SAD deve implementar um esquema para manter o acesso aos seus recursos em qualquer caso, estando sempre disponível para responder às requisições enviados pelos seus usuários. Além disso, o usuário não precisa saber como tal esquema funciona e nem como foi implementado, podendo continuar a usar o sistema mesmo com a indisponibilidade de alguns servidores. Essa restrição é incorporada para manter a propriedade de transparência do sistema.
+	\\
 	
+	%AQUI!!!!!
 	%\item Operações atômicas
 	\subsection{Operação atômica}
 	A operação atômica é um conjunto de operações que aparece para o resto do sistema como se fosse ocorrido instantaneamente.
